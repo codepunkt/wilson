@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import { UserConfig } from 'vite'
 import reactRefresh from '@vitejs/plugin-react-refresh'
+import minifyHTML from './plugins/minifyHtml'
 
 const config: UserConfig = {
   resolve: {
@@ -9,7 +10,7 @@ const config: UserConfig = {
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
   },
-  plugins: [reactRefresh()],
+  plugins: [reactRefresh(), minifyHTML()],
   esbuild: {
     jsxInject: `import React from 'react'`,
   },

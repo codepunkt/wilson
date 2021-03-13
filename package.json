@@ -18,6 +18,7 @@
   "devDependencies": {
     "@babel/core": "^7.13.10",
     "@types/express": "^4.17.11",
+    "@types/html-minifier": "^4.0.0",
     "@types/node": "^14.14.34",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
@@ -27,6 +28,7 @@
     "express": "^4.17.1",
     "gray-matter": "^4.0.2",
     "hast-util-to-html": "^7.1.2",
+    "html-minifier": "^4.0.0",
     "mdast-util-to-hast": "^10.2.0",
     "prettier": "^2.2.1",
     "remark": "^13.0.0",
