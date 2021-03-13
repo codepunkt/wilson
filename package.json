@@ -11,7 +11,6 @@
     "serve": "node -r ts-node/register build/ssrServer"
   },
   "dependencies": {
-    "@types/html-minifier-terser": "^5.1.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0"
@@ -28,7 +27,6 @@
     "express": "^4.17.1",
     "gray-matter": "^4.0.2",
     "hast-util-to-html": "^7.1.2",
-    "html-minifier-terser": "^5.1.1",
     "mdast-util-to-hast": "^10.2.0",
     "prettier": "^2.2.1",
     "remark": "^13.0.0",
@@ -36,6 +34,7 @@
     "serve-static": "^1.14.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3",
-    "vite": "^2.0.5"
+    "vite": "^2.0.5",
+    "vite-plugin-html": "^2.0.3"
   }
 }
