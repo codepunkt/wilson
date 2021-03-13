@@ -1,5 +1,5 @@
 import { Plugin } from 'vite'
-import { minify, Options as HTMLMinifierOptions } from 'html-minifier'
+import { minify, Options as HTMLMinifierOptions } from 'html-minifier-terser'
 
 export interface Options {
   minifierOptions?: HTMLMinifierOptions
