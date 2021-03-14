@@ -1,18 +1,18 @@
-import fs from 'fs'
-import path from 'path'
+import { readFileSync } from 'fs-extra'
+import { resolve } from 'path'
 import express from 'express'
 
 const isTest = process.env.NODE_ENV === 'test' || !!process.env.VITE_TEST_BUILD
-const resolve = (p: string) => path.resolve(__dirname, p)
+const toAbsolute = (p: string) => resolve(__dirname, p)
 const manifest = require('../dist/client/ssr-manifest.json')
-const template = fs.readFileSync(resolve('../dist/client/index.html'), 'utf-8')
+const template = readFileSync(toAbsolute('../dist/client/index.html'), 'utf-8')
 
 async function createServer() {
   const app = express()
 
   app.use(require('compression')())
   app.use(
-    require('serve-static')(resolve('../dist/client'), {
+    require('serve-static')(toAbsolute('../dist/client'), {
       index: false,
     })
   )

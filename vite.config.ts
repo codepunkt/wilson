@@ -13,6 +13,7 @@ const config: UserConfig = {
   plugins: [
     reactRefresh(),
     minifyHtml({
+      removeComments: false,
       useShortDoctype: true,
     }),
   ],

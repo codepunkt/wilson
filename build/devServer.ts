@@ -1,10 +1,10 @@
-import fs from 'fs'
-import path from 'path'
+import { readFile } from 'fs-extra'
 import express from 'express'
+import { resolve } from 'path'
 import { StaticRouterContext } from 'react-router'
 
 const isTest = process.env.NODE_ENV === 'test' || !!process.env.VITE_TEST_BUILD
-const resolve = (p: string) => path.resolve(__dirname, p)
+const toAbsolute = (p: string) => resolve(__dirname, p)
 
 async function createServer(root = process.cwd()) {
   const app = express()
@@ -22,7 +22,7 @@ async function createServer(root = process.cwd()) {
       const url = req.originalUrl
 
       // 1. read index.html
-      const index = fs.readFileSync(resolve('../index.html'), 'utf-8')
+      const index = await readFile(toAbsolute('../index.html'), 'utf-8')
       // 2. Apply vite HTML transforms. This injects the vite HMR client, and
       //    also applies HTML transforms from Vite plugins, e.g. global preambles
       //    from @vitejs/plugin-react-refresh
