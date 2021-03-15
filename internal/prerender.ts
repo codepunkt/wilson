@@ -17,11 +17,12 @@ const toAbsolute = (p: string) => resolve(__dirname, p)
       'utf-8'
     )
 
+    // collect pages
     const pages: Page[] = []
     for await (const entry of readdirp(toAbsolute('../src/pages'))) {
       const sourcePath = entry.path
       const url = `/${sourcePath
-        .replace(/\.tsx$/, '')
+        .replace(/\.(tsx|md)$/, '')
         .toLowerCase()
         .replace(/index$/, '')}/`.replace(/\/\/$/, '/')
       const htmlPath =
@@ -30,7 +31,6 @@ const toAbsolute = (p: string) => resolve(__dirname, p)
           : `${url.replace(/^\//, '')}index.html`
       pages.push({ sourcePath, url, htmlPath })
     }
-    console.log({ pages })
 
     // pre-render each page
     for (const page of pages) {

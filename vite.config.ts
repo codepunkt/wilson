@@ -2,6 +2,7 @@ import { resolve } from 'path'
 import { UserConfig } from 'vite'
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import { minifyHtml } from 'vite-plugin-html'
+import { markdown } from './internal/plugins/markdown'
 
 const config: UserConfig = {
   resolve: {
@@ -11,6 +12,7 @@ const config: UserConfig = {
     include: ['react', 'react-dom', 'react-router-dom'],
   },
   plugins: [
+    markdown(),
     reactRefresh(),
     minifyHtml({
       removeComments: false,
