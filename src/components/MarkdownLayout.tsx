@@ -1,13 +1,16 @@
+import classes from './MarkdownLayout.module.scss'
+import { Frontmatter } from 'wilson'
+
 interface Props {
   children: React.ReactNode
-  frontmatter: {}
+  frontmatter: Frontmatter
 }
 
 export default function MarkdownLayout({ children, frontmatter }: Props) {
   console.log(frontmatter)
   return (
     <>
-      Post layout
+      <h1 className={classes.headline}>{frontmatter.title}</h1>
       {children}
     </>
   )

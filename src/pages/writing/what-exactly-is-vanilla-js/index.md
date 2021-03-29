@@ -46,8 +46,6 @@ Because both Web and Node APIs are not external additions, JavaScript code using
 
 The term _vanilla JS_ is often used as a joke to remind other developers that a lot of things can be easily done without the need for additional JavaScript libraries or packages.
 
-![An image](./ecmascript-and-apis.svg)
-
 There's even a website that builds upon this joke by attempting to market _vanilla JS_ as a "very fast framework". Even though reminding developers that a lof of things can be done without using additional libraries, this is **very** confusing to beginners.
 
 Don't get confused! _Vanilla JavaScript_ is **not** a framework.

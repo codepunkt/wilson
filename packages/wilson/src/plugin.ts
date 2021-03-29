@@ -4,9 +4,7 @@ import grayMatter from 'gray-matter'
 import toHAST from 'mdast-util-to-hast'
 import hastToHTML from 'hast-util-to-html'
 import { Plugin } from 'vite'
-import { PluginContext, NormalizedOutputOptions, OutputBundle } from 'rollup'
 import minimatch from 'minimatch'
-import chalk from 'chalk'
 import hastUtilRaw from 'hast-util-raw'
 import {
   assetUrlPrefix,
@@ -29,25 +27,46 @@ export interface WilsonOptions {
   }>
 }
 
-const defaultOptions = {
+export interface Frontmatter {
+  draft: boolean
+  title: string
+  [key: string]: any
+}
+
+const defaultOptions: Required<WilsonOptions> = {
+  assetUrlTagConfig: {
+    video: ['src', 'poster'],
+    source: ['src'],
+    img: ['src'],
+    image: ['xlink:href', 'href'],
+    use: ['xlink:href', 'href'],
+  },
   markdownLayouts: [
-    { component: `${__dirname}/src/components/MarkdownLayout` },
+    {
+      pattern: '**',
+      component: `${process.cwd()}/src/components/MarkdownLayout`,
+    },
   ],
 }
 
-function getLayoutUrl(id: string, options: WilsonOptions): string {
+function getLayoutUrl(id: string, options: Required<WilsonOptions>): string {
   const markdownLayout = options.markdownLayouts.find(({ pattern = '**' }) => {
     return minimatch(
       id.replace(new RegExp(`^${process.cwd()}\/src\/pages\/`), ''),
       pattern
     )
   })
+
+  if (!markdownLayout) {
+    throw new Error(`Couldn't find markdown layout: ${markdownLayout}!`)
+  }
+
   return path.relative(path.dirname(id), markdownLayout.component)
 }
 
 function htmlToReact(
   html: string,
-  frontmatter,
+  frontmatter: Frontmatter,
   layoutUrl: string,
   relativeAssetUrls: string[]
 ): string {
@@ -75,23 +94,23 @@ function htmlToReact(
   }).code
 }
 
-const markdownCache = {}
+const markdownCache: { [id: string]: Frontmatter } = {}
 
-export const wilson = (options: WilsonOptions): Plugin => {
-  options = { ...defaultOptions, ...options }
+export const wilson = (opts: WilsonOptions = {}): Plugin => {
+  const options: Required<WilsonOptions> = { ...defaultOptions, ...opts }
   return {
     name: 'rollup-plugin-wilson',
     enforce: 'pre',
 
     // async generateBundle() {
     //   console.log('=========')
-    //   console.log('generateBundle')
+    //   console.log(markdownCache)
     //   console.log('=========')
-    //   this.emitFile({
-    //     type: 'asset',
-    //     fileName: 'hurz',
-    //     source: 'wat',
-    //   })
+    //     this.emitFile({
+    //       type: 'asset',
+    //       fileName: 'hurz',
+    //       source: 'wat',
+    //     })
     // },
 
     transform(code: string, id: string) {
@@ -99,8 +118,8 @@ export const wilson = (options: WilsonOptions): Plugin => {
       if (extension !== '.md') return
 
       const parsed = grayMatter(code, {})
-      const defaultFrontmatter = { title: '', draft: false }
-      const frontmatter = { ...defaultFrontmatter, ...parsed.data }
+      const defaultFrontmatter: Frontmatter = { title: '', draft: false }
+      const frontmatter: Frontmatter = { ...defaultFrontmatter, ...parsed.data }
       const markdown = parsed.content
 
       markdownCache[id] = frontmatter

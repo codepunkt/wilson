@@ -4,14 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
-    "dev:old": "node -r ts-node/register internal/devServer",
-    "build": "yarn build:server && yarn build:client",
-    "build:client": "rm -rf dist && vite build --outDir dist --ssrManifest",
-    "build:server": "rm -rf .wilson/tmp && vite build --ssr src/entry-server.tsx --outDir .wilson/tmp/server",
-    "ssr": "node -r ts-node/register internal/ssrServer",
-    "generate": "yarn build && node -r ts-node/register internal/prerender",
-    "serve": "serve dist"
+    "dev": "wilson",
+    "build": "wilson build",
+    "serve": "wilson serve"
   },
   "dependencies": {
     "@types/loadable__component": "^5.13.3",
