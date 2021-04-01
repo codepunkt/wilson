@@ -1,20 +1,21 @@
-import { Link } from 'react-router-dom'
-import { usePageInfo } from '../components/PageInfoProvider'
+import { Link, useParams } from 'react-router-dom'
+import { markdownPages } from 'wilson/virtual'
 
 export default function WritingPage() {
-  const pageInfo = usePageInfo()
+  const { page } = useParams<{ page: string | undefined }>()
+
+  console.log({ page })
+
   return (
     <>
       <h1>Writing</h1>
-      {pageInfo
-        .filter(({ name }) => name.startsWith('writing/'))
-        .map(({ name, path }) => {
-          return (
-            <li key={path}>
-              <Link to={path}>{name}</Link>
-            </li>
-          )
-        })}
+      {markdownPages.map(({ url, frontmatter }) => {
+        return (
+          <li key={url}>
+            <Link to={url}>{frontmatter?.title ?? url}</Link>
+          </li>
+        )
+      })}
     </>
   )
 }

@@ -1,11 +1,12 @@
 import { build } from 'vite'
 import { getConfig } from '../config'
 
-import { ensureDir, readFile, stat, writeFile } from 'fs-extra'
+import { ensureDir, emptyDir, readFile, stat, writeFile } from 'fs-extra'
 import { resolve } from 'path'
 import readdirp from 'readdirp'
 import chalk from 'chalk'
 import packageJson from '../../package.json'
+import { collectPageData } from '../collectPageData'
 
 interface Page {
   sourcePath: string
@@ -62,6 +63,10 @@ async function prerender() {
 }
 
 export async function generate() {
+  await emptyDir(`${process.cwd()}/.wilson/tmp`)
+
+  await collectPageData()
+
   const serverResult = await build(getConfig(true))
   const clientResult = await build(getConfig(false))
   const prerenderResult = await prerender()

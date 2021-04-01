@@ -11,8 +11,14 @@ import {
   AssetURLTagConfig,
   collectAndReplaceAssetUrls,
 } from './transformAssetUrls'
+import { readFile } from 'fs-extra'
+import { Page } from 'src'
 
 export interface WilsonOptions {
+  /**
+   *
+   */
+  pageSize?: number
   /**
    * Defines attributes on HTML/SVG elements that should be considered when
    * converting relative URLs to imports.
@@ -34,6 +40,7 @@ export interface Frontmatter {
 }
 
 const defaultOptions: Required<WilsonOptions> = {
+  pageSize: 3,
   assetUrlTagConfig: {
     video: ['src', 'poster'],
     source: ['src'],
@@ -47,6 +54,13 @@ const defaultOptions: Required<WilsonOptions> = {
       component: `${process.cwd()}/src/components/MarkdownLayout`,
     },
   ],
+}
+
+function transformJsx(code: string): string {
+  return require('@babel/core').transformSync(code, {
+    ast: false,
+    presets: ['@babel/preset-react'],
+  }).code
 }
 
 function getLayoutUrl(id: string, options: Required<WilsonOptions>): string {
@@ -85,33 +99,77 @@ function htmlToReact(
     `import Layout from '${layoutUrl}';` +
     `import React from "react";` +
     `${relativeAssetImports.join('')}` +
-    `export default function(){return <Layout frontmatter={${fm}}>${html}</Layout>}`
+    `export default function MarkdownPage(){return <Layout frontmatter={${fm}}>${html}</Layout>}`
 
-  // replace JSX with React.createElement calls
-  return require('@babel/core').transformSync(template, {
-    ast: false,
-    presets: ['@babel/preset-react'],
-  }).code
+  return transformJsx(template)
 }
 
 const markdownCache: { [id: string]: Frontmatter } = {}
 
-export const wilson = (opts: WilsonOptions = {}): Plugin => {
+export const supportedFileExtensions = ['.tsx', '.md']
+
+export const wilsonPlugin = (opts: WilsonOptions = {}): Plugin => {
   const options: Required<WilsonOptions> = { ...defaultOptions, ...opts }
   return {
     name: 'rollup-plugin-wilson',
     enforce: 'pre',
 
-    // async generateBundle() {
-    //   console.log('=========')
-    //   console.log(markdownCache)
-    //   console.log('=========')
-    //     this.emitFile({
-    //       type: 'asset',
-    //       fileName: 'hurz',
-    //       source: 'wat',
-    //     })
-    // },
+    resolveId(id: string) {
+      if (id.startsWith('wilson/virtual')) {
+        return id
+      }
+      if (id === 'wilson/virt') {
+        return id
+      }
+    },
+
+    async load(id: string) {
+      if (id === 'wilson/virt') {
+        return `export const foo = 'bar';`
+      }
+      if (id.startsWith('wilson/virtual')) {
+        const pages = JSON.parse(
+          await readFile(`${process.cwd()}/.wilson/tmp/page-data.json`, 'utf-8')
+        ) as Page[]
+        // todo: don't allow /0
+        const match = id.match(/^wilson\/pageData(\/([\d]+))?$/)
+        const pageNumber = match?.[2] ? Number(match[2]) : null
+        console.log({ pages })
+        const markdownPages = JSON.stringify(
+          (pageNumber === null
+            ? pages
+            : pages.slice(
+                (pageNumber - 1) * options.pageSize,
+                pageNumber * options.pageSize
+              )
+          ).filter((page) => page.type === 'markdown')
+        )
+
+        // routes added here will be available client side, but not prerendered (yet!)
+        return transformJsx(
+          `import { Route } from 'react-router-dom';` +
+            `import React from 'react';` +
+            pages
+              .map(
+                (page, i) =>
+                  `import Page${i} from '${`${process.cwd()}/src/pages/${
+                    page.path
+                  }`}';`
+              )
+              .join('\n') +
+            `const routes = <>` +
+            pages
+              .map(
+                (page, i) =>
+                  `<Route path="${page.url}" exact><Page${i} /></Route>`
+              )
+              .join('\n') +
+            `</>;` +
+            `const markdownPages = ${markdownPages};` +
+            `export { markdownPages, routes }`
+        )
+      }
+    },
 
     transform(code: string, id: string) {
       const extension = path.extname(id)

@@ -1,6 +1,6 @@
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import { minifyHtml } from 'vite-plugin-html'
-import { wilson } from './plugin'
+import { wilsonPlugin } from './plugin'
 import { UserConfig as ViteUserConfig } from 'vite'
 
 export function getConfig(
@@ -14,7 +14,7 @@ export function getConfig(
     clearScreen: false,
     mode: dev ? 'development' : 'production',
     plugins: [
-      wilson(),
+      wilsonPlugin(),
       reactRefresh(),
       minifyHtml({
         removeComments: false,
@@ -26,6 +26,8 @@ export function getConfig(
       outDir: ssr ? '.wilson/tmp/server' : 'dist',
       // will inline async chunk css
       cssCodeSplit: true,
+      // TODO: asset inlining doesn't work? check how vite/vitepress do it for vue
+      assetsInlineLimit: 409600000,
       rollupOptions: {
         // important so that each page chunk and the index export things for each other
         preserveEntrySignatures: 'allow-extension',

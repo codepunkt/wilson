@@ -4,6 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "start": "cd packages/wilson && yarn build && cd ../.. && yarn dev",
+    "prod": "cd packages/wilson && yarn build && cd ../.. && yarn build && yarn serve",
     "dev": "wilson",
     "build": "wilson build",
     "serve": "wilson serve"

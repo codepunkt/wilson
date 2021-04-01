@@ -1,10 +1,5 @@
-import { ComponentType, createContext, ReactNode, useContext } from 'react'
-
-interface Page {
-  name: string
-  path: string
-  component: ComponentType
-}
+import { createContext, ReactNode, useContext } from 'react'
+import { Page } from 'wilson'
 
 interface PageInfoProviderProps {
   children: ReactNode
@@ -24,7 +19,7 @@ export default function PageInfoProvider({
   )
 }
 
-export function usePageInfo() {
+export function usePageInfo(): Page[] {
   const pageInfo = useContext(PageInfoContext)
   return pageInfo
 }

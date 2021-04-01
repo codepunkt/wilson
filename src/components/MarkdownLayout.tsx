@@ -7,7 +7,6 @@ interface Props {
 }
 
 export default function MarkdownLayout({ children, frontmatter }: Props) {
-  console.log(frontmatter)
   return (
     <>
       <h1 className={classes.headline}>{frontmatter.title}</h1>
