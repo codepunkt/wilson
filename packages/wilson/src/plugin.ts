@@ -1,4 +1,4 @@
-import path from 'path'
+import { relative, dirname, extname } from 'path'
 import remark from 'remark'
 import grayMatter from 'gray-matter'
 import toHAST from 'mdast-util-to-hast'
@@ -13,6 +13,10 @@ import {
 } from './transformAssetUrls'
 import { readFile } from 'fs-extra'
 import { Page } from 'src'
+import { transformSync } from '@babel/core'
+import { LoadResult, ResolveIdResult, TransformResult } from 'rollup'
+// @ts-ignore
+import presetReact from '@babel/preset-react'
 
 export interface WilsonOptions {
   /**
@@ -57,10 +61,7 @@ const defaultOptions: Required<WilsonOptions> = {
 }
 
 function transformJsx(code: string): string {
-  return require('@babel/core').transformSync(code, {
-    ast: false,
-    presets: ['@babel/preset-react'],
-  }).code
+  return transformSync(code, { ast: false, presets: [presetReact] })!.code!
 }
 
 function getLayoutUrl(id: string, options: Required<WilsonOptions>): string {
@@ -75,7 +76,7 @@ function getLayoutUrl(id: string, options: Required<WilsonOptions>): string {
     throw new Error(`Couldn't find markdown layout: ${markdownLayout}!`)
   }
 
-  return path.relative(path.dirname(id), markdownLayout.component)
+  return relative(dirname(id), markdownLayout.component)
 }
 
 function htmlToReact(
@@ -107,72 +108,20 @@ function htmlToReact(
 const markdownCache: { [id: string]: Frontmatter } = {}
 
 export const supportedFileExtensions = ['.tsx', '.md']
+let isServer: boolean
 
-export const wilsonPlugin = (opts: WilsonOptions = {}): Plugin => {
+/**
+ * Transform markdown to HTML to React components
+ */
+const markdownPlugin = (opts: WilsonOptions = {}): Plugin => {
   const options: Required<WilsonOptions> = { ...defaultOptions, ...opts }
+
   return {
-    name: 'rollup-plugin-wilson',
+    name: 'vite-plugin-wilson-markdown',
     enforce: 'pre',
 
-    resolveId(id: string) {
-      if (id.startsWith('wilson/virtual')) {
-        return id
-      }
-      if (id === 'wilson/virt') {
-        return id
-      }
-    },
-
-    async load(id: string) {
-      if (id === 'wilson/virt') {
-        return `export const foo = 'bar';`
-      }
-      if (id.startsWith('wilson/virtual')) {
-        const pages = JSON.parse(
-          await readFile(`${process.cwd()}/.wilson/tmp/page-data.json`, 'utf-8')
-        ) as Page[]
-        // todo: don't allow /0
-        const match = id.match(/^wilson\/pageData(\/([\d]+))?$/)
-        const pageNumber = match?.[2] ? Number(match[2]) : null
-        console.log({ pages })
-        const markdownPages = JSON.stringify(
-          (pageNumber === null
-            ? pages
-            : pages.slice(
-                (pageNumber - 1) * options.pageSize,
-                pageNumber * options.pageSize
-              )
-          ).filter((page) => page.type === 'markdown')
-        )
-
-        // routes added here will be available client side, but not prerendered (yet!)
-        return transformJsx(
-          `import { Route } from 'react-router-dom';` +
-            `import React from 'react';` +
-            pages
-              .map(
-                (page, i) =>
-                  `import Page${i} from '${`${process.cwd()}/src/pages/${
-                    page.path
-                  }`}';`
-              )
-              .join('\n') +
-            `const routes = <>` +
-            pages
-              .map(
-                (page, i) =>
-                  `<Route path="${page.url}" exact><Page${i} /></Route>`
-              )
-              .join('\n') +
-            `</>;` +
-            `const markdownPages = ${markdownPages};` +
-            `export { markdownPages, routes }`
-        )
-      }
-    },
-
-    transform(code: string, id: string) {
-      const extension = path.extname(id)
+    transform(code: string, id: string): TransformResult {
+      const extension = extname(id)
       if (extension !== '.md') return
 
       const parsed = grayMatter(code, {})
@@ -209,3 +158,79 @@ export const wilsonPlugin = (opts: WilsonOptions = {}): Plugin => {
     },
   }
 }
+
+const corePlugin = (opts: WilsonOptions = {}): Plugin => {
+  // const options: Required<WilsonOptions> = { ...defaultOptions, ...opts }
+  return {
+    name: 'vite-plugin-wilson-core',
+    enforce: 'pre',
+
+    /**
+     * Find out when server side rendering
+     */
+    config(config, env) {
+      isServer = env.mode === 'server'
+      return config
+    },
+
+    /**
+     * Resolve wilson/virtual imports
+     */
+    resolveId(id: string): ResolveIdResult {
+      if (id.startsWith('wilson/virtual')) {
+        return id
+      }
+    },
+
+    /**
+     * Provide content for wilson/virtual imports
+     */
+    async load(id: string): Promise<LoadResult> {
+      if (id.startsWith('wilson/virtual')) {
+        const pages: Page[] = JSON.parse(
+          await readFile(`${process.cwd()}/.wilson/tmp/page-data.json`, 'utf-8')
+        )
+        const markdownPages = JSON.stringify(
+          pages.filter((page) => page.type === 'markdown')
+        )
+
+        // routes added here will be available client side, but not prerendered (yet!)
+        const code =
+          `import { Route } from 'react-router-dom';` +
+          `import React from 'react';` +
+          pages
+            .map((page, i) => {
+              return isServer
+                ? `import Page${i} from '${`${process.cwd()}/src/pages/${
+                    page.source.path
+                  }`}';`
+                : `const Page${i} = React.lazy(() => import('${`${process.cwd()}/src/pages/${
+                    page.source.path
+                  }`}'));`
+            })
+            .join('\n') +
+          `const routes = [` +
+          pages
+            .map((page, i) => {
+              return `<Route path="${page.result.url}" key="${
+                page.result.url
+              }" exact>${
+                isServer
+                  ? `<Page${i} />`
+                  : `<React.Suspense fallback={<>Loading...</>}><Page${i} /></React.Suspense>`
+              }</Route>`
+            })
+            .join(',') +
+          '];' +
+          `const markdownPages = ${markdownPages};` +
+          `export { markdownPages, routes };`
+        return transformJsx(code)
+      }
+    },
+  }
+}
+
+export const plugins = (opts: WilsonOptions = {}): Plugin[] => [
+  corePlugin(opts),
+  markdownPlugin(opts),
+]

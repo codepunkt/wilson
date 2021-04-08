@@ -5,7 +5,7 @@ export default function WritingPage() {
   return (
     <>
       <h1>Writing</h1>
-      {markdownPages.map(({ url, frontmatter }) => {
+      {markdownPages.map(({ result: { url }, frontmatter }) => {
         return (
           <li key={url}>
             <Link to={url}>{frontmatter?.title ?? url}</Link>

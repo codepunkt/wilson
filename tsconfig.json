@@ -13,7 +13,7 @@
     "lib": ["ESNext", "DOM"],
     "sourceMap": true,
     "jsx": "react-jsx",
-    "types": ["node", "vite/client"]
+    "types": ["node", "wilson/node_modules/vite/client"]
   },
   "include": ["./src"]
 }

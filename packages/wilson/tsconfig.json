@@ -12,6 +12,7 @@
     "types": ["node"],
     "rootDir": ".",
     "outDir": "dist",
+    "jsx": "react-jsx",
     "skipLibCheck": true,
     "resolveJsonModule": true
   },

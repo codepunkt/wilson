@@ -1,2 +1,2 @@
-export { Frontmatter, WilsonOptions, wilsonPlugin } from './plugin'
+export { Frontmatter, WilsonOptions } from './plugin'
 export { Page } from './collectPageData'

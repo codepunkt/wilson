@@ -1,6 +1,6 @@
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import { minifyHtml } from 'vite-plugin-html'
-import { wilsonPlugin } from './plugin'
+import { plugins } from './plugin'
 import { UserConfig as ViteUserConfig } from 'vite'
 
 export function getConfig(
@@ -12,14 +12,15 @@ export function getConfig(
       include: ['react', 'react-dom', 'react-router-dom'],
     },
     clearScreen: false,
-    mode: dev ? 'development' : 'production',
+    mode: dev ? 'development' : ssr ? 'server' : 'production',
     plugins: [
-      wilsonPlugin(),
-      reactRefresh(),
+      // @TODO: check https://github.com/small-tech/vite-plugin-sri. does this tamper with splitting?
       minifyHtml({
         removeComments: false,
         useShortDoctype: true,
       }),
+      ...plugins(),
+      reactRefresh(),
     ],
     build: {
       ssr,
@@ -33,6 +34,7 @@ export function getConfig(
         preserveEntrySignatures: 'allow-extension',
         input: ssr ? 'src/entry-server.tsx' : 'index.html',
       },
+      manifest: ssr ? false : true,
       minify: ssr ? false : !process.env.DEBUG,
     },
     esbuild: {

@@ -4,3 +4,4 @@ node_modules/
 .DS_Store
 .wilson/tmp/
 dist/
+loadable-components/

@@ -2,7 +2,7 @@ import chalk from 'chalk'
 import boxen from 'boxen'
 import minimist from 'minimist'
 import { startDevServer } from './scripts/dev'
-import { generate } from './scripts/build'
+import { build } from './scripts/build'
 import { serve } from './scripts/serve'
 
 const argv: any = minimist(process.argv.slice(2))
@@ -23,7 +23,6 @@ console.log(
 async function cli(command: string) {
   if (command === 'dev') {
     try {
-      // TODO: use ora in devServer because logLevel warn hides the default message
       startDevServer()
     } catch (err) {
       console.error(chalk.red(`failed to start dev server. error:\n`), err)
@@ -31,8 +30,7 @@ async function cli(command: string) {
     }
   } else if (command === 'build') {
     try {
-      // TODO: prefix rm -rf .wilson/tmp/dist && dist
-      generate()
+      build()
     } catch (err) {
       console.error(chalk.red(`build error:\n`), err)
       process.exit(1)
