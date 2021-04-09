@@ -1,24 +1,19 @@
-import { ComponentChildren } from 'preact'
+import { FunctionalComponent } from 'preact'
 
-interface Props {
-  children?: ComponentChildren
-}
+const Menu: FunctionalComponent = () => (
+  <>
+    <a href="/">Home</a>
+    <a href="/writing/">Writing</a>
+    <a href="/about/">About</a>
+    <a href="/wat/">404</a>
+  </>
+)
 
-function Menu() {
-  return (
-    <>
-      <a href="/">Home</a>
-      <a href="/writing/">Writing</a>
-      <a href="/about/">About</a>
-    </>
-  )
-}
+const Header: FunctionalComponent = ({ children }) => (
+  <>
+    <Menu />
+    {children}
+  </>
+)
 
-export default function Header({ children }: Props) {
-  return (
-    <>
-      <Menu />
-      {children}
-    </>
-  )
-}
+export default Header
