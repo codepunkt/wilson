@@ -86,16 +86,28 @@ export async function prerenderStaticPages() {
     const template = await readFile(toAbsolute('./dist/index.html'), 'utf-8')
 
     for (const page of pages) {
-      const sourcePath = `src/pages/${page.source.path}`
-      // @ts-ignore
-      const deps = getDependencies(manifest, sourcePath)
-      const prerender = require(toAbsolute(
-        './.wilson/tmp/server/entry-server.js'
-      )).prerender
-      const { html } = await prerender(page.result.url)
+      const deps = getDependencies(manifest, `src/pages/${page.source.path}`)
+      const prerender: (
+        url: string
+      ) => Promise<{
+        html: string
+        links: Set<string>
+      }> = require(toAbsolute('./.wilson/tmp/server/entry-server.js')).prerender
+      const prerenderResult = await prerender(page.result.url)
       const styleTags = deps.css
         .map((path) => `<link rel=stylesheet href=/${path}>`)
         .join('')
+      // const linkDeps = Array.from(prerenderResult.links)
+      //   .map((link) => {
+      //     const page = pages.find((page) => page.result.url === link)
+      //     if (!page) return false
+      //     const deps = getDependencies(
+      //       manifest,
+      //       `src/pages/${page.source.path}`
+      //     )
+      //     return { link, deps }
+      //   })
+      //   .filter(Boolean)
       const preloadTags = deps.js
         .filter(filterExistingTags(template))
         .map(
@@ -108,13 +120,10 @@ export async function prerenderStaticPages() {
         .map((path) => `<script type=module crossorigin src=/${path}></script>`)
         .join('')
       const source = `${template}`
-        .replace(`<!--html-->`, html)
+        .replace(`<!--html-->`, prerenderResult.html)
         .replace(`<!--style-tags-->`, styleTags)
         .replace(`<!--preload-tags-->`, preloadTags)
         .replace(`<!--script-tags-->`, scriptTags)
-
-      // @TODO insert preload
-      // <link rel=modulepreload as=script crossorigin href>
 
       const staticHtmlPath = toAbsolute(`./dist/${page.result.path}`)
       await ensureDir(dirname(staticHtmlPath))
