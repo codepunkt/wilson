@@ -6,17 +6,17 @@ import { FunctionalComponent } from 'preact'
 
 const NotFound: FunctionalComponent = () => <>Not Found</>
 
-export const App: FunctionalComponent<{ url?: string }> = ({ url }) => {
-  return (
-    <>
-      <Header />
-      <LocationProvider>
-        <div>
-          <ErrorBoundary>
-            <Router>{[...routes, <NotFound default />]}</Router>
-          </ErrorBoundary>
-        </div>
-      </LocationProvider>
-    </>
-  )
-}
+const App: FunctionalComponent<{ url?: string }> = ({ url }) => (
+  <>
+    <Header />
+    <LocationProvider>
+      <div>
+        <ErrorBoundary>
+          <Router>{[...routes, <NotFound default />]}</Router>
+        </ErrorBoundary>
+      </div>
+    </LocationProvider>
+  </>
+)
+
+export default App

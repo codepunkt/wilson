@@ -20,10 +20,6 @@ import presetPreact from 'babel-preset-preact'
 
 export interface WilsonOptions {
   /**
-   *
-   */
-  pageSize?: number
-  /**
    * Defines attributes on HTML/SVG elements that should be considered when
    * converting relative URLs to imports.
    */
@@ -44,7 +40,6 @@ export interface Frontmatter {
 }
 
 const defaultOptions: Required<WilsonOptions> = {
-  pageSize: 3,
   assetUrlTagConfig: {
     video: ['src', 'poster'],
     source: ['src'],

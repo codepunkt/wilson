@@ -1,4 +1,4 @@
-import { WilsonOptions } from '../internal/plugins/wilson'
+import { WilsonOptions } from 'wilson'
 
 const config: WilsonOptions = {}
 

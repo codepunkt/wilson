@@ -88,8 +88,9 @@ export async function prerenderStaticPages() {
       const deps = getDependencies(manifest, sourcePath)
       const renderFn = require(toAbsolute(
         './.wilson/tmp/server/entry-server.js'
-      )).render
+      )).renderToString
       const appHtml = await renderFn(page.result.url)
+      console.log({ appHtml })
       const scriptTags = deps.js
         .filter((path) => !template.match(new RegExp(`(href|src)=/${path}`)))
         .map((path) => `<script type=module crossorigin src=/${path}></script>`)
@@ -114,6 +115,6 @@ export async function prerenderStaticPages() {
       await writeFile(staticHtmlPath, source)
     }
   } catch (err) {
-    console.log(err)
+    console.log('error', err)
   }
 }

@@ -5,13 +5,11 @@ import { FunctionalComponent } from 'preact'
 const MarkdownLayout: FunctionalComponent<{ frontmatter: Frontmatter }> = ({
   children,
   frontmatter,
-}) => {
-  return (
-    <div className={classes.markdownLayout}>
-      <h1>{frontmatter.title}</h1>
-      {children}
-    </div>
-  )
-}
+}) => (
+  <div className={classes.markdownLayout}>
+    <h1>{frontmatter.title}</h1>
+    {children}
+  </div>
+)
 
 export default MarkdownLayout
