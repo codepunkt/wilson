@@ -2,7 +2,7 @@ import { build as viteBuild } from 'vite'
 import { getConfig } from '../config'
 import { emptyDir } from 'fs-extra'
 import { collectPageData } from '../collectPageData'
-import { generateStaticPages } from '../generate'
+import { prerenderStaticPages } from '../prerender'
 
 export async function build() {
   await emptyDir(`${process.cwd()}/.wilson/tmp`)
@@ -13,5 +13,5 @@ export async function build() {
   await viteBuild(getConfig(true))
   await viteBuild(getConfig(false))
 
-  await generateStaticPages()
+  await prerenderStaticPages()
 }

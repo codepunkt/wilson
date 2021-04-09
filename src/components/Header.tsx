@@ -1,4 +1,3 @@
-import { Link } from 'preact-router/match'
 import { ComponentChildren } from 'preact'
 
 interface Props {
@@ -8,9 +7,9 @@ interface Props {
 function Menu() {
   return (
     <>
-      <Link href="/">Home</Link>
-      <Link href="/writing/">Writing</Link>
-      <Link href="/about/">About</Link>
+      <a href="/">Home</a>
+      <a href="/writing/">Writing</a>
+      <a href="/about/">About</a>
     </>
   )
 }

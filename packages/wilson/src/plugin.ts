@@ -187,25 +187,21 @@ const corePlugin = (opts: WilsonOptions = {}): Plugin => {
 
         // routes added here will be available client side, but not prerendered (yet!)
         const code =
-          `import { Route } from 'preact-router';` +
           `import { h } from 'preact';` +
-          `import { Suspense, lazy } from 'preact/compat';` +
+          `import { lazy } from 'preact-iso';` +
           pages
-            .map((page, i) => {
-              return `const Page${i} = lazy(() => import('${`${process.cwd()}/src/pages/${
-                page.source.path
-              }`}'));`
-            })
+            .map(
+              (page, i) =>
+                `const Page${i} = lazy(() => import('${`${process.cwd()}/src/pages/${
+                  page.source.path
+                }`}'));`
+            )
             .join('\n') +
           `const routes = [` +
           pages
-            .map((page, i) => {
-              return `<Route path="${
-                page.result.url
-              }" ${`component={() => <Suspense fallback={<div>wat...</div>}><Page${i} /></Suspense>}`}/>`
-            })
+            .map((page, i) => `<Page${i} path="${page.result.url}" />`)
             .join(',') +
-          '];' +
+          `];` +
           `const markdownPages = ${markdownPages};` +
           `export { markdownPages, routes };`
         return transformJsx(code)

@@ -72,7 +72,7 @@ function getAssetDependencies(manifest: Manifest, paths: string[]): string[] {
 }
 
 // @TODO log files similar to vite
-export async function generateStaticPages() {
+export async function prerenderStaticPages() {
   try {
     const pages: Page[] = JSON.parse(
       await readFile(toAbsolute('./.wilson/tmp/page-data.json'), 'utf-8')
