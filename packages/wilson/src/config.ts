@@ -10,7 +10,7 @@ export function getConfig(
 ): ViteUserConfig {
   return {
     optimizeDeps: {
-      include: ['preact'],
+      include: ['preact', 'preact-iso'],
     },
     clearScreen: false,
     mode: dev ? 'development' : ssr ? 'server' : 'production',

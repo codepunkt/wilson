@@ -23,6 +23,9 @@ interface Dependencies {
 }
 
 const toAbsolute = (path: string) => resolve(process.cwd(), path)
+const filterExistingTags = (template: string) => (path: string) => {
+  return !template.match(new RegExp(`(href|src)=/${path}`))
+}
 
 function getDependencies(manifest: Manifest, pagePath: string): Dependencies {
   // add dependencies to sets to get rid of duplicates
@@ -81,33 +84,37 @@ export async function prerenderStaticPages() {
       await readFile(toAbsolute('./dist/manifest.json'), 'utf-8')
     )
     const template = await readFile(toAbsolute('./dist/index.html'), 'utf-8')
-    // console.dir({ pages, manifest, template }, { depth: Infinity })
 
     for (const page of pages) {
       const sourcePath = `src/pages/${page.source.path}`
+      // @ts-ignore
       const deps = getDependencies(manifest, sourcePath)
       const prerender = require(toAbsolute(
         './.wilson/tmp/server/entry-server.js'
       )).prerender
       const { html } = await prerender(page.result.url)
-      const scriptTags = deps.js
-        .filter((path) => !template.match(new RegExp(`(href|src)=/${path}`)))
-        .map((path) => `<script type=module crossorigin src=/${path}></script>`)
-        .join('')
       const styleTags = deps.css
         .map((path) => `<link rel=stylesheet href=/${path}>`)
         .join('')
+      const preloadTags = deps.js
+        .filter(filterExistingTags(template))
+        .map(
+          (path) =>
+            `<link rel=modulepreload as=script crossorigin href=/${path}></script>`
+        )
+        .join('')
+      const scriptTags = deps.js
+        .filter(filterExistingTags(template))
+        .map((path) => `<script type=module crossorigin src=/${path}></script>`)
+        .join('')
       const source = `${template}`
-        .replace(`<!--app-html-->`, html)
-        .replace(`<!--script-tags-->`, scriptTags)
+        .replace(`<!--html-->`, html)
         .replace(`<!--style-tags-->`, styleTags)
+        .replace(`<!--preload-tags-->`, preloadTags)
+        .replace(`<!--script-tags-->`, scriptTags)
 
-      // @TODO how does vitepress insert the tags? what is "link tags" for?
-      //    @loadable/component examples have
-      //    - <link rel=stylesheet> before </head>
-      //    - <link rel=preload as=script> before that
-      //    - <script async> before </body>
-      // @TODO implement waitFor before hydrating
+      // @TODO insert preload
+      // <link rel=modulepreload as=script crossorigin href>
 
       const staticHtmlPath = toAbsolute(`./dist/${page.result.path}`)
       await ensureDir(dirname(staticHtmlPath))
