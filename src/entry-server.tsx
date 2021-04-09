@@ -4,7 +4,6 @@ import { options, VNode } from 'preact'
 
 let vnodeHook: null | ((vnode: VNode) => void)
 
-console.log(options)
 const old = options.vnode
 options.vnode = (vnode) => {
   if (old) old(vnode)
