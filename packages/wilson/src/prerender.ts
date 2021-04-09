@@ -86,11 +86,10 @@ export async function prerenderStaticPages() {
     for (const page of pages) {
       const sourcePath = `src/pages/${page.source.path}`
       const deps = getDependencies(manifest, sourcePath)
-      const renderFn = require(toAbsolute(
+      const prerender = require(toAbsolute(
         './.wilson/tmp/server/entry-server.js'
-      )).renderToString
-      const appHtml = await renderFn(page.result.url)
-      console.log({ appHtml })
+      )).prerender
+      const { html } = await prerender(page.result.url)
       const scriptTags = deps.js
         .filter((path) => !template.match(new RegExp(`(href|src)=/${path}`)))
         .map((path) => `<script type=module crossorigin src=/${path}></script>`)
@@ -99,7 +98,7 @@ export async function prerenderStaticPages() {
         .map((path) => `<link rel=stylesheet href=/${path}>`)
         .join('')
       const source = `${template}`
-        .replace(`<!--app-html-->`, appHtml)
+        .replace(`<!--app-html-->`, html)
         .replace(`<!--script-tags-->`, scriptTags)
         .replace(`<!--style-tags-->`, styleTags)
 
