@@ -8,13 +8,14 @@
     "declaration": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ESNext"],
     "types": ["node"],
     "rootDir": ".",
     "outDir": "dist",
     "jsx": "react-jsx",
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "sourceMap": true
   },
   "include": ["src", "package.json"]
 }
