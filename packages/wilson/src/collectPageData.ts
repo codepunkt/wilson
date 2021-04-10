@@ -6,7 +6,7 @@ import grayMatter from 'gray-matter'
 
 export type Page = (
   | { type: 'markdown'; frontmatter: Frontmatter }
-  | { type: 'react'; frontmatter?: undefined }
+  | { type: 'preact'; frontmatter?: undefined }
 ) & {
   source: {
     path: string
@@ -61,7 +61,7 @@ export async function collectPageData() {
     pages.push(
       isMarkdown
         ? { type: 'markdown', frontmatter, ...untypedPage }
-        : { type: 'react', ...untypedPage }
+        : { type: 'preact', ...untypedPage }
     )
   }
 
