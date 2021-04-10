@@ -10,12 +10,11 @@ import {
   assetUrlPrefix,
   collectAndReplaceAssetUrls,
 } from './transformAssetUrls'
-import { Page } from 'src'
 import { transformSync } from '@babel/core'
 import { LoadResult, ResolveIdResult, TransformResult } from 'rollup'
 // @ts-ignore
 import presetPreact from 'babel-preset-preact'
-import { readJson, toRoot } from './util'
+import { getPageData, toRoot } from './util'
 import { getOptions, Options, OptionsWithDefaults } from './config'
 
 export interface Frontmatter {
@@ -154,7 +153,7 @@ const corePlugin = async (opts: Options = {}): Promise<Plugin> => {
      */
     async load(id: string): Promise<LoadResult> {
       if (id.startsWith('wilson/virtual')) {
-        const pages: Page[] = await readJson('./.wilson/tmp/page-data.json')
+        const pages = await getPageData()
         const markdownPages = JSON.stringify(
           pages.filter((page) => page.type === 'markdown')
         )

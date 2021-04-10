@@ -1,6 +1,5 @@
-import { Page } from './collectPageData'
 import { Manifest, wrapManifest } from './manifest'
-import { readFile, toRoot, readJson, writeFile } from './util'
+import { readFile, toRoot, readJson, writeFile, getPageData } from './util'
 
 type PrerenderFn = (
   url: string
@@ -14,7 +13,7 @@ const filterExistingTags = (template: string) => (path: string) =>
 
 export async function prerenderStaticPages() {
   try {
-    const pages = await readJson<Page[]>('./.wilson/tmp/page-data.json')
+    const pages = await getPageData()
     const manifest = await readJson<Manifest>('./dist/manifest.json')
     const template = await readFile('./dist/index.html')
     const prerender = require(toRoot('./.wilson/tmp/server/entry-server.js'))

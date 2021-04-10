@@ -1,5 +1,6 @@
 import { dirname, join } from 'path'
 import { readFile as read, writeFile as write, ensureDir } from 'fs-extra'
+import { Page } from './collectPageData'
 
 /**
  * Prefixes a relative path with the project root directory, turning it into
@@ -20,6 +21,17 @@ export const readFile = async (path: string) =>
  */
 export const readJson = async <T extends object>(path: string): Promise<T> =>
   JSON.parse(await readFile(path))
+
+let pageData: Page[] | null = null
+/**
+ * Returns page data
+ */
+export const getPageData = async (): Promise<Page[]> => {
+  if (pageData === null) {
+    pageData = await readJson<Page[]>('./.wilson/page-data.json')
+  }
+  return pageData
+}
 
 /**
  * Write a file to the given path and ensure that any required directories
