@@ -23,12 +23,18 @@ export const readJson = async <T extends object>(path: string): Promise<T> =>
   JSON.parse(await readFile(path))
 
 let pageData: Page[] | null = null
+
+/**
+ * Path where page-data is stored
+ */
+export const pageDataPath = './.wilson/page-data.json'
+
 /**
  * Returns page data
  */
 export const getPageData = async (): Promise<Page[]> => {
   if (pageData === null) {
-    pageData = await readJson<Page[]>('./.wilson/page-data.json')
+    pageData = await readJson<Page[]>(pageDataPath)
   }
   return pageData
 }

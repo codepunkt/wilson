@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'fs-extra'
 import { extname, basename } from 'path'
 import { Frontmatter, supportedFileExtensions } from './plugin'
 import grayMatter from 'gray-matter'
-import { toRoot } from './util'
+import { pageDataPath, toRoot } from './util'
 
 export type Page = (
   | { type: 'markdown'; frontmatter: Frontmatter }
@@ -66,5 +66,5 @@ export async function collectPageData() {
     )
   }
 
-  writeFile(toRoot('./.wilson/page-data.json'), JSON.stringify(pages, null, 2))
+  writeFile(toRoot(pageDataPath), JSON.stringify(pages, null, 2))
 }
