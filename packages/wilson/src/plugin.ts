@@ -99,8 +99,20 @@ const markdownPlugin = async (): Promise<Plugin> => {
       if (extension !== '.md') return
 
       const parsed = grayMatter(code, {})
-      const defaultFrontmatter: Frontmatter = { title: '', draft: false }
-      const frontmatter: Frontmatter = { ...defaultFrontmatter, ...parsed.data }
+      const parsedFrontmatter = parsed.data as Frontmatter
+
+      if (Object.values(parsedFrontmatter).length === 0) {
+        throw new Error('markdown has no frontmatter!')
+      }
+      if (parsedFrontmatter.title === undefined) {
+        throw new Error(`frontmatter has no title!`)
+      }
+
+      const defaultFrontmatter = { draft: false }
+      const frontmatter: Frontmatter = {
+        ...defaultFrontmatter,
+        ...parsedFrontmatter,
+      }
       const markdown = parsed.content
 
       markdownCache[id] = frontmatter
