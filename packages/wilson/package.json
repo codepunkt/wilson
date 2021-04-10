@@ -1,8 +1,13 @@
 {
   "name": "wilson",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "main": "dist/src/index.js",
+  "author": "Christoph Werner <christoph@codepunkt.de>",
   "license": "MIT",
+  "files": [
+    "virtual.d.ts",
+    "dist/**"
+  ],
   "bin": {
     "wilson": "bin/wilson.js"
   },
