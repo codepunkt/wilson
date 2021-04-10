@@ -2,10 +2,6 @@ import visit from 'unist-util-visit'
 import { Node } from 'unist'
 import { Element } from 'hast'
 
-export interface AssetURLTagConfig {
-  [tagName: string]: string[]
-}
-
 function isRelativeUrl(url: string): boolean {
   return /^\./.test(url)
 }
@@ -16,13 +12,13 @@ export const assetUrlPrefix = '_assetUrl_'
 // @see https://github.com/vuejs/vue-next/blob/2424768808e493ae1b59860ccb20a7c96d72d20a/packages/compiler-sfc/src/templateTransformSrcset.ts
 export function collectAndReplaceAssetUrls(
   htmlAST: Node,
-  assetUrlTagConfig: AssetURLTagConfig
+  assetUrlTagConfig: Record<string, string[]>
 ): string[] {
   const assetUrls: string[] = []
 
   visit(htmlAST, 'element', (node: Element) => {
     if (assetUrlTagConfig[node.tagName]) {
-      const attributes: string[] = assetUrlTagConfig[node.tagName]
+      const attributes = assetUrlTagConfig[node.tagName]
       const properties = node.properties!
 
       attributes.forEach((attribute) => {

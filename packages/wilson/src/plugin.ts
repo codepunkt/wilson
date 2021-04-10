@@ -8,7 +8,6 @@ import minimatch from 'minimatch'
 import hastUtilRaw from 'hast-util-raw'
 import {
   assetUrlPrefix,
-  AssetURLTagConfig,
   collectAndReplaceAssetUrls,
 } from './transformAssetUrls'
 import { Page } from 'src'
@@ -17,21 +16,7 @@ import { LoadResult, ResolveIdResult, TransformResult } from 'rollup'
 // @ts-ignore
 import presetPreact from 'babel-preset-preact'
 import { readJson, toRoot } from './util'
-
-export interface WilsonOptions {
-  /**
-   * Defines attributes on HTML/SVG elements that should be considered when
-   * converting relative URLs to imports.
-   */
-  assetUrlTagConfig?: AssetURLTagConfig
-  /**
-   * Mapping of layout components to glob pattern, targeting markdown documents
-   */
-  markdownLayouts?: Array<{
-    component: string
-    pattern?: string
-  }>
-}
+import { getOptions, Options, OptionsWithDefaults } from './config'
 
 export interface Frontmatter {
   draft: boolean
@@ -39,27 +24,11 @@ export interface Frontmatter {
   [key: string]: any
 }
 
-const defaultOptions: Required<WilsonOptions> = {
-  assetUrlTagConfig: {
-    video: ['src', 'poster'],
-    source: ['src'],
-    img: ['src'],
-    image: ['xlink:href', 'href'],
-    use: ['xlink:href', 'href'],
-  },
-  markdownLayouts: [
-    {
-      pattern: '**',
-      component: toRoot('/src/components/MarkdownLayout'),
-    },
-  ],
-}
-
 function transformJsx(code: string): string {
   return transformSync(code, { ast: false, presets: [presetPreact] })!.code!
 }
 
-function getLayoutUrl(id: string, options: Required<WilsonOptions>): string {
+function getLayoutUrl(id: string, options: OptionsWithDefaults): string {
   const markdownLayout = options.markdownLayouts.find(({ pattern = '**' }) => {
     return minimatch(
       id.replace(new RegExp(`^${process.cwd()}\/src\/pages\/`), ''),
@@ -68,13 +37,13 @@ function getLayoutUrl(id: string, options: Required<WilsonOptions>): string {
   })
 
   if (!markdownLayout) {
-    throw new Error(`Couldn't find markdown layout: ${markdownLayout}!`)
+    throw new Error(`Couldn't find markdown layout for: ${id}!`)
   }
 
   return relative(dirname(id), markdownLayout.component)
 }
 
-function htmlToReact(
+function htmlToPreact(
   html: string,
   frontmatter: Frontmatter,
   layoutUrl: string,
@@ -105,10 +74,22 @@ const markdownCache: { [id: string]: Frontmatter } = {}
 export const supportedFileExtensions = ['.tsx', '.md']
 
 /**
+ * Defines attributes on HTML/SVG elements that should be considered when
+ * converting relative URLs to imports.
+ */
+const assetUrlTagConfig = {
+  video: ['src', 'poster'],
+  source: ['src'],
+  img: ['src'],
+  image: ['xlink:href', 'href'],
+  use: ['xlink:href', 'href'],
+}
+
+/**
  * Transform markdown to HTML to Preact components
  */
-const markdownPlugin = (opts: WilsonOptions = {}): Plugin => {
-  const options: Required<WilsonOptions> = { ...defaultOptions, ...opts }
+const markdownPlugin = async (): Promise<Plugin> => {
+  const options = await getOptions()
 
   return {
     name: 'vite-plugin-wilson-markdown',
@@ -134,7 +115,7 @@ const markdownPlugin = (opts: WilsonOptions = {}): Plugin => {
       // apply plugins that change HAST
       const relativeAssetUrls = collectAndReplaceAssetUrls(
         htmlAST,
-        options.assetUrlTagConfig
+        assetUrlTagConfig
       )
       const html = hastToHTML(htmlAST, {
         allowDangerousHtml: true,
@@ -142,7 +123,7 @@ const markdownPlugin = (opts: WilsonOptions = {}): Plugin => {
       })
 
       return {
-        code: htmlToReact(
+        code: htmlToPreact(
           html,
           frontmatter,
           getLayoutUrl(id, options),
@@ -153,7 +134,7 @@ const markdownPlugin = (opts: WilsonOptions = {}): Plugin => {
   }
 }
 
-const corePlugin = (opts: WilsonOptions = {}): Plugin => {
+const corePlugin = async (opts: Options = {}): Promise<Plugin> => {
   // const options: Required<WilsonOptions> = { ...defaultOptions, ...opts }
   return {
     name: 'vite-plugin-wilson-core',
@@ -203,7 +184,7 @@ const corePlugin = (opts: WilsonOptions = {}): Plugin => {
   }
 }
 
-export const plugins = (opts: WilsonOptions = {}): Plugin[] => [
-  corePlugin(opts),
-  markdownPlugin(opts),
+export const getWilsonPlugins = async (): Promise<Plugin[]> => [
+  await corePlugin(),
+  await markdownPlugin(),
 ]

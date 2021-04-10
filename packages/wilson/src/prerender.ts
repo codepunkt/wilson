@@ -12,7 +12,6 @@ type PrerenderFn = (
 const filterExistingTags = (template: string) => (path: string) =>
   !template.match(new RegExp(`(href|src)=/${path}`))
 
-// @TODO log files similar to vite
 export async function prerenderStaticPages() {
   try {
     const pages = await readJson<Page[]>('./.wilson/tmp/page-data.json')
