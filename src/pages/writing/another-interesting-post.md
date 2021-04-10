@@ -1,3 +1,7 @@
+---
+title: Another interesting post
+---
+
 # Another interesting post
 
 - rofl
