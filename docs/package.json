@@ -1,0 +1,27 @@
+{
+  "name": "@wilson/docs",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "cd ../packages/wilson && yarn build && cd ../../docs && yarn dev",
+    "prod": "cd ../packages/wilson && yarn build && cd ../..docs && yarn build && yarn serve",
+    "dev": "wilson",
+    "build": "wilson build",
+    "serve": "wilson serve"
+  },
+  "engines": {
+    "node": "^14.16.0",
+    "yarn": "^1.22.10"
+  },
+  "dependencies": {
+    "preact": "^10.5.13",
+    "preact-iso": "^1.1.1"
+  },
+  "devDependencies": {
+    "@prefresh/vite": "^2.2.0",
+    "@types/node": "^14.14.37",
+    "preact-render-to-string": "^5.1.19",
+    "sass": "^1.32.8"
+  }
+}
