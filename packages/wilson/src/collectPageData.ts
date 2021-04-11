@@ -1,7 +1,7 @@
 import readdirp from 'readdirp'
 import { readFile, writeFile } from 'fs-extra'
 import { extname, basename } from 'path'
-import { Frontmatter, supportedFileExtensions } from './plugin'
+import { Frontmatter } from './plugins/markdown'
 import grayMatter from 'gray-matter'
 import { pageDataPath, toRoot } from './util'
 
@@ -21,13 +21,18 @@ export type Page = (
 
 const pages: Page[] = []
 
+/**
+ * Allowed extensions for pages.
+ */
+const pageExtensions = ['.tsx', '.md']
+
 export async function collectPageData() {
   const pagePath = `${process.cwd()}/src/pages`
 
   for await (const { path, fullPath } of readdirp(pagePath)) {
     const file = basename(path)
     const extension = extname(file)
-    if (!supportedFileExtensions.includes(extension)) continue
+    if (!pageExtensions.includes(extension)) continue
 
     const isMarkdown = extension === '.md'
     const url = `/${path

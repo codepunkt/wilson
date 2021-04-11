@@ -1,13 +1,15 @@
 import { minifyHtml } from 'vite-plugin-html'
-import { Frontmatter, getWilsonPlugins } from './plugin'
+import { Frontmatter } from './plugins/markdown'
 import { UserConfig as ViteUserConfig } from 'vite'
 import prefresh from '@prefresh/vite'
 import { resolve } from 'path'
 import { toRoot } from './util'
+import markdownPlugin from './plugins/markdown'
+import virtualPlugin from './plugins/virtual'
 
 export interface Options {
   /**
-   * When defined, this is used to generate open graph images.
+   * When defined, this iss used to generate open graph images.
    */
   opengraphImage?: {
     background: string
@@ -92,7 +94,8 @@ export const getViteConfig = async ({
         removeComments: false,
         useShortDoctype: true,
       }),
-      ...(await getWilsonPlugins()),
+      await virtualPlugin(),
+      await markdownPlugin(),
       prefresh({}),
     ],
     build: {

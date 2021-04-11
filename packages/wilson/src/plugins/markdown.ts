@@ -9,13 +9,12 @@ import hastUtilRaw from 'hast-util-raw'
 import {
   assetUrlPrefix,
   collectAndReplaceAssetUrls,
-} from './transformAssetUrls'
-import { transformSync } from '@babel/core'
-import { LoadResult, ResolveIdResult, TransformResult } from 'rollup'
+} from '../transformAssetUrls'
+import { TransformResult } from 'rollup'
 // @ts-ignore
 import presetPreact from 'babel-preset-preact'
-import { getPageData, toRoot } from './util'
-import { getOptions, Options, OptionsWithDefaults } from './config'
+import { getOptions, OptionsWithDefaults } from '../config'
+import { transformJsx } from '../util'
 
 export interface Frontmatter {
   draft: boolean
@@ -23,8 +22,16 @@ export interface Frontmatter {
   [key: string]: any
 }
 
-function transformJsx(code: string): string {
-  return transformSync(code, { ast: false, presets: [presetPreact] })!.code!
+/**
+ * Defines attributes on HTML/SVG elements that should be considered when
+ * converting relative URLs to imports.
+ */
+const assetUrlTagConfig = {
+  video: ['src', 'poster'],
+  source: ['src'],
+  img: ['src'],
+  image: ['xlink:href', 'href'],
+  use: ['xlink:href', 'href'],
 }
 
 function getLayoutUrl(id: string, options: OptionsWithDefaults): string {
@@ -68,22 +75,6 @@ function htmlToPreact(
   return transformJsx(template)
 }
 
-const markdownCache: { [id: string]: Frontmatter } = {}
-
-export const supportedFileExtensions = ['.tsx', '.md']
-
-/**
- * Defines attributes on HTML/SVG elements that should be considered when
- * converting relative URLs to imports.
- */
-const assetUrlTagConfig = {
-  video: ['src', 'poster'],
-  source: ['src'],
-  img: ['src'],
-  image: ['xlink:href', 'href'],
-  use: ['xlink:href', 'href'],
-}
-
 /**
  * Transform markdown to HTML to Preact components
  */
@@ -115,8 +106,6 @@ const markdownPlugin = async (): Promise<Plugin> => {
       }
       const markdown = parsed.content
 
-      markdownCache[id] = frontmatter
-
       // apply plugins that change markdown or frontmatter
       const markdownAST = remark().data('settings', options).parse(markdown)
       // apply plugins that change MDAST
@@ -145,57 +134,4 @@ const markdownPlugin = async (): Promise<Plugin> => {
   }
 }
 
-const corePlugin = async (opts: Options = {}): Promise<Plugin> => {
-  // const options: Required<WilsonOptions> = { ...defaultOptions, ...opts }
-  return {
-    name: 'vite-plugin-wilson-core',
-    enforce: 'pre',
-
-    /**
-     * Resolve wilson/virtual imports
-     */
-    resolveId(id: string): ResolveIdResult {
-      if (id.startsWith('wilson/virtual')) {
-        return id
-      }
-    },
-
-    /**
-     * Provide content for wilson/virtual imports
-     */
-    async load(id: string): Promise<LoadResult> {
-      if (id.startsWith('wilson/virtual')) {
-        const pages = await getPageData()
-        const markdownPages = JSON.stringify(
-          pages.filter((page) => page.type === 'markdown')
-        )
-
-        // routes added here will be available client side, but not prerendered (yet!)
-        const code =
-          `import { h } from 'preact';` +
-          `import { lazy } from 'preact-iso';` +
-          pages
-            .map(
-              (page, i) =>
-                `const Page${i} = lazy(() => import('${toRoot(
-                  `/src/pages/${page.source.path}`
-                )}'));`
-            )
-            .join('\n') +
-          `const routes = [` +
-          pages
-            .map((page, i) => `<Page${i} path="${page.result.url}" />`)
-            .join(',') +
-          `];` +
-          `const markdownPages = ${markdownPages};` +
-          `export { markdownPages, routes };`
-        return transformJsx(code)
-      }
-    },
-  }
-}
-
-export const getWilsonPlugins = async (): Promise<Plugin[]> => [
-  await corePlugin(),
-  await markdownPlugin(),
-]
+export default markdownPlugin
