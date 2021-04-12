@@ -10,7 +10,7 @@ const argv: any = minimist(process.argv.slice(2))
 console.log(
   boxen(
     `You are running ${chalk.cyan(
-      `wilson v${require('../package.json').version}`
+      `wilson v${require('wilson/package.json').version}`
     )}`,
     {
       padding: 1,

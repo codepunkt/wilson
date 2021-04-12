@@ -10,12 +10,12 @@
     "esModuleInterop": true,
     "lib": ["ESNext"],
     "types": ["node"],
-    "rootDir": ".",
+    "rootDir": "src",
     "outDir": "dist",
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "sourceMap": true
   },
-  "include": ["src", "package.json"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }
