@@ -1,4 +1,13 @@
+/**
+ * @type { import('wilson').Options }
+ */
 module.exports = {
+  siteMetadata: {
+    title: 'Wilson',
+    description: 'Blazing fast, opinionated static site generator for Preact',
+    author: 'Christoph Werner',
+    lang: 'en',
+  },
   opengraphImage: {
     background: '#ffffff',
     texts: [
