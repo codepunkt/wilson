@@ -1,11 +1,21 @@
 import { Manifest, wrapManifest } from './manifest'
 import { readFile, toRoot, readJson, writeFile, getPageData } from './util'
+import { minify } from 'html-minifier-terser'
 
 type PrerenderFn = (
   url: string
 ) => Promise<{
   html: string
-  title: string
+  head: {
+    lang: string
+    title: string
+    metas: Array<
+      { content: string } & (
+        | { name: string; property: undefined }
+        | { name: undefined; property: string }
+      )
+    >
+  }
   links: Set<string>
 }>
 
@@ -51,14 +61,37 @@ export async function prerenderStaticPages() {
         .filter(filterExistingTags(template))
         .map((path) => `<script type=module crossorigin src=/${path}></script>`)
 
+      const head = `
+        <title>${prerenderResult.head.title}</title>
+        ${prerenderResult.head.metas
+          .map(
+            ({ name, property, content }) =>
+              `<meta ${
+                name ? `name="${name}"` : `property="${property}"`
+              } content="${content}">`
+          )
+          .join('')}
+      `
       const source = `${template}`
-        .replace(`<!--head-->`, `<title>${prerenderResult.title}</title>`)
+        .replace(`<!--head-->`, head)
         .replace(`<!--html-->`, prerenderResult.html)
         .replace(`<!--style-tags-->`, styleTags.join(''))
         .replace(`<!--preload-tags-->`, preloadTags.join(''))
         .replace(`<!--script-tags-->`, scriptTags.join(''))
 
-      await writeFile(toRoot(`./dist/${page.result.path}`), source)
+      const minifiedSource = minify(source, {
+        collapseBooleanAttributes: true,
+        collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: true,
+        minifyURLs: true,
+        removeAttributeQuotes: true,
+        removeComments: true,
+        removeEmptyAttributes: true,
+        useShortDoctype: true,
+      })
+
+      await writeFile(toRoot(`./dist/${page.result.path}`), minifiedSource)
     }
   } catch (err) {
     console.log('error', err)

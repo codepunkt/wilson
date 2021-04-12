@@ -3,6 +3,7 @@ import { LoadResult, ResolveIdResult } from 'rollup'
 // @ts-ignore
 import presetPreact from 'babel-preset-preact'
 import { getPageData, toRoot, transformJsx } from '../util'
+import { getOptions } from '../config'
 
 /**
  * Provides virtual import of routes and markdown page metadata.
@@ -33,10 +34,10 @@ const virtualPlugin = async (): Promise<Plugin> => {
           pages.filter((page) => page.type === 'markdown')
         )
 
-        // routes added here will be available client side, but not prerendered (yet!)
         const code =
           `import { h } from 'preact';` +
           `import { lazy } from 'preact-iso';` +
+          `import { useMeta, useTitleTemplate } from 'hoofd/preact';` +
           pages
             .map(
               (page, i) =>
@@ -50,8 +51,19 @@ const virtualPlugin = async (): Promise<Plugin> => {
             .map((page, i) => `<Page${i} path="${page.result.url}" />`)
             .join(',') +
           `];` +
+          `const siteMetadata = ${JSON.stringify(getOptions().siteMetadata)};` +
           `const markdownPages = ${markdownPages};` +
-          `export { markdownPages, routes };`
+          `const Meta = () => {` +
+          `  const { author, description, titleTemplate } = ${JSON.stringify(
+            getOptions().siteMetadata
+          )};` +
+          `  useTitleTemplate(titleTemplate);` +
+          `  useMeta({ name: 'author', content: author });` +
+          `  useMeta({ name: 'description', content: description });` +
+          `  useMeta({ property: 'og:image', content: 'og-image.jpg' });` +
+          `  return null;` +
+          `};` +
+          `export { markdownPages, routes, siteMetadata, Meta };`
         return transformJsx(code)
       }
     },

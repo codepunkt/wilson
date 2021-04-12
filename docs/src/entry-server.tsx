@@ -13,7 +13,11 @@ options.vnode = (vnode) => {
 
 interface PrerenderResult {
   html: string
-  title: string
+  head: {
+    lang: string
+    title: string
+    metas: { keyword: string; content: string }[]
+  }
   links: Set<string>
 }
 
@@ -60,8 +64,8 @@ export async function prerender(url: string): Promise<PrerenderResult> {
 
   try {
     const html = await render()
-    const { title } = toStatic()
-    return { links, html, title }
+    const head = (toStatic() as unknown) as PrerenderResult['head']
+    return { links, html, head }
   } finally {
     vnodeHook = null
   }

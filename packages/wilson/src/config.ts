@@ -1,4 +1,3 @@
-import { minifyHtml } from 'vite-plugin-html'
 import { Frontmatter } from './plugins/markdown'
 import { UserConfig as ViteUserConfig } from 'vite'
 import prefresh from '@prefresh/vite'
@@ -6,7 +5,7 @@ import { toRoot } from './util'
 import markdownPlugin from './plugins/markdown'
 import virtualPlugin from './plugins/virtual'
 
-interface SiteMetadata {
+export interface SiteMetadata {
   title: string
   description: string
   author: string
@@ -84,6 +83,7 @@ interface ViteConfigOptions {
   ssr?: boolean
 }
 
+// @TODO: check https://github.com/small-tech/vite-plugin-sri. does this tamper with splitting?
 export const getViteConfig = async ({
   ssr = false,
 }: ViteConfigOptions): Promise<ViteUserConfig> => {
@@ -92,16 +92,7 @@ export const getViteConfig = async ({
       include: ['preact', 'preact-iso'],
     },
     clearScreen: false,
-    plugins: [
-      // @TODO: check https://github.com/small-tech/vite-plugin-sri. does this tamper with splitting?
-      minifyHtml({
-        removeComments: false,
-        useShortDoctype: true,
-      }),
-      await virtualPlugin(),
-      await markdownPlugin(),
-      prefresh({}),
-    ],
+    plugins: [await virtualPlugin(), await markdownPlugin(), prefresh({})],
     build: {
       ssr,
       outDir: ssr ? '.wilson/ssr' : 'dist',
