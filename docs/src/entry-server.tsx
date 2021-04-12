@@ -1,6 +1,7 @@
 import preactRenderToString from 'preact-render-to-string'
 import App from './components/App'
 import { options, VNode } from 'preact'
+import { toStatic } from 'hoofd/preact'
 
 let vnodeHook: null | ((vnode: VNode) => void)
 
@@ -12,6 +13,7 @@ options.vnode = (vnode) => {
 
 interface PrerenderResult {
   html: string
+  title: string
   links: Set<string>
 }
 
@@ -58,7 +60,8 @@ export async function prerender(url: string): Promise<PrerenderResult> {
 
   try {
     const html = await render()
-    return { links, html }
+    const { title } = toStatic()
+    return { links, html, title }
   } finally {
     vnodeHook = null
   }

@@ -5,6 +5,7 @@ type PrerenderFn = (
   url: string
 ) => Promise<{
   html: string
+  title: string
   links: Set<string>
 }>
 
@@ -51,6 +52,7 @@ export async function prerenderStaticPages() {
         .map((path) => `<script type=module crossorigin src=/${path}></script>`)
 
       const source = `${template}`
+        .replace(`<!--head-->`, `<title>${prerenderResult.title}</title>`)
         .replace(`<!--html-->`, prerenderResult.html)
         .replace(`<!--style-tags-->`, styleTags.join(''))
         .replace(`<!--preload-tags-->`, preloadTags.join(''))
