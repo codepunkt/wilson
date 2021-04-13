@@ -15,7 +15,6 @@ import {
   Identifier,
 } from 'estree'
 import { generate } from 'astring'
-import assert from 'assert'
 
 export interface Page {
   type: 'markdown' | 'preact'
