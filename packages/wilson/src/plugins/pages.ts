@@ -29,7 +29,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
       }
 
       const wrapper =
-        `import { useMeta } from "hoofd/preact";` +
+        `import { useMeta, useTitle } from "hoofd/preact";` +
         `import { siteMetadata } from "wilson/virtual";` +
         `${code}` +
         `export default function PageWrapper() {` +
@@ -37,6 +37,9 @@ const pagesPlugin = async (): Promise<Plugin> => {
         `  useMeta({ property: 'og:url', content: pageUrl });` +
         `  useMeta({ property: 'og:image', content: pageUrl + 'og-image.jpg' });` +
         `  useMeta({ property: 'og:image:secure_url', content: pageUrl + 'og-image.jpg' });` +
+        `  useTitle('${page.frontmatter.title}');` +
+        `  useMeta({ property: 'og:title', content: '${page.frontmatter.title}' });` +
+        `  useMeta({ property: 'twitter:title', content: '${page.frontmatter.title}' });` +
         `  return <Page />;` +
         `}`
 

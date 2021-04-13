@@ -69,10 +69,8 @@ function htmlToPreact(
   const template =
     `import Layout from '${layoutUrl}';` +
     `import { h } from "preact";` +
-    `import { useTitle } from "hoofd/preact";` +
     `${relativeAssetImports.join('')}` +
     `export const Page = () => {` +
-    `  useTitle('${frontmatter.title}');` +
     `  return <Layout frontmatter={${fm}}>${html}</Layout>` +
     `}`
 
