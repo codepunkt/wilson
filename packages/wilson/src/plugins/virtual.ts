@@ -54,13 +54,13 @@ const virtualPlugin = async (): Promise<Plugin> => {
           `const siteMetadata = ${JSON.stringify(getOptions().siteMetadata)};` +
           `const markdownPages = ${markdownPages};` +
           `const Meta = () => {` +
-          `  const { author, description, titleTemplate } = ${JSON.stringify(
-            getOptions().siteMetadata
-          )};` +
-          `  useTitleTemplate(titleTemplate);` +
-          `  useMeta({ name: 'author', content: author });` +
-          `  useMeta({ name: 'description', content: description });` +
+          `  const meta = ${JSON.stringify(getOptions().siteMetadata)};` +
+          `  console.log({meta});` +
+          `  useTitleTemplate(meta.titleTemplate);` +
+          `  useMeta({ name: 'author', content: meta.author });` +
+          `  useMeta({ name: 'description', content: meta.description });` +
           `  useMeta({ property: 'og:image', content: 'og-image.jpg' });` +
+          `  useMeta({ property: 'og:site_name', content: meta.siteName });` +
           `  return null;` +
           `};` +
           `export { markdownPages, routes, siteMetadata, Meta };`

@@ -3,6 +3,7 @@
  */
 module.exports = {
   siteMetadata: {
+    siteName: 'Wilson',
     titleTemplate: '%s | Wilson',
     description: 'Blazing fast, opinionated static site generator for Preact',
     author: 'Christoph Werner',

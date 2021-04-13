@@ -6,7 +6,8 @@ import markdownPlugin from './plugins/markdown'
 import virtualPlugin from './plugins/virtual'
 
 export interface SiteMetadata {
-  title: string
+  siteName: string
+  titleTemplate: string
   description: string
   author: string
   lang: string
