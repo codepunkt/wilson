@@ -34,12 +34,13 @@ const pagesPlugin = async (): Promise<Plugin> => {
         `${code}` +
         `export default function PageWrapper() {` +
         `  const pageUrl = siteMetadata.siteUrl + '${page.result.url}';` +
+        `  const title = '${page.frontmatter.title}';` +
         `  useMeta({ property: 'og:url', content: pageUrl });` +
         `  useMeta({ property: 'og:image', content: pageUrl + 'og-image.jpg' });` +
         `  useMeta({ property: 'og:image:secure_url', content: pageUrl + 'og-image.jpg' });` +
-        `  useTitle('${page.frontmatter.title}');` +
-        `  useMeta({ property: 'og:title', content: '${page.frontmatter.title}' });` +
-        `  useMeta({ property: 'twitter:title', content: '${page.frontmatter.title}' });` +
+        `  useTitle(title);` +
+        `  useMeta({ property: 'og:title', content: title });` +
+        `  useMeta({ property: 'twitter:title', content: title });` +
         `  return <Page />;` +
         `}`
 
