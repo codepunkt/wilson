@@ -38,6 +38,14 @@ const nodeConfig = {
   onwarn(warning, warn) {
     // ignore circular dependency warnings
     if (warning.code === 'CIRCULAR_DEPENDENCY') return
+    // ignore empty index bundle
+    if (warning.code === 'EMPTY_BUNDLE' && warning.chunkName === 'index') return
+    // ignore eval in special file
+    if (
+      warning.code === 'EVAL' &&
+      warning.loc.file === `${__dirname}/src/eval.ts`
+    )
+      return
     warn(warning)
   },
 }
