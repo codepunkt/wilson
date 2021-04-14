@@ -72,6 +72,7 @@ export async function prerenderStaticPages() {
           )
           .join('')}
       `
+
       const source = `${template}`
         .replace(`<!--head-->`, head)
         .replace(`<!--html-->`, prerenderResult.html)

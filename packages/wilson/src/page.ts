@@ -4,6 +4,7 @@ import { extname, basename } from 'path'
 import { Frontmatter } from './plugins/markdown'
 import grayMatter from 'gray-matter'
 import { pageDataPath, toRoot } from './util'
+import { objectSourceToObject } from './eval'
 import { pageExtensions } from './plugins/pages'
 import { transpileModule, ModuleKind, JsxEmit } from 'typescript'
 import { parse } from 'acorn'
@@ -92,7 +93,7 @@ export async function collectPageData() {
         ? generate(frontmatterNode, { indent: '', lineEnd: '' })
         : '{}'
       frontmatter = {
-        ...(eval(`const obj=()=>(${objSource});obj`)() as Frontmatter),
+        ...(objectSourceToObject(objSource) as Frontmatter),
       }
     }
 

@@ -55,8 +55,12 @@
     "ora": "^5.4.0",
     "preact": "^10.5.13",
     "readdirp": "^3.6.0",
+    "rehype-parse": "^7.0.1",
+    "rehype-stringify": "^8.0.0",
     "remark": "^13.0.0",
     "sass": "^1.32.8",
+    "unified": "^9.2.1",
+    "unist-util-is": "^4.1.0",
     "unist-util-visit": "^2.0.3",
     "vite": "^2.1.3"
   },

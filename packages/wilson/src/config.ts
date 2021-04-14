@@ -5,6 +5,7 @@ import { toRoot } from './util'
 import markdownPlugin from './plugins/markdown'
 import virtualPlugin from './plugins/virtual'
 import pagesPlugin from './plugins/pages'
+import indexHtmlPlugin from './plugins/indexHtml'
 
 /**
  * Site metadata.
@@ -15,7 +16,10 @@ export interface SiteMetadata {
   titleTemplate: string
   description: string
   author: string
-  lang: string
+  /**
+   * Sets document base language. Defaults to 'en'.
+   */
+  lang?: string
   /**
    * `twitter:site` meta. `twitter:creator` meta if `twitterCreator` is not defined.
    */
@@ -112,6 +116,7 @@ export const getViteConfig = async ({
     clearScreen: false,
     plugins: [
       await virtualPlugin(),
+      await indexHtmlPlugin(),
       await markdownPlugin(),
       await pagesPlugin(),
       prefresh({}),

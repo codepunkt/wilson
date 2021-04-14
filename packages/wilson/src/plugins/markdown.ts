@@ -11,8 +11,6 @@ import {
   collectAndReplaceAssetUrls,
 } from '../transformAssetUrls'
 import { TransformResult } from 'rollup'
-// @ts-ignore
-import presetPreact from 'babel-preset-preact'
 import { getOptions, OptionsWithDefaults } from '../config'
 import { transformJsx } from '../util'
 
