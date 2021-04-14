@@ -33,9 +33,8 @@ const virtualPlugin = async (): Promise<Plugin> => {
         )
 
         const code =
-          `import { h, Fragment } from 'preact';` +
+          `import { h } from 'preact';` +
           `import { lazy } from 'preact-iso';` +
-          `import { useTitleTemplate } from 'hoofd/preact';` +
           pages
             .map(
               (page, i) =>
@@ -51,11 +50,7 @@ const virtualPlugin = async (): Promise<Plugin> => {
           `];` +
           `const markdownPages = ${markdownPages};` +
           `const siteMetadata = ${JSON.stringify(getOptions().siteMetadata)};` +
-          `const Meta = () => {` +
-          `  useTitleTemplate(siteMetadata.titleTemplate);` +
-          `  return null;` +
-          `};` +
-          `export { markdownPages, routes, siteMetadata, Meta };`
+          `export { markdownPages, routes, siteMetadata };`
         return transformJsx(code)
       }
     },

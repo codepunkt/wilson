@@ -30,7 +30,7 @@ export async function prerender(url: string): Promise<PrerenderResult> {
   // @ts-ignore
   global.location = new URL(url, 'http://localhost/')
 
-  const vnode = <App url={url} />
+  const vnode = <App />
 
   const render = async (): Promise<string> => {
     if (++tries > maxDepth) {
