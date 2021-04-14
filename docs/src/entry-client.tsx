@@ -1,6 +1,6 @@
 import { hydrate } from 'preact-iso'
 // import { options, VNode } from 'preact'
-import App from './components/App'
+import App from './components/app'
 // import 'preact/debug'
 
 // if (process.env.NODE_ENV === 'production') {

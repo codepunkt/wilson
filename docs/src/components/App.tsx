@@ -1,5 +1,5 @@
-import './App.scss'
-import Header from './Header'
+import './app.scss'
+import Header from './header'
 import { routes, Meta } from 'wilson/virtual'
 import { ErrorBoundary, LocationProvider, Router } from 'preact-iso'
 import { FunctionalComponent } from 'preact'

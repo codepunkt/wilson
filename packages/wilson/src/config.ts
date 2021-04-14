@@ -82,8 +82,8 @@ export const loadOptions = async (): Promise<OptionsWithDefaults> => {
     ...userConfig,
     pageLayouts: userConfig.pageLayouts ?? [
       {
-        pattern: '**',
-        component: toRoot('/src/components/MarkdownLayout'),
+        pattern: '**/*.md',
+        component: 'markdown',
       },
     ],
   }

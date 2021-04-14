@@ -1,4 +1,4 @@
-import classes from './MarkdownLayout.module.scss'
+import classes from './markdown.module.scss'
 import { Frontmatter } from 'wilson'
 import { FunctionalComponent } from 'preact'
 

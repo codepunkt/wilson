@@ -1,7 +1,9 @@
 import { Plugin } from 'vite'
 import { TransformResult } from 'rollup'
-import { extname } from 'path'
+import { dirname, extname, relative } from 'path'
 import { getPageData, toRoot, transformJsx } from '../util'
+import minimatch from 'minimatch'
+import { getOptions } from '../config'
 
 /**
  * Allowed file extensions for pages.
@@ -21,16 +23,32 @@ const pagesPlugin = async (): Promise<Plugin> => {
       if (!pageExtensions.includes(extension)) return
       if (!id.startsWith(toRoot('./src/pages/'))) return
 
-      const pageData = await getPageData()
-      const page = pageData.find((p) => p.source.absolutePath === id)
+      const pages = await getPageData()
+      const { pageLayouts } = getOptions()
+      const page = pages.find((p) => p.source.absolutePath === id)
 
       if (!page) {
         throw new Error(`pageData for page ${id} not found!`)
       }
 
+      const pageLayout = pageLayouts.find(({ pattern = '**' }) =>
+        minimatch(
+          id.replace(new RegExp(`^${process.cwd()}\/src\/pages\/`), ''),
+          pattern
+        )
+      )
+
       const wrapper =
         `import { useMeta, useTitle } from "hoofd/preact";` +
         `import { siteMetadata } from "wilson/virtual";` +
+        `${
+          pageLayout
+            ? `import Layout from '${relative(
+                dirname(id),
+                toRoot(`./src/layouts/${pageLayout.component}`)
+              )}'`
+            : `import { Fragment as Layout } from 'preact'`
+        };` +
         `${code}` +
         `export default function PageWrapper() {` +
         `  const pageUrl = siteMetadata.siteUrl + '${page.result.url}';` +
@@ -44,7 +62,9 @@ const pagesPlugin = async (): Promise<Plugin> => {
         }' });` +
         `  useMeta({ property: 'twitter:title', content: title });` +
         `  useTitle(title);` +
-        `  return <Page />;` +
+        `  return <Layout frontmatter={${JSON.stringify(page.frontmatter)}}>` +
+        `    <Page />` +
+        `  </Layout>;` +
         `}`
 
       return {

@@ -1,5 +1,5 @@
 import preactRenderToString from 'preact-render-to-string'
-import App from './components/App'
+import App from './components/app'
 import { options, VNode } from 'preact'
 import { toStatic } from 'hoofd/preact'
 

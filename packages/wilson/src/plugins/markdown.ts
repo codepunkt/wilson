@@ -1,17 +1,16 @@
-import { relative, dirname, extname } from 'path'
+import { extname } from 'path'
 import remark from 'remark'
 import grayMatter from 'gray-matter'
 import toHAST from 'mdast-util-to-hast'
 import hastToHTML from 'hast-util-to-html'
 import { Plugin } from 'vite'
-import minimatch from 'minimatch'
 import hastUtilRaw from 'hast-util-raw'
 import {
   assetUrlPrefix,
   collectAndReplaceAssetUrls,
 } from '../transformAssetUrls'
 import { TransformResult } from 'rollup'
-import { getOptions, OptionsWithDefaults } from '../config'
+import { getOptions } from '../config'
 import { transformJsx } from '../util'
 
 export interface Frontmatter {
@@ -33,27 +32,7 @@ const assetUrlTagConfig = {
   use: ['xlink:href', 'href'],
 }
 
-function getLayoutUrl(id: string, options: OptionsWithDefaults): string {
-  const pageLayout = options.pageLayouts.find(({ pattern = '**' }) => {
-    return minimatch(
-      id.replace(new RegExp(`^${process.cwd()}\/src\/pages\/`), ''),
-      pattern
-    )
-  })
-
-  if (!pageLayout) {
-    throw new Error(`Couldn't find markdown layout for: ${id}!`)
-  }
-
-  return relative(dirname(id), pageLayout.component)
-}
-
-function htmlToPreact(
-  html: string,
-  frontmatter: Frontmatter,
-  layoutUrl: string,
-  relativeAssetUrls: string[]
-): string {
+function htmlToPreact(html: string, relativeAssetUrls: string[]): string {
   // create imports from relative asset urls and replace placeholders with imported vars
   const relativeAssetImports = relativeAssetUrls.map((url, i) => {
     html = html.replace(
@@ -63,15 +42,13 @@ function htmlToPreact(
     return `import ${assetUrlPrefix}${i} from '${url}';`
   })
 
-  // wrap in layout component and add relative asset imports
-  const fm = JSON.stringify(frontmatter)
+  // add relative asset imports
   const template =
-    `import Layout from '${layoutUrl}';` +
-    `import { h } from "preact";` +
+    `import { h, Fragment} from "preact";` +
     `${relativeAssetImports.join('')}` +
     `export const Page = () => {` +
-    `  return <Layout frontmatter={${fm}}>${html}</Layout>` +
-    `}`
+    `  return <Fragment>${html}</Fragment>;` +
+    `};`
 
   return transformJsx(template)
 }
@@ -100,11 +77,6 @@ const markdownPlugin = async (): Promise<Plugin> => {
         throw new Error(`frontmatter has no title!`)
       }
 
-      const defaultFrontmatter = { draft: false }
-      const frontmatter: Frontmatter = {
-        ...defaultFrontmatter,
-        ...parsedFrontmatter,
-      }
       const markdown = parsed.content
 
       // apply plugins that change markdown or frontmatter
@@ -124,12 +96,7 @@ const markdownPlugin = async (): Promise<Plugin> => {
       })
 
       return {
-        code: htmlToPreact(
-          html,
-          frontmatter,
-          getLayoutUrl(id, options),
-          relativeAssetUrls
-        ),
+        code: htmlToPreact(html, relativeAssetUrls),
       }
     },
   }
