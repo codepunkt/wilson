@@ -17,13 +17,17 @@ export interface SiteMetadata {
   author: string
   lang: string
   /**
-   * Defines `twitter:site` meta. Defines `twitter:creator` meta if `twitterCreator` is not defined.
+   * `twitter:site` meta. `twitter:creator` meta if `twitterCreator` is not defined.
    */
   twitterSite?: string
   /**
-   * Defines `twitter:creator` meta. Defines `twitter:site` meta if `twitterSite` is not defined.
+   * `twitter:creator` meta. `twitter:site` meta if `twitterSite` is not defined.
    */
   twitterCreator?: string
+  /**
+   * `keywords` meta
+   */
+  keywords?: string[]
 }
 
 export interface Options {

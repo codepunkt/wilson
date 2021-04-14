@@ -33,7 +33,7 @@ const virtualPlugin = async (): Promise<Plugin> => {
         )
 
         const code =
-          `import { h } from 'preact';` +
+          `import { h, Fragment } from 'preact';` +
           `import { lazy } from 'preact-iso';` +
           `import { useMeta, useTitleTemplate } from 'hoofd/preact';` +
           pages
@@ -58,6 +58,9 @@ const virtualPlugin = async (): Promise<Plugin> => {
           `  useMeta({ property: 'twitter:creator', content: twitterCreator });` +
           `  return null;` +
           `};` +
+          `const KeywordMeta = () => {` +
+          `  useMeta({ name: 'keywords', content: (siteMetadata.keywords).join(',') });` +
+          `};` +
           `const Meta = () => {` +
           `  const addTwitter = !!twitterSite || !!twitterCreator;` +
           `  useTitleTemplate(siteMetadata.titleTemplate);` +
@@ -72,7 +75,10 @@ const virtualPlugin = async (): Promise<Plugin> => {
           `  useMeta({ name: 'generator', content: 'Wilson ${
             require('wilson/package.json').version
           }' });` +
-          `  return addTwitter ? <TwitterMeta /> : null;` +
+          `  return <Fragment>` +
+          `    {addTwitter ? <TwitterMeta /> : null }` +
+          `    {Array.isArray(siteMetadata.keywords) ? <KeywordMeta />: null }` +
+          `  </Fragment>;` +
           `};` +
           `export { markdownPages, routes, siteMetadata, Meta };`
         return transformJsx(code)
