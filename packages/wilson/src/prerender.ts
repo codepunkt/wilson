@@ -117,8 +117,8 @@ export async function prerenderStaticPages() {
         const targetPage = pages.find((page) => page.result.url === path)
         if (
           targetPage &&
-          options.linkPreloadTest &&
-          options.linkPreloadTest(targetPage)
+          (typeof options.linkPreloadTest !== 'function' ||
+            options.linkPreloadTest(targetPage))
         ) {
           filteredLinkDependencies[path] = linkDependencies[path]
         }
