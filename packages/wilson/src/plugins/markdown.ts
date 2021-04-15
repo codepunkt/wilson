@@ -11,7 +11,6 @@ import {
 } from '../transformAssetUrls'
 import { TransformResult } from 'rollup'
 import { getOptions } from '../config'
-import { transformJsx } from '../util'
 
 /**
  * Page frontmatter.
@@ -47,14 +46,15 @@ function htmlToPreact(html: string, relativeAssetUrls: string[]): string {
   })
 
   // add relative asset imports
-  const template =
-    `import { h, Fragment} from "preact";` +
-    `${relativeAssetImports.join('')}` +
-    `export const Page = () => {` +
-    `  return <Fragment>${html}</Fragment>;` +
-    `};`
+  const template = `
+    import { h, Fragment } from "preact";
+    ${relativeAssetImports.join('')}
+    export const Page = () => {
+      return <Fragment>${html}</Fragment>;
+    };
+  `
 
-  return transformJsx(template)
+  return template
 }
 
 /**

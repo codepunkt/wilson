@@ -1,9 +1,7 @@
 import { dirname, join } from 'path'
 import { readFile as read, writeFile as write, ensureDir } from 'fs-extra'
 import { Page } from './page'
-import { transformSync } from '@babel/core'
-// @ts-ignore
-import presetPreact from 'babel-preset-preact'
+import { transform } from 'sucrase'
 
 /**
  * Prefixes a relative path with the project root directory, turning it into
@@ -64,8 +62,13 @@ export const hexToRgb = (hex: string): [r: number, g: number, b: number] => {
 }
 
 /**
- * Transforms JSX to standard JavaScript using babel.
+ * Transforms TypeScript/JSX to standard JavaScript.
  */
 export const transformJsx = (code: string): string => {
-  return transformSync(code, { ast: false, presets: [presetPreact] })!.code!
+  return transform(code, {
+    transforms: ['jsx', 'typescript'],
+    production: true,
+    jsxPragma: 'h',
+    jsxFragmentPragma: 'Fragment',
+  }).code
 }
