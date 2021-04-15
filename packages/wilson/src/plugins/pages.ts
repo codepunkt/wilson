@@ -18,7 +18,7 @@ import {
 } from 'estree'
 import { generate } from 'astring'
 import { objectSourceToObject } from '../eval'
-import { pages, mapPagePathToUrl, addPage } from '../page'
+import { mapPagePathToUrl, setPage } from '../page'
 
 /**
  * Allowed file extensions for pages.
@@ -140,7 +140,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
         },
       }
 
-      addPage(path, page)
+      setPage(path, page)
 
       const pageLayout =
         page.frontmatter.layout ?? typeof pageLayouts === 'undefined'

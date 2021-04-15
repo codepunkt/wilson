@@ -44,6 +44,6 @@ export const mapPagePathToUrl = (pagePath: string): string => {
 
 export const pages: Map<String, Page> = new Map()
 
-export const addPage = (path: string, page: Page): void => {
+export const setPage = (path: string, page: Page): void => {
   pages.set(path, page)
 }
