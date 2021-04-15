@@ -5,7 +5,7 @@ import { Frontmatter } from './plugins/markdown'
 import grayMatter from 'gray-matter'
 import { pageDataPath, toRoot } from './util'
 import { objectSourceToObject } from './eval'
-import { pageExtensions } from './plugins/pages'
+import { pageTypes } from './plugins/pages'
 import { transpileModule, ModuleKind, JsxEmit } from 'typescript'
 import { parse } from 'acorn'
 import { walk } from 'estree-walker'
@@ -18,7 +18,7 @@ import {
 import { generate } from 'astring'
 
 export interface Page {
-  type: 'markdown' | 'preact'
+  type: keyof typeof pageTypes
   frontmatter: Frontmatter
   source: {
     path: string
@@ -32,18 +32,33 @@ export interface Page {
 
 const pages: Page[] = []
 
+const getPagetype = (
+  pageTypes: Record<string, string[]>,
+  extension: string
+): string => {
+  for (const type in pageTypes) {
+    if (pageTypes[type].includes(extension)) {
+      return type
+    }
+  }
+  throw new Error(`pageType for extension ${extension} not found!`)
+}
+
 export async function collectPageData() {
   const pagePath = `${process.cwd()}/src/pages`
 
   for await (const { path, fullPath } of readdirp(pagePath)) {
     const file = basename(path)
     const extension = extname(file)
-    if (!pageExtensions.includes(extension)) continue
+    if (!Object.values(pageTypes).flat().includes(extension)) continue
 
-    const isMarkdown = extension === '.md'
+    const pageType = getPagetype(pageTypes, extension)
 
     const url = `/${path
-      .replace(/\.(tsx|md)$/, '')
+      .replace(
+        new RegExp(`(${Object.values(pageTypes).flat().join('|')})$`),
+        ''
+      )
       .toLowerCase()
       .replace(/index$/, '')}/`.replace(/\/\/$/, '/')
     const htmlPath =
@@ -54,7 +69,7 @@ export async function collectPageData() {
     const content = await readFile(fullPath, 'utf-8')
     let frontmatter: Frontmatter
 
-    if (isMarkdown) {
+    if (pageType === 'markdown') {
       const parsed = grayMatter(content, {})
       frontmatter = parsed.data as Frontmatter
     } else {
@@ -65,6 +80,7 @@ export async function collectPageData() {
           jsxImportSource: 'preact',
         },
       }).outputText
+
       const ast = parse(js, { ecmaVersion: 'latest' })
       let frontmatterNode: ObjectExpression | null = null
       walk(ast, {
@@ -107,7 +123,7 @@ export async function collectPageData() {
     }
 
     pages.push({
-      type: isMarkdown ? 'markdown' : 'preact',
+      type: pageType as Page['type'],
       frontmatter,
       source: { path, absolutePath: fullPath },
       result: { url, path: htmlPath },

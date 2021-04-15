@@ -8,7 +8,11 @@ import { getOptions } from '../config'
 /**
  * Allowed file extensions for pages.
  */
-export const pageExtensions = ['.tsx', '.md']
+export const pageTypes = {
+  javascript: ['.js', '.jsx'],
+  typescript: ['.tsx'],
+  markdown: ['.md'],
+}
 
 /**
  * Wrap pages into wrapper components for <head> meta etc.
@@ -20,7 +24,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
 
     async transform(code: string, id: string): Promise<TransformResult> {
       const extension = extname(id)
-      if (!pageExtensions.includes(extension)) return
+      if (!Object.values(pageTypes).flat().includes(extension)) return
       if (!id.startsWith(toRoot('./src/pages/'))) return
 
       const pages = await getPageData()

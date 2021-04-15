@@ -21,5 +21,4 @@ module.exports = {
       },
     ],
   },
-  linkPreloadTest: (page) => page.result.url.match(/^\/writing\/.+/),
 }
