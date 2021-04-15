@@ -1,6 +1,6 @@
 import { collectPageData } from '../page'
 import { createServer as createViteServer } from 'vite'
-import { getViteConfig, loadOptions } from '../config'
+import { getViteConfig } from '../vite'
 import { emptyDir } from 'fs-extra'
 
 export async function startDevServer(root: string = process.cwd()) {
@@ -9,7 +9,6 @@ export async function startDevServer(root: string = process.cwd()) {
   // - tsx pages export Page
   await emptyDir(`${process.cwd()}/.wilson`)
 
-  await loadOptions()
   await collectPageData()
 
   const config = await getViteConfig({ ssr: false })

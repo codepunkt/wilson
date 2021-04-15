@@ -1,7 +1,7 @@
 import { HtmlTagDescriptor, Plugin } from 'vite'
 import visit from 'unist-util-visit'
 import is from 'unist-util-is'
-import { getOptions } from '../config'
+import { resolveUserConfig } from '../config'
 import { Node, Element } from 'hast'
 import parse from 'rehype-parse'
 import stringify from 'rehype-stringify'
@@ -33,7 +33,7 @@ const indexHtmlPlugin = async (): Promise<Plugin> => {
     name: 'vite-plugin-wilson-indexhtml',
     enforce: 'pre',
 
-    transformIndexHtml(html: string) {
+    async transformIndexHtml(html: string) {
       const {
         siteData: {
           author,
@@ -44,7 +44,7 @@ const indexHtmlPlugin = async (): Promise<Plugin> => {
           twitterCreator,
           twitterSite,
         },
-      } = getOptions()
+      } = await resolveUserConfig()
 
       interface Options {
         lang: string

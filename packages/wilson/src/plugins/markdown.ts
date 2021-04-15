@@ -10,8 +10,8 @@ import {
   collectAndReplaceAssetUrls,
 } from '../transformAssetUrls'
 import { TransformResult } from 'rollup'
-import { getOptions } from '../config'
 import { Frontmatter } from '../types'
+import { resolveUserConfig } from '../config'
 
 /**
  * Defines attributes on HTML/SVG elements that should be considered when
@@ -51,7 +51,7 @@ function htmlToPreact(html: string, relativeAssetUrls: string[]): string {
  * Transform markdown to HTML to Preact components
  */
 const markdownPlugin = async (): Promise<Plugin> => {
-  const options = getOptions()
+  const userConfig = await resolveUserConfig()
 
   return {
     name: 'vite-plugin-wilson-markdown',
@@ -74,7 +74,7 @@ const markdownPlugin = async (): Promise<Plugin> => {
       const markdown = parsed.content
 
       // apply plugins that change markdown or frontmatter
-      const markdownAST = remark().data('settings', options).parse(markdown)
+      const markdownAST = remark().data('settings', userConfig).parse(markdown)
       // apply plugins that change MDAST
       const htmlAST = hastUtilRaw(
         toHAST(markdownAST, { allowDangerousHtml: true })

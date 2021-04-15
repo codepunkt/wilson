@@ -1,7 +1,7 @@
 import { Plugin } from 'vite'
 import { LoadResult, ResolveIdResult } from 'rollup'
 import { getPageData, toRoot, transformJsx } from '../util'
-import { getOptions } from '../config'
+import { resolveSiteData } from '../config'
 
 /**
  * Provides virtual import of routes and markdown page metadata.
@@ -49,7 +49,7 @@ const virtualPlugin = async (): Promise<Plugin> => {
             .join(',') +
           `];` +
           `const markdownPages = ${markdownPages};` +
-          `const siteData = ${JSON.stringify(getOptions().siteData)};` +
+          `const siteData = ${JSON.stringify(resolveSiteData())};` +
           `export { markdownPages, routes, siteData };`
         return transformJsx(code)
       }

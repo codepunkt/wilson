@@ -1,14 +1,17 @@
 import Jimp from 'jimp'
 import wlt from '@codepunkt/wasm-layout-text'
-import { getOptions } from './config'
+import { resolveUserConfig } from './config'
 import { getPageData, hexToRgb, toRoot } from './util'
 import { readFile } from 'fs-extra'
 import { dirname } from 'path'
 
 export async function createOpengraphImages() {
-  const {
-    opengraphImage: { background, texts },
-  } = getOptions()
+  const userConfig = await resolveUserConfig()
+
+  const { background, texts } = userConfig.opengraphImage ?? {
+    background: '#ffffff',
+    texts: [],
+  }
 
   const width = 1200
   const height = 630

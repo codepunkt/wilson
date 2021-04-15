@@ -3,7 +3,7 @@ import { TransformResult } from 'rollup'
 import { dirname, extname, relative } from 'path'
 import { getPageData, toRoot, transformJsx } from '../util'
 import minimatch from 'minimatch'
-import { getOptions } from '../config'
+import { resolveUserConfig } from '../config'
 
 /**
  * Allowed file extensions for pages.
@@ -28,7 +28,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
       if (!id.startsWith(toRoot('./src/pages/'))) return
 
       const pages = await getPageData()
-      const { pageLayouts } = getOptions()
+      const { pageLayouts } = await resolveUserConfig()
       const page = pages.find((p) => p.source.absolutePath === id)
 
       if (!page) {
@@ -36,13 +36,14 @@ const pagesPlugin = async (): Promise<Plugin> => {
       }
 
       const pageLayout =
-        page.frontmatter.layout ??
-        pageLayouts.find(({ pattern = '**' }) =>
-          minimatch(
-            id.replace(new RegExp(`^${process.cwd()}\/src\/pages\/`), ''),
-            pattern
-          )
-        )?.component
+        page.frontmatter.layout ?? typeof pageLayouts === 'undefined'
+          ? undefined
+          : pageLayouts.find(({ pattern = '**' }) =>
+              minimatch(
+                id.replace(new RegExp(`^${process.cwd()}\/src\/pages\/`), ''),
+                pattern
+              )
+            )?.component
 
       const wrapper =
         `import { useMeta, useTitle } from "hoofd/preact";` +

@@ -3,7 +3,7 @@ import { readFile, toRoot, readJson, writeFile, getPageData } from './util'
 import { minify } from 'html-minifier-terser'
 import chalk from 'chalk'
 import size from 'brotli-size'
-import { getOptions } from './config'
+import { resolveUserConfig } from './config'
 
 type PrerenderFn = (
   url: string
@@ -44,7 +44,7 @@ export async function prerenderStaticPages() {
       )} prerendering static pages...`
     )
     const pages = await getPageData()
-    const options = getOptions()
+    const userConfig = await resolveUserConfig()
     const manifest = await readJson<Manifest>('./dist/manifest.json')
     const template = await readFile('./dist/index.html')
     const prerender = require(toRoot('./.wilson/ssr/entry-server.js'))
@@ -117,8 +117,8 @@ export async function prerenderStaticPages() {
         const targetPage = pages.find((page) => page.result.url === path)
         if (
           targetPage &&
-          (typeof options.linkPreloadTest !== 'function' ||
-            options.linkPreloadTest(targetPage))
+          (typeof userConfig.linkPreloadTest !== 'function' ||
+            userConfig.linkPreloadTest(targetPage))
         ) {
           filteredLinkDependencies[path] = linkDependencies[path]
         }
