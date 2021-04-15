@@ -2,7 +2,7 @@
  * @type { import('wilson').Options }
  */
 module.exports = {
-  siteMetadata: {
+  siteData: {
     siteName: 'Wilson',
     siteUrl: 'https://wilsonjs.com',
     titleTemplate: '%s | Wilson',

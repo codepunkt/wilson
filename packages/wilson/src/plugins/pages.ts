@@ -46,7 +46,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
 
       const wrapper =
         `import { useMeta, useTitle } from "hoofd/preact";` +
-        `import { siteMetadata } from "wilson/virtual";` +
+        `import { siteData } from "wilson/virtual";` +
         `${
           pageLayout
             ? `import Layout from '${relative(
@@ -57,7 +57,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
         };` +
         `${code}` +
         `export default function PageWrapper() {` +
-        `  const pageUrl = siteMetadata.siteUrl + '${page.result.url}';` +
+        `  const pageUrl = siteData.siteUrl + '${page.result.url}';` +
         `  const title = '${page.frontmatter.title}';` +
         `  useMeta({ property: 'og:url', content: pageUrl });` +
         `  useMeta({ property: 'og:image', content: pageUrl + 'og-image.jpg' });` +

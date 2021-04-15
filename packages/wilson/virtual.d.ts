@@ -1,6 +1,6 @@
 import { VNode } from 'preact'
-import { Page, SiteMetadata } from 'wilson'
+import { Page, SiteData } from 'wilson'
 
 export const routes: VNode[]
 export const markdownPages: Page[]
-export const siteMetadata: SiteMetadata
+export const siteData: SiteData

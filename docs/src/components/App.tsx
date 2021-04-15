@@ -1,6 +1,6 @@
 import './app.scss'
 import Header from './header'
-import { routes, siteMetadata } from 'wilson/virtual'
+import { routes, siteData } from 'wilson/virtual'
 import { ErrorBoundary, LocationProvider, Router } from 'preact-iso'
 import { FunctionalComponent } from 'preact'
 import { useTitleTemplate } from 'hoofd/preact'
@@ -8,7 +8,7 @@ import { useTitleTemplate } from 'hoofd/preact'
 const NotFound: FunctionalComponent = () => <>Not Found</>
 
 const App: FunctionalComponent = () => {
-  useTitleTemplate(siteMetadata.titleTemplate)
+  useTitleTemplate(siteData.titleTemplate)
   return (
     <>
       <Header />

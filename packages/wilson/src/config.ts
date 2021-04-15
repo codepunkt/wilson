@@ -7,33 +7,7 @@ import virtualPlugin from './plugins/virtual'
 import pagesPlugin from './plugins/pages'
 import indexHtmlPlugin from './plugins/indexHtml'
 import { Page } from './page'
-
-/**
- * Site metadata.
- */
-export interface SiteMetadata {
-  siteName: string
-  siteUrl: string
-  titleTemplate: string
-  description: string
-  author: string
-  /**
-   * Sets document base language. Defaults to 'en'.
-   */
-  lang?: string
-  /**
-   * `twitter:site` meta. `twitter:creator` meta if `twitterCreator` is not defined.
-   */
-  twitterSite?: string
-  /**
-   * `twitter:creator` meta. `twitter:site` meta if `twitterSite` is not defined.
-   */
-  twitterCreator?: string
-  /**
-   * `keywords` meta
-   */
-  keywords?: string[]
-}
+import { SiteData } from './types'
 
 export interface Options {
   /**
@@ -51,7 +25,7 @@ export interface Options {
    *
    */
   linkPreloadTest: (targetPage: Page) => boolean
-  siteMetadata: SiteMetadata
+  siteData: SiteData
 }
 
 export type OptionsWithDefaults = Options &

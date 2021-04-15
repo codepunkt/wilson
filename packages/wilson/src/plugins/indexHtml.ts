@@ -22,7 +22,7 @@ const createPropertyMeta = createMetaCreator('property')
 /**
  * Transforms index html.
  *
- * - Adds `lang` attribute from `siteMetadata, defaulting to 'en'.
+ * - Adds `lang` attribute from siteData, defaulting to 'en'.
  * - Adds `meta` tags that don't change between pages.
  *
  * Certain meta tags like title, twitter:sitle, og:image, og:url or og:type
@@ -35,7 +35,7 @@ const indexHtmlPlugin = async (): Promise<Plugin> => {
 
     transformIndexHtml(html: string) {
       const {
-        siteMetadata: {
+        siteData: {
           author,
           keywords,
           description,
@@ -89,7 +89,7 @@ const indexHtmlPlugin = async (): Promise<Plugin> => {
           createPropertyMeta('og:image:width', '1200'),
           createPropertyMeta('og:image:height', '630'),
           createPropertyMeta('twitter:card', 'summary_large_image'),
-          // metas from siteMetadata
+          // metas from siteData
           createNameMeta('author', author),
           createNameMeta('description', description),
           createPropertyMeta('og:description', description),
