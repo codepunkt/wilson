@@ -1,29 +1,33 @@
 import { extname } from 'path'
-import remark from 'remark'
 import grayMatter from 'gray-matter'
-import toHAST from 'mdast-util-to-hast'
-import hastToHTML from 'hast-util-to-html'
 import { Plugin } from 'vite'
-import hastUtilRaw from 'hast-util-raw'
-import {
-  assetUrlPrefix,
-  collectAndReplaceAssetUrls,
-} from '../transformAssetUrls'
 import { TransformResult } from 'rollup'
 import { Frontmatter } from '../types'
-import { resolveUserConfig } from '../config'
+import rehypeSlug from 'rehype-slug'
+import remarkParse from 'remark-parse'
+import remarkToRehype from 'remark-rehype'
+import rehypeStringify from 'rehype-stringify'
+import remarkStringify from 'remark-stringify'
+import unified from 'unified'
+import rehypeRaw from 'rehype-raw'
+import remarkRelativeAssets from '../unified/remark-relative-assets'
 
 /**
  * Defines attributes on HTML/SVG elements that should be considered when
  * converting relative URLs to imports.
  */
-const assetUrlTagConfig = {
+const assetUrlTagConfig: Record<string, string[]> = {
   video: ['src', 'poster'],
   source: ['src'],
   img: ['src'],
   image: ['xlink:href', 'href'],
   use: ['xlink:href', 'href'],
 }
+
+/**
+ * Asset URL prefix
+ */
+const assetUrlPrefix = '_assetUrl_'
 
 function htmlToPreact(html: string, relativeAssetUrls: string[]): string {
   // create imports from relative asset urls and replace placeholders with imported vars
@@ -51,13 +55,11 @@ function htmlToPreact(html: string, relativeAssetUrls: string[]): string {
  * Transform markdown to HTML to Preact components
  */
 const markdownPlugin = async (): Promise<Plugin> => {
-  const userConfig = await resolveUserConfig()
-
   return {
     name: 'vite-plugin-wilson-markdown',
     enforce: 'pre',
 
-    transform(code: string, id: string): TransformResult {
+    async transform(code: string, id: string): Promise<TransformResult> {
       const extension = extname(id)
       if (extension !== '.md') return
 
@@ -71,23 +73,24 @@ const markdownPlugin = async (): Promise<Plugin> => {
         throw new Error(`frontmatter has no title!`)
       }
 
-      const markdown = parsed.content
+      const processor = unified()
+        .use(remarkParse)
+        // apply plugins that change MDAST
+        .use(remarkStringify)
+        .use(remarkToRehype, { allowDangerousHtml: true })
+        .use(rehypeRaw)
+        // apply plugins that change HAST
+        .use(remarkRelativeAssets, { assetUrlPrefix, assetUrlTagConfig })
+        .use(rehypeSlug)
+        .use(rehypeStringify, {
+          allowDangerousHtml: true,
+          closeSelfClosing: true,
+        })
 
-      // apply plugins that change markdown or frontmatter
-      const markdownAST = remark().data('settings', userConfig).parse(markdown)
-      // apply plugins that change MDAST
-      const htmlAST = hastUtilRaw(
-        toHAST(markdownAST, { allowDangerousHtml: true })
-      )
-      // apply plugins that change HAST
-      const relativeAssetUrls = collectAndReplaceAssetUrls(
-        htmlAST,
-        assetUrlTagConfig
-      )
-      const html = hastToHTML(htmlAST, {
-        allowDangerousHtml: true,
-        closeSelfClosing: true,
-      })
+      const vfile = await processor.process(parsed.content)
+      const html = vfile.contents as string
+      // @ts-ignore
+      const relativeAssetUrls = vfile.data.assetUrls as string[]
 
       return {
         code: htmlToPreact(html, relativeAssetUrls),
