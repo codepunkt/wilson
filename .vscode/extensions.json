@@ -1,9 +1,9 @@
 {
-    "recommendations": [
-      "christian-kohler.npm-intellisense",
-      "christian-kohler.path-intellisense",
-      "codezombiech.gitignore",
-      "esbenp.prettier-vscode"
-    ]
-  }
-  
+  "recommendations": [
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "codezombiech.gitignore",
+    "esbenp.prettier-vscode",
+    "be5invis.toml"
+  ]
+}
