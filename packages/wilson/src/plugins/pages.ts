@@ -123,7 +123,6 @@ const pagesPlugin = async (): Promise<Plugin> => {
           ? `${url.replace(/^\//, '')}.html`
           : `${url.replace(/^\//, '')}index.html`
 
-      // @ts-ignore
       const pageType = getPagetype(pageTypes, extension) as Page['type']
       const page: Page = {
         type: pageType,
