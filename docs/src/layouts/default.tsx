@@ -10,7 +10,7 @@ const DefaultLayout: FunctionalComponent<{ frontmatter: Frontmatter }> = ({
   return (
     <div className={classes.container}>
       <Header />
-      <main>{children}</main>
+      <main className={classes.main}>{children}</main>
     </div>
   )
 }

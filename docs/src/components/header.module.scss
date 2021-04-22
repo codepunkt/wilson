@@ -1,13 +1,23 @@
 .header {
   margin: 0 auto;
-  padding: 1rem 0;
-  display: flex;
+  padding: 0 1.5rem;
   height: 5rem;
+  position: fixed;
+  right: 0;
+  left: 0;
+  top: 0;
+  max-width: 80rem;
+  background: #fff;
+  z-index: 1;
+}
+
+.innerHeader {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 3rem;
   color: #6b7280;
+  height: 5rem;
 
   a {
     text-decoration: none;
