@@ -1,0 +1,68 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* System font stack */
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
+    helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+  background: #f5fcff;
+  font-size: 12px;
+  @media only screen and (min-width: 400px) {
+    font-size: 14px;
+  }
+  @media only screen and (min-width: 600px) {
+    font-size: 16px;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+}
+
+h1 {
+  font-size: 2.8rem;
+  color: #91272f;
+  text-align: center;
+}
+
+@mixin flexColHorizontalCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container {
+  @include flexColHorizontalCenter();
+}
+
+.paper {
+  @include flexColHorizontalCenter();
+  background: white;
+  border: 1px solid #ddd;
+  padding: 0.6rem 2rem;
+  border-radius: 0.75rem;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Remove all animations and transitions for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

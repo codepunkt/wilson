@@ -1,0 +1,37 @@
+.logo {
+  margin-top: 4rem;
+  width: 26rem;
+}
+
+.counter {
+  border: 0 none;
+  margin-top: 1rem;
+  background: papayaWhip;
+  font-size: 1.2rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 400;
+  background: #7073ae;
+  color: #f9fafb;
+  cursor: pointer;
+
+  &:hover {
+    background: #595c90;
+  }
+  &:focus {
+    outline: 0px none;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2b2d5a;
+  }
+}
+
+.hotmodule {
+  font-size: 1.2rem;
+  max-width: 40rem;
+  text-align: center;
+
+  code {
+    font-size: 1.1em;
+    padding: 0.2em 0.4em;
+    background: #ebf0f3;
+  }
+}
