@@ -1,6 +1,6 @@
 {
   "name": "wilson",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "license": "MIT",
   "author": "Christoph Werner <christoph@codepunkt.de>",
   "description": "Blazing-fast, opinionated static site generator for Preact",
@@ -79,6 +79,7 @@
     "remark-parse": "^9.0.0",
     "remark-rehype": "^8.1.0",
     "remark-stringify": "^9.0.1",
+    "rollup": "^2.45.2",
     "rollup-plugin-auto-external": "^2.0.0",
     "tslib": "^2.2.0"
   }
