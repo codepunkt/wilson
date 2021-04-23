@@ -1,6 +1,6 @@
 {
   "name": "wilson",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "license": "MIT",
   "author": "Christoph Werner <christoph@codepunkt.de>",
   "description": "Blazing-fast, opinionated static site generator for Preact",
