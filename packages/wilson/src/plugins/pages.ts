@@ -93,7 +93,7 @@ const getFrontmatter = async (
   }
 
   if (Object.values(frontmatter).length === 0)
-    throw new Error(`page has no frontmatter: ${id}!`)
+    throw new Error(`page has no or empty frontmatter: ${id}!`)
   if (frontmatter.title === undefined)
     throw new Error(`frontmatter has no title: ${id}!`)
 
