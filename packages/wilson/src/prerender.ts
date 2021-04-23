@@ -54,14 +54,14 @@ export async function prerenderStaticPages() {
     const sources: Record<string, string> = {}
     const linkDependencies: Record<string, Dependencies> = {}
 
-    for (const [path, page] of cache.pages) {
+    for (const [, page] of cache.pages) {
       if (page.result.path.length > longestPath)
         longestPath = page.result.path.length
 
       const prerenderResult = await prerender(page.result.url)
       const wrappedManifest = wrapManifest(manifest)
       const pageDependencies = wrappedManifest.getPageDependencies(
-        `src/pages/${path}`
+        `src/pages/${page.source.path}`
       )
 
       prerenderResult.links.forEach((link) => {
