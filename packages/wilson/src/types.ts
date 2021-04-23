@@ -65,6 +65,6 @@ export interface OpengraphImageText {
 export interface UserConfig {
   siteData: SiteData
   opengraphImage?: { background: string; texts: OpengraphImageText[] }
-  pageLayouts?: { component: string; pattern?: string }[]
+  pageLayouts?: { layout: string; pattern?: string }[]
   linkPreloadTest: (targetPage: Page) => boolean
 }

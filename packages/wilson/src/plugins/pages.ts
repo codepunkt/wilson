@@ -150,7 +150,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
                 id.replace(new RegExp(`^${process.cwd()}\/src\/pages\/`), ''),
                 pattern
               )
-            )?.component
+            )?.layout
 
       const wrapper =
         `import { useMeta, useTitle } from "hoofd/preact";` +

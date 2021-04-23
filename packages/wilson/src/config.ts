@@ -17,7 +17,7 @@ export async function resolveUserConfig(
 
   const userConfig: UserConfig = require(configPath)
   return {
-    pageLayouts: [{ pattern: '**/*.md', component: 'markdown' }],
+    pageLayouts: [{ pattern: '**/*.md', layout: 'markdown' }],
     ...userConfig,
   }
 }

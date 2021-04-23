@@ -13,8 +13,8 @@ module.exports = {
     twitterCreator: '@code_punkt',
   },
   pageLayouts: [
-    { pattern: 'docs/**/*', component: 'docs' },
-    { pattern: '**', component: 'default' },
+    { pattern: 'docs/**/*', layout: 'docs' },
+    { pattern: '**', layout: 'default' },
   ],
   opengraphImage: {
     background: '#ffffff',
