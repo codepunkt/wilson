@@ -33,9 +33,7 @@ const virtualPlugin = async (): Promise<Plugin> => {
      */
     async load(id: string): Promise<LoadResult> {
       if (id.startsWith(virtualImportPath)) {
-        const pages = Array.from(cache.pages.entries()).map(
-          ([absolutePath, page]) => page
-        )
+        const pages = cache.collections.all
 
         const code =
           `import { createContext, h } from 'preact';` +
@@ -58,7 +56,7 @@ const virtualPlugin = async (): Promise<Plugin> => {
             .join(',') +
           `];` +
           `const PageContext = createContext(null);` +
-          `const PageProvider = ({ children }) => (` +
+          `const PageProvider = ({ children, collection = 'all' }) => (` +
           `  <PageContext.Provider value={${JSON.stringify(pages)}}>` +
           `    {children}` +
           `  </PageContext.Provider>` +

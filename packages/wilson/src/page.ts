@@ -102,8 +102,9 @@ export const collectPageData = async (): Promise<void> => {
  * Caches data so it doesn't have to be collected twice in a run.
  */
 export const getPageData = async (id: string): Promise<Page> => {
-  if (cache.pages.has(id)) {
-    return cache.pages.get(id) as Page
+  let page = cache.collections.all.find((p) => p.source.absolutePath === id)
+  if (page) {
+    return page
   }
 
   const path = id.replace(new RegExp(`^${process.cwd()}/src/pages/`), '')
@@ -115,7 +116,7 @@ export const getPageData = async (id: string): Promise<Page> => {
 
   const extension = extname(id)
   const pageType = getPagetype(pageTypes, extension) as Page['type']
-  const page: Page = {
+  page = {
     type: pageType,
     frontmatter: {
       draft: false,
@@ -131,7 +132,8 @@ export const getPageData = async (id: string): Promise<Page> => {
     },
   }
 
-  cache.pages.set(id, page)
+  cache.collections.all.push(page)
+
   return page
 }
 

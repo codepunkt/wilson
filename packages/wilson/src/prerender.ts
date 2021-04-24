@@ -54,7 +54,7 @@ export async function prerenderStaticPages() {
     const sources: Record<string, string> = {}
     const linkDependencies: Record<string, Dependencies> = {}
 
-    for (const [, page] of cache.pages) {
+    for (const page of cache.collections.all) {
       if (page.result.path.length > longestPath)
         longestPath = page.result.path.length
 
@@ -65,7 +65,7 @@ export async function prerenderStaticPages() {
       )
 
       prerenderResult.links.forEach((link) => {
-        const targetPage = Array.from(cache.pages.values()).find(
+        const targetPage = cache.collections.all.find(
           (page) => page.result.url === link
         )
         if (targetPage && !linkDependencies[link]) {
@@ -113,10 +113,10 @@ export async function prerenderStaticPages() {
       sources[page.result.path] = source
     }
 
-    for (const [, page] of cache.pages) {
+    for (const page of cache.collections.all) {
       const filteredLinkDependencies: Record<string, Dependencies> = {}
       for (const path in linkDependencies) {
-        const targetPage = Array.from(cache.pages.values()).find(
+        const targetPage = cache.collections.all.find(
           (page) => page.result.url === path
         )
         if (
@@ -149,7 +149,9 @@ export async function prerenderStaticPages() {
       await writeFile(toRoot(`./dist/${page.result.path}`), minifiedSource)
     }
 
-    console.info(`${chalk.green('✓')} ${cache.pages.size} pages rendered.`)
+    console.info(
+      `${chalk.green('✓')} ${cache.collections.all.length} pages rendered.`
+    )
     for (const page of Object.keys(sources)) {
       console.info(
         `${chalk.grey(chalk.white.dim('dist/'))}${chalk.green(

@@ -28,7 +28,7 @@ export async function createOpengraphImages() {
     throw new Error(`opengraph background image is not ${width} x ${height}!`)
   }
 
-  for (const [, page] of cache.pages) {
+  for (const page of cache.collections.all) {
     let textLayers = await Promise.all(
       texts.map(
         async ({
