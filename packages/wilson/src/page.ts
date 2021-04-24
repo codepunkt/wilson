@@ -1,4 +1,4 @@
-import { extname } from 'path'
+import { basename, extname } from 'path'
 import { pageTypes } from './plugins/pages'
 import { Frontmatter, Page } from './types'
 import grayMatter from 'gray-matter'
@@ -6,6 +6,7 @@ import { readFile } from 'fs-extra'
 import { transpileModule, ModuleKind, JsxEmit } from 'typescript'
 import { parse } from 'acorn'
 import { walk } from 'estree-walker'
+import readdirp from 'readdirp'
 import {
   ObjectExpression,
   AssignmentExpression,
@@ -84,6 +85,16 @@ const getFrontmatter = async (
     throw new Error(`frontmatter has no title: ${id}!`)
 
   return frontmatter
+}
+
+export const collectPageData = async (): Promise<void> => {
+  const pageDir = `${process.cwd()}/src/pages`
+
+  for await (const { path, fullPath } of readdirp(pageDir)) {
+    const extension = extname(basename(path))
+    if (!Object.values(pageTypes).flat().includes(extension)) continue
+    await getPageData(fullPath)
+  }
 }
 
 /**

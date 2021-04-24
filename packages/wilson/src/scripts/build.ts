@@ -3,6 +3,7 @@ import { emptyDir } from 'fs-extra'
 import { getViteConfig } from '../vite'
 import { prerenderStaticPages } from '../prerender'
 import { createOpengraphImages } from '../opengraph'
+import { collectPageData } from '../page'
 
 export async function build() {
   // possible validations
@@ -11,6 +12,8 @@ export async function build() {
 
   await emptyDir(`${process.cwd()}/.wilson`)
   await emptyDir(`${process.cwd()}/dist`)
+
+  await collectPageData()
 
   await viteBuild(await getViteConfig({ ssr: true }))
   await viteBuild(await getViteConfig({ ssr: false }))
