@@ -102,6 +102,9 @@ const DocsLayout: FunctionalComponent<LayoutProps> = ({
               <MenuItem toc={toc} href="/docs/why/">
                 Why Wilson?
               </MenuItem>
+              <MenuItem toc={toc} href="/docs/glossary/">
+                Glossary
+              </MenuItem>
               <MenuItem toc={toc} href="/docs/">
                 Getting started
               </MenuItem>
