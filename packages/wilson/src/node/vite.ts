@@ -22,10 +22,10 @@ export const getViteConfig = async ({
     plugins: [
       {
         name: 'vite-plugin-wilson-entry',
-        resolveId(id) {
+        resolveId(id: string) {
           return id === '/@wilson/client.js' ? id : undefined
         },
-        load(id) {
+        load(id: string) {
           if (id === '/@wilson/client.js') {
             return `import "wilson/dist/client/main.js";`
           }
