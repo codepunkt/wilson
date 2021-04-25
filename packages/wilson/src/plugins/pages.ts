@@ -16,6 +16,12 @@ export const pageTypes = {
   markdown: ['.md'],
 }
 
+const isPageModule = (moduleId: string): boolean => {
+  if (!Object.values(pageTypes).flat().includes(extname(moduleId))) return false
+  if (!moduleId.startsWith(toRoot('./src/pages/'))) return false
+  return true
+}
+
 /**
  * Wrap pages into wrapper components for <head> meta etc.
  */
@@ -27,8 +33,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
     async transform(code: string, id: string): Promise<TransformResult> {
       const extension = extname(id)
 
-      if (!Object.values(pageTypes).flat().includes(extension)) return
-      if (!id.startsWith(toRoot('./src/pages/'))) return
+      if (!isPageModule(id)) return
 
       const page = await getPageData(id)
 
