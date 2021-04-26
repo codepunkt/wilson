@@ -20,7 +20,7 @@
   "scripts": {
     "build": "rm -rf ./dist && tsc",
     "dev": "rm -rf ./dist && tsc -w",
-    "prepare": "yarn run build"
+    "prepack": "yarn run build"
   },
   "dependencies": {
     "chalk": "^4.1.1",
