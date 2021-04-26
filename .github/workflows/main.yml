@@ -20,7 +20,7 @@ jobs:
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.5
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -32,4 +32,10 @@ jobs:
           NODE_ENV: production
         run: |
           cd packages/wilson
+          yarn build
+      - name: Build website
+        env:
+          NODE_ENV: production
+        run: |
+          cd docs
           yarn build
