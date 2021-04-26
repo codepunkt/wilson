@@ -28,6 +28,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: |
-          yarn
-          cd docs
-          yarn build
+          npm i
+          cd packages/wilson
+          npm run build
+          cd ../../docs
+          npm run build
