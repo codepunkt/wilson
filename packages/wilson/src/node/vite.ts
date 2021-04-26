@@ -16,6 +16,16 @@ export const getViteConfig = async ({
 }: ViteConfigOptions): Promise<ViteUserConfig> => {
   return {
     optimizeDeps: {
+      include: [
+        'preact',
+        'preact/hooks',
+        'preact-iso',
+        'hoofd/preact',
+        '@prefresh/vite/utils',
+        '@prefresh/vite/runtime',
+        'wilson/dist/client/main.js',
+      ],
+
       exclude: ['wilson/virtual'],
     },
     clearScreen: false,
