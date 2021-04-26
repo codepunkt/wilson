@@ -7,8 +7,8 @@
   "scripts": {
     "start": "cd ../packages/wilson && yarn build && cd ../../docs && yarn dev",
     "prod": "cd ../packages/wilson && yarn build && cd ../..docs && yarn build && yarn serve",
-    "dev": "rm -rf ./node_modules/.vite && wilson",
-    "build": "rm -rf ./node_modules/.vite && wilson build",
+    "dev": "wilson",
+    "build": "wilson build",
     "serve": "wilson serve"
   },
   "engines": {

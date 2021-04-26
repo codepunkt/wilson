@@ -2,4 +2,4 @@
   base = "docs/"
   publish = "dist/"
   command = "yarn build"
-  environment = { NODE_VERSION = "14" }
+  environment = { NODE_VERSION = "14", NETLIFY_USE_YARN = "true", YARN_VERSION = "1.22.10" }
