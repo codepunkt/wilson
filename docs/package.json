@@ -5,10 +5,8 @@
   "private": true,
   "author": "Christoph Werner <christoph@codepunkt.de>",
   "scripts": {
-    "start": "cd ../packages/wilson && yarn build && cd ../../docs && yarn dev",
-    "prod": "cd ../packages/wilson && yarn build && cd ../..docs && yarn build && yarn serve",
-    "dev": "rm -rf ./node_modules/.vite && wilson",
-    "build": "rm -rf ./node_modules/.vite && wilson build",
+    "start": "wilson",
+    "build": "wilson build",
     "serve": "wilson serve"
   },
   "engines": {
@@ -19,7 +17,7 @@
     "hoofd": "^1.2.2",
     "preact": "^10.5.13",
     "preact-iso": "^1.1.1",
-    "wilson": "latest"
+    "wilson": "1.0.0-beta.9"
   },
   "devDependencies": {
     "@prefresh/vite": "^2.2.0",

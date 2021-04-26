@@ -1,0 +1,40 @@
+name: Build docs
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/setup-node@v2.1.5
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Get dependency cache directory
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2.1.5
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Build wilson
+        env:
+          NODE_ENV: production
+        run: |
+          cd packages/wilson
+          yarn build
+      - name: Build website
+        env:
+          NODE_ENV: production
+        run: |
+          cd docs
+          yarn build
