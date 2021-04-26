@@ -1,7 +1,7 @@
 import { LayoutProps } from 'wilson'
 import { createContext, FunctionalComponent } from 'preact'
 import classes from './docs.module.scss'
-//import Header from '../components/header'
+import Header from '../components/header'
 import Link from '../components/link'
 import { useLocation } from 'preact-iso'
 import { useContext, useEffect, useState } from 'preact/hooks'
@@ -94,7 +94,7 @@ const DocsLayout: FunctionalComponent<LayoutProps> = ({
 
   return (
     <div className={classes.container}>
-      {/*<Header withLogo />*/}
+      <Header withLogo />
       <main className={classes.main}>
         <aside className={classes.toc}>
           <p className={classes.headline}>Documentation</p>
