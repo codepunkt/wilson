@@ -1,21 +1,9 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "strict": true,
-    "declaration": true,
-    "outDir": "dist",
-    "noUnusedLocals": true,
-    "esModuleInterop": true,
-    "lib": ["ESNext"],
-    "types": ["node"],
-    "rootDir": "src",
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact",
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "sourceMap": true
+    "outDir": "./dist",
+    "module": "commonjs",
+    "lib": ["ESNext"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }
