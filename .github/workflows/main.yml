@@ -26,4 +26,9 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-        
+      - name: Build wilson
+        env:
+          NODE_ENV: production
+        run: |
+          cd packages/wilson
+          yarn build
