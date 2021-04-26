@@ -5,34 +5,36 @@ import { resolveSiteData } from '../config'
 import { mapPagePathToUrl } from '../page'
 import cache from '../cache'
 
+const virtualExportsPath = 'wilson/virtual'
+const clientEntryPath = '/@wilson/client.js'
+
 /**
- * Provides virtual import of routes and markdown page metadata.
+ * Provides virtual modules.
  */
 const virtualPlugin = async (): Promise<Plugin> => {
-  const virtualImportPath = 'wilson/virtual'
-
   return {
     name: 'wilson-plugin-virtual',
     enforce: 'pre',
 
-    /**
-     * Resolve wilson/virtual imports
-     */
     resolveId(id: string): ResolveIdResult {
-      if (id.startsWith(virtualImportPath)) {
+      if (id === virtualExportsPath || id === clientEntryPath) {
         return id
       }
     },
 
     /**
-     * Provide content for wilson/virtual imports
+     * Provide virtual module content.
      *
      * @TODO
      * export VirtualPage instead of Page, because Page has too much
      * information density that would increase clientside bundlesize on import
      */
     async load(id: string): Promise<LoadResult> {
-      if (id.startsWith(virtualImportPath)) {
+      if (id === clientEntryPath) {
+        return `import "wilson/dist/client/main.js";`
+      }
+
+      if (id === virtualExportsPath) {
         const pages = cache.collections.all
 
         const code =

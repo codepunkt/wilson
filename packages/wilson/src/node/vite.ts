@@ -16,21 +16,10 @@ export const getViteConfig = async ({
 }: ViteConfigOptions): Promise<ViteUserConfig> => {
   return {
     optimizeDeps: {
-      include: ['preact', 'preact-iso'],
+      exclude: ['wilson/virtual'],
     },
     clearScreen: false,
     plugins: [
-      {
-        name: 'vite-plugin-wilson-entry',
-        resolveId(id: string) {
-          return id === '/@wilson/client.js' ? id : undefined
-        },
-        load(id: string) {
-          if (id === '/@wilson/client.js') {
-            return `import "wilson/dist/client/main.js";`
-          }
-        },
-      },
       await indexHtmlPlugin(),
       await markdownPlugin(),
       await pagesPlugin(),
