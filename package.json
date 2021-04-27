@@ -10,11 +10,11 @@
   ],
   "scripts": {
     "docs:build": "yarn workspace @wilson/docs build",
-    "docs:dev": "yarn workspace @wilson/docs dev",
+    "docs:start": "yarn workspace @wilson/docs start",
     "docs:serve": "yarn workspace @wilson/docs serve",
     "wilson:build": "yarn workspace wilson build",
-    "wilson:dev": "yarn workspace wilson build",
-    "dev": "run-s wilson:dev docs:dev",
+    "wilson:start": "yarn workspace wilson build",
+    "start": "run-s wilson:start docs:start",
     "build": "run-s wilson:build docs:build docs:serve"
   },
   "engines": {
