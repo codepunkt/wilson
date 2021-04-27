@@ -1,5 +1,5 @@
 [build]
-  base = "website/"
+  base = "docs/"
   publish = "dist/"
   command = "npm run build"
   environment = { NODE_ENV = "production", NODE_VERSION = "14" }

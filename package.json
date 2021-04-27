@@ -5,17 +5,17 @@
   "private": true,
   "author": "Christoph Werner <christoph@codepunkt.de>",
   "workspaces": [
-    "website",
+    "docs",
     "packages/*"
   ],
   "scripts": {
-    "site:build": "yarn workspace @wilson/website build",
-    "site:start": "yarn workspace @wilson/website start",
-    "site:serve": "yarn workspace @wilson/website serve",
+    "docs:build": "yarn workspace @wilson/docs build",
+    "docs:dev": "yarn workspace @wilson/docs dev",
+    "docs:serve": "yarn workspace @wilson/docs serve",
     "wilson:build": "yarn workspace wilson build",
-    "wilson:start": "yarn workspace wilson build",
-    "start": "run-s wilson:start site:start",
-    "build": "run-s wilson:build site:build site:serve"
+    "wilson:dev": "yarn workspace wilson build",
+    "dev": "run-s wilson:dev docs:dev",
+    "build": "run-s wilson:build docs:build docs:serve"
   },
   "engines": {
     "node": "^14.16.0",
