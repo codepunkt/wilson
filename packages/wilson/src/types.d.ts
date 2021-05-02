@@ -32,7 +32,7 @@ export interface FrontmatterOptional {
   date?: string | Date
   permalink?: string
   layout?: string
-  ogType?: string
+  opengraphType?: string
   multiple?: 'tags'
   inject?: {
     pages: {
@@ -50,6 +50,7 @@ export interface FrontmatterDefaults {
   tags: string[]
   draft: boolean
   date: string | Date
+  opengraphType: string
 }
 
 export type Frontmatter = FrontmatterOptional & FrontmatterRequired
@@ -96,7 +97,7 @@ export type PageLayouts = Array<{
 }>
 
 export interface OpengraphImageText {
-  text: (frontmatter?: Frontmatter) => string
+  text: (title: string, date: Date, tags: string[]) => string
   font: string
   fontSize?: number
   color?: string
@@ -118,17 +119,18 @@ export interface UserConfig {
 export interface PageFile {
   public route: string
   public path: string
-  public frontmatter: Frontmatter
+  public title: string
+  public tags: string[]
+  public draft: boolean
+  public date: Date
 }
 
 export interface ComponentProps {
   title: string
+  date: number // timestamp
+  tags: string[]
+  tableOfContents: Heading[]
   inject: {
     pages?: PageFile[]
   }
-}
-
-export interface LayoutProps {
-  frontmatter: Frontmatter
-  toc: Heading[]
 }

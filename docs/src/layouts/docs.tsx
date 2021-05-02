@@ -58,14 +58,15 @@ const MenuItem: FunctionalComponent<{
 
 const DocsLayout: FunctionalComponent<LayoutProps> = ({
   children,
-  frontmatter,
-  toc,
+  title,
+  tags,
+  tableOfContents,
 }) => {
   const [activeSection, setActiveSection] = useState<string | null>(null)
   useEffect(() => {
     const headlines = Array.from(document.querySelectorAll('main h2, main h3'))
-    let previousRatio: Record<string, number> = {}
-    let previousY: Record<string, number> = {}
+    const previousRatio: Record<string, number> = {}
+    const previousY: Record<string, number> = {}
     const handleIntersect = (entries: IntersectionObserverEntry[]): void => {
       entries.forEach(
         ({ intersectionRatio, boundingClientRect: { y }, target }) => {
@@ -100,33 +101,33 @@ const DocsLayout: FunctionalComponent<LayoutProps> = ({
           <p className={classes.headline}>Documentation</p>
           <ol className={`${classes.links} ${classes.toplevel}`}>
             <ActiveSectionContext.Provider value={activeSection}>
-              <MenuItem toc={toc} href="/docs/why/">
+              <MenuItem toc={tableOfContents} href="/docs/why/">
                 Why Wilson?
               </MenuItem>
-              <MenuItem toc={toc} href="/docs/glossary/">
+              <MenuItem toc={tableOfContents} href="/docs/glossary/">
                 Glossary
               </MenuItem>
-              <MenuItem toc={toc} href="/docs/">
+              <MenuItem toc={tableOfContents} href="/docs/">
                 Getting started
               </MenuItem>
-              <MenuItem toc={toc} href="/docs/features/">
+              <MenuItem toc={tableOfContents} href="/docs/features/">
                 Features
               </MenuItem>
-              <MenuItem toc={toc} href="/docs/deploy/">
+              <MenuItem toc={tableOfContents} href="/docs/deploy/">
                 Deploying
               </MenuItem>
-              <MenuItem toc={toc} href="/docs/comparison/">
+              <MenuItem toc={tableOfContents} href="/docs/comparison/">
                 Comparison
               </MenuItem>
             </ActiveSectionContext.Provider>
           </ol>
         </aside>
         <article className={classes.markdown}>
-          <h1>{frontmatter.title}</h1>
+          <h1>{title}</h1>
           <h2>Tags</h2>
           <ul>
-            {frontmatter.tags.map((tag: string) => (
-              <li>
+            {tags.map((tag: string) => (
+              <li key={tag}>
                 <a href={`/tag/${tag}/`}>{tag}</a>
               </li>
             ))}

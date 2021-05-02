@@ -56,6 +56,7 @@ const defaultFrontmatter: FrontmatterDefaults = {
   draft: false,
   date: 'Created',
   tags: [],
+  opengraphType: 'website',
 }
 
 type PageSourceType = 'markdown' | 'typescript'
@@ -199,17 +200,20 @@ class PageSource {
       const tags = getTags()
 
       this.pageFiles = tags.map((tag) => {
-        return new PageFile(
-          {
-            ...this.frontmatter,
-            permalink: this.frontmatter.permalink!.replace(/\{\{tag\}\}/, tag),
-            title: this.frontmatter.title.replace(/\{\{tag\}\}/, tag),
-          },
-          this.path
-        )
+        return new PageFile(this, {
+          '{{tag}}': tag,
+        })
+        // return new PageFile(
+        //   {
+        //     ...this.frontmatter,
+        //     permalink: this.frontmatter.permalink!.replace(/\{\{tag\}\}/, tag),
+        //     title: this.frontmatter.title.replace(/\{\{tag\}\}/, tag),
+        //   },
+        //   this.path
+        // )
       })
     } else {
-      this.pageFiles = [new PageFile(this.frontmatter, this.path)]
+      this.pageFiles = [new PageFile(this)]
     }
   }
 

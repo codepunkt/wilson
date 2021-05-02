@@ -11,8 +11,8 @@ export const Page: FunctionalComponent<ComponentProps> = ({
       <ul>
         {pages &&
           pages.map((page) => (
-            <li key={page.frontmatter.title}>
-              <a href={page.route}>{page.frontmatter.title}</a>
+            <li key={page.title}>
+              <a href={page.route}>{page.title}</a>
             </li>
           ))}
       </ul>

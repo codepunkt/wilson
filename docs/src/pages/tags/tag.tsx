@@ -10,8 +10,8 @@ export const Page: FunctionalComponent<ComponentProps> = ({
       <h1>{title}</h1>
       <ul>
         {pages.map((page) => (
-          <li key={page.frontmatter.title}>
-            <a href={page.route}>{page.frontmatter.title}</a>
+          <li key={page.title}>
+            <a href={page.route}>{page.title}</a>
           </li>
         ))}
       </ul>

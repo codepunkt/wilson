@@ -74,7 +74,7 @@ export async function createOpengraphImages(): Promise<void> {
           const buffer = wlt.render(
             new wlt.Text(
               typeof text === 'function'
-                ? text(page.frontmatter ?? undefined)
+                ? text(page.title, page.date, page.tags)
                 : text,
               fontSize,
               new wlt.RgbColor(...hexToRgb(color)),

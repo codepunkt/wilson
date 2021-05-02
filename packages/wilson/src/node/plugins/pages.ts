@@ -65,28 +65,32 @@ const pagesPlugin = async (): Promise<Plugin> => {
       /**
        * @todo validate that frontmatter.inject must be type = 'typescript'
        */
-      if (page.frontmatter.inject) {
-        const tags = page.frontmatter.inject.pages.tags
+      if (pageSource.frontmatter.inject) {
+        const tags = pageSource.frontmatter.inject.pages.tags
         const pages = []
         for (const tag of tags) {
           pages.push(
-            ...getPagefiles().filter((page) =>
-              page.frontmatter.tags.includes(tag)
-            )
+            ...getPagefiles().filter((page) => page.tags.includes(tag))
           )
         }
         inject.pages = pages
       }
 
-      const frontmatterString = JSON.stringify(page.frontmatter)
-
-      const ogType = page.frontmatter.ogType ?? 'website'
       const layoutImport = pageLayout
         ? `import Layout from '${relative(
             dirname(id),
             toRoot(`./src/layouts/${pageLayout}`)
           )}';`
         : `import { Fragment as Layout } from 'preact';`
+
+      const componentProps = `
+        title="${page.title}"
+        date={${+page.date}}
+        tags={${JSON.stringify(page.tags)}}
+        tableOfContents={${JSON.stringify(
+          cache.markdown.toc.get(pageSource.fullPath)
+        )}}
+      `
 
       const wrapper = `
         import { h } from 'preact';
@@ -97,26 +101,26 @@ const pagesPlugin = async (): Promise<Plugin> => {
 
         export default function PageWrapper() {
           const pageUrl = siteData.siteUrl + '${page.route}';
-          const title = '${page.frontmatter.title}';
+          const title = '${page.title}';
 
           useMeta({ property: 'og:url', content: pageUrl });
           useMeta({ property: 'og:image', content: pageUrl + 'og-image.jpg' });
           useMeta({ property: 'og:image:secure_url', content: pageUrl + 'og-image.jpg' });
           useMeta({ property: 'og:title', content: title });
-          useMeta({ property: 'og:type', content: '${ogType}' });
+          useMeta({ property: 'og:type', content: '${
+            pageSource.frontmatter.opengraphType
+          }' });
           useMeta({ property: 'twitter:title', content: title });
           useTitle(title);
 
-          return <Layout
-            frontmatter={${frontmatterString}}
-            toc={${JSON.stringify(cache.markdown.toc.get(pageSource.fullPath))}}
-          >
+          return <Layout ${componentProps}>
             <Page
-              title="${page.frontmatter.title}"
+              ${componentProps}
               inject={${JSON.stringify(inject)}}
             />
           </Layout>;
-        }`
+        }
+      `
 
       return {
         code: transformJsx(wrapper),
