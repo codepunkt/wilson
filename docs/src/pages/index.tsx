@@ -1,10 +1,10 @@
-import { Frontmatter } from 'wilson'
+import { ComponentProps, Frontmatter } from 'wilson'
 import { FunctionalComponent } from 'preact'
 import classes from './index.module.scss'
 import logoSrc from '../assets/wilson.svg'
 import InstallButton from '../components/install-button'
 
-export const Page: FunctionalComponent = () => {
+export const Page: FunctionalComponent<ComponentProps> = () => {
   return (
     <>
       <div className={classes.hero}>

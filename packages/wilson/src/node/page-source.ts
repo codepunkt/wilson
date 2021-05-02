@@ -1,5 +1,9 @@
 import { extname } from 'path'
-import { Frontmatter } from '../types'
+import {
+  Frontmatter,
+  FrontmatterDefaults,
+  FrontmatterWithDefaults,
+} from '../types'
 import grayMatter from 'gray-matter'
 import { readFileSync } from 'fs-extra'
 import { transpileModule, ModuleKind, JsxEmit } from 'typescript'
@@ -48,7 +52,7 @@ const assetUrlPrefix = '_assetUrl_'
 /**
  * Default values for optional properties in frontmatter.
  */
-const defaultFrontmatter: Partial<Frontmatter> = {
+const defaultFrontmatter: FrontmatterDefaults = {
   draft: false,
   date: 'Created',
   tags: [],
@@ -102,7 +106,7 @@ class PageSource {
   /**
    * The frontmatter, parsed from page source.
    */
-  public frontmatter: Frontmatter
+  public frontmatter: FrontmatterWithDefaults
 
   constructor(path: string, fullPath: string) {
     this.path = path
@@ -194,20 +198,16 @@ class PageSource {
     if (this.frontmatter.multiple === 'tags') {
       const tags = getTags()
 
-      this.pageFiles = tags.map(
-        (tag) =>
-          new PageFile(
-            {
-              ...this.frontmatter,
-              permalink: this.frontmatter.permalink!.replace(
-                /\{\{tag\}\}/,
-                tag
-              ),
-              title: this.frontmatter.title.replace(/\{\{tag\}\}/, tag),
-            },
-            this.path
-          )
-      )
+      this.pageFiles = tags.map((tag) => {
+        return new PageFile(
+          {
+            ...this.frontmatter,
+            permalink: this.frontmatter.permalink!.replace(/\{\{tag\}\}/, tag),
+            title: this.frontmatter.title.replace(/\{\{tag\}\}/, tag),
+          },
+          this.path
+        )
+      })
     } else {
       this.pageFiles = [new PageFile(this.frontmatter, this.path)]
     }
@@ -231,7 +231,7 @@ class PageSource {
   /**
    *
    */
-  private parseFrontmatter(): Frontmatter {
+  private parseFrontmatter(): FrontmatterWithDefaults {
     let frontmatter: Partial<Frontmatter>
     if (this.type === 'markdown') {
       frontmatter = this.parseMarkdownFrontmatter()
@@ -244,7 +244,7 @@ class PageSource {
     if (frontmatter.title === undefined)
       throw new Error(`frontmatter has no title: ${this.path}!`)
 
-    return { ...defaultFrontmatter, ...frontmatter } as Frontmatter
+    return { ...defaultFrontmatter, ...frontmatter } as FrontmatterWithDefaults
   }
 
   /**

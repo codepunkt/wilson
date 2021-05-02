@@ -27,7 +27,7 @@
     "url": "https://github.com/codepunkt/wilson/issues"
   },
   "scripts": {
-    "build": "rm -rf ./dist && run-p \"build:*\"",
+    "build": "rm -rf ./dist && run-p \"build:*\" && cp ./src/types.d.ts ./dist/types.d.ts",
     "build:node": "tsc -p src/node",
     "build:client": "tsc -p src/client",
     "start": "rm -rf ./dist && run-p \"start:*\"",

@@ -1,6 +1,7 @@
 import { basename, extname } from 'path'
 import readdirp from 'readdirp'
 import { pageTypes } from './constants'
+import PageFile from './page-file'
 import PageSource from './page-source'
 
 /**
@@ -17,7 +18,7 @@ const state: State = {
 /**
  *
  */
-const readPagesources = async (pageDir: string): Promise<void> => {
+const initializePagesources = async (pageDir: string): Promise<void> => {
   for await (const { path, fullPath } of readdirp(pageDir)) {
     const extension = extname(basename(path))
     if (!Object.values(pageTypes).flat().includes(extension)) continue
@@ -40,5 +41,18 @@ const getTags = (): string[] => {
   ]
 }
 
-export default state
-export { getTags, readPagesources }
+/**
+ *
+ */
+const getPageSources = (): PageSource[] => {
+  return state.pageSources
+}
+
+/**
+ *
+ */
+const getPagefiles = (): PageFile[] => {
+  return state.pageSources.map((pageSource) => pageSource.pageFiles).flat()
+}
+
+export { getTags, getPageSources, getPagefiles, initializePagesources }

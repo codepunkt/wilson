@@ -5,7 +5,6 @@ import virtualPlugin from './plugins/virtual'
 import pagesPlugin from './plugins/pages'
 import indexHtmlPlugin from './plugins/indexHtml'
 import { join } from 'path'
-import { collectPageData } from './page'
 
 interface ViteConfigOptions {
   ssr?: boolean
@@ -50,7 +49,7 @@ export const getViteConfig = async ({
           ? join(__dirname, '../client/ssr/serverRender.js')
           : 'index.html',
       },
-      manifest: ssr ? false : true,
+      manifest: !ssr,
       minify: ssr ? false : !process.env.DEBUG,
     },
     esbuild: {

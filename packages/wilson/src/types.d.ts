@@ -1,3 +1,9 @@
+/**
+ * No imports here, just type definitions.
+ *
+ * If we choose to import types from node or client directory, build
+ * folder structure gets screwed up.
+ */
 export interface SiteData {
   lang?: string
   titleTemplate: string
@@ -20,23 +26,34 @@ export interface Pagination {
   size: number
 }
 
-export interface Frontmatter {
-  title: string
-  tags: string[]
-  draft: boolean
+export interface FrontmatterOptional {
+  tags?: string[]
+  draft?: boolean
   date?: string | Date
   permalink?: string
+  layout?: string
+  ogType?: string
   multiple?: 'tags'
   inject?: {
     pages: {
-      collections: string[]
+      tags: string[]
       pagination?: Pagination
     }
   }
-  layout?: string
-  ogType?: string
-  [key: string]: any
 }
+
+export interface FrontmatterRequired {
+  title: string
+}
+
+export interface FrontmatterDefaults {
+  tags: string[]
+  draft: boolean
+  date: string | Date
+}
+
+export type Frontmatter = FrontmatterOptional & FrontmatterRequired
+export type FrontmatterWithDefaults = Frontmatter & FrontmatterDefaults
 
 /**
  * Page-related information, used internally.
@@ -73,11 +90,6 @@ export interface Heading {
   slug: string
 }
 
-export interface LayoutProps {
-  frontmatter: Frontmatter
-  toc: Heading[]
-}
-
 export type PageLayouts = Array<{
   component: string
   pattern?: string
@@ -101,4 +113,22 @@ export interface UserConfig {
   opengraphImage?: { background: string; texts: OpengraphImageText[] }
   pageLayouts?: { layout: string; pattern?: string }[]
   linkPreloadTest: (route: string) => boolean
+}
+
+export interface PageFile {
+  public route: string
+  public path: string
+  public frontmatter: Frontmatter
+}
+
+export interface ComponentProps {
+  title: string
+  inject: {
+    pages?: PageFile[]
+  }
+}
+
+export interface LayoutProps {
+  frontmatter: Frontmatter
+  toc: Heading[]
 }

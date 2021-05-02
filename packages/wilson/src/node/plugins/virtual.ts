@@ -2,7 +2,7 @@ import { Plugin } from 'vite'
 import { LoadResult, ResolveIdResult } from 'rollup'
 import { transformJsx } from '../util'
 import { resolveSiteData } from '../config'
-import state from '../state'
+import { getPagefiles, getPageSources } from '../state'
 
 const virtualExportsPath = 'wilson/virtual'
 const clientEntryPath = '/@wilson/client.js'
@@ -32,10 +32,8 @@ const virtualPlugin = async (): Promise<Plugin> => {
       }
 
       if (id === virtualExportsPath) {
-        const pageSources = state.pageSources
-        const pageFiles = pageSources
-          .map((pageSource) => pageSource.pageFiles)
-          .flat()
+        const pageSources = getPageSources()
+        const pageFiles = getPagefiles()
 
         const lazyPageImports = pageSources
           .map((pageSource, i) =>

@@ -1,12 +1,12 @@
 import { extname } from 'path'
-import { Frontmatter } from '../types'
+import { FrontmatterWithDefaults, PageFile as PageFileType } from '../types'
 
-class PageFile {
+class PageFile implements PageFileType {
   public route: string
   public path: string
-  public frontmatter: Frontmatter
+  public frontmatter: FrontmatterWithDefaults
 
-  constructor(frontmatter: Frontmatter, sourcePath: string) {
+  constructor(frontmatter: FrontmatterWithDefaults, sourcePath: string) {
     this.frontmatter = frontmatter
     this.route = this.getRoute(sourcePath)
     this.path = this.getPath()

@@ -5,8 +5,8 @@ import { toRoot, transformJsx } from '../util'
 import minimatch from 'minimatch'
 import { resolveUserConfig } from '../config'
 import cache from '../cache'
-import state from '../state'
-import { ClientPage } from '../../types'
+import PageFile from '../page-file'
+import { getPagefiles, getPageSources } from '../state'
 
 const virtualPageRegex = /^@wilson\/page-source\/(\d+)\/page\/(\d+)/
 
@@ -38,7 +38,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
       if (match === null) return
 
       const pageSourceIndex = parseInt(match[1], 10)
-      const pageSource = state.pageSources[pageSourceIndex]
+      const pageSource = getPageSources()[pageSourceIndex]
       const pageIndex = parseInt(match[2], 10)
       const page = pageSource.pageFiles[pageIndex]
 
@@ -60,25 +60,22 @@ const pagesPlugin = async (): Promise<Plugin> => {
               )
             )?.layout
 
-      const inject: { pages?: ClientPage[] } = {}
-      const hasInject =
-        pageSource.type === 'typescript' &&
-        page.frontmatter.inject !== undefined
+      const inject: { pages?: PageFile[] } = {}
 
-      if (hasInject) {
-        const collections = page.frontmatter.inject!.pages.collections
+      /**
+       * @todo validate that frontmatter.inject must be type = 'typescript'
+       */
+      if (page.frontmatter.inject) {
+        const tags = page.frontmatter.inject.pages.tags
         const pages = []
-        for (const collection of collections) {
+        for (const tag of tags) {
           pages.push(
-            ...state.pageSources.filter((pageSource) =>
-              pageSource.frontmatter.tags.includes(collection)
+            ...getPagefiles().filter((page) =>
+              page.frontmatter.tags.includes(tag)
             )
           )
         }
-        inject.pages = []
-        // inject.pages = pages
-        //   .map(pageToClientPage)
-        //   .sort((a, b) => b.date.getTime() - a.date.getTime())
+        inject.pages = pages
       }
 
       const frontmatterString = JSON.stringify(page.frontmatter)
