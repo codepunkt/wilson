@@ -1,14 +1,15 @@
-import { Heading, Page } from '../types'
+import { Heading } from '../types'
 
+/**
+ * @todo move cache to state, get rid of this!
+ */
 interface PluginCache {
-  pages: Page[]
   markdown: {
     toc: Map<string, Heading[]>
   }
 }
 
 const cache: PluginCache = {
-  pages: [],
   markdown: {
     toc: new Map(),
   },

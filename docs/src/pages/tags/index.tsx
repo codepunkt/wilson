@@ -1,30 +1,26 @@
 import { FunctionalComponent } from 'preact'
-import { ComponentProps, Frontmatter } from 'wilson'
+import { TermPageProps, Frontmatter } from 'wilson'
 
-export const Page: FunctionalComponent<ComponentProps> = ({
+export const Page: FunctionalComponent<TermPageProps> = ({
   title,
-  inject: { pages },
+  taxonomyTerms,
 }) => {
   return (
     <>
       <h1>{title}</h1>
       <ul>
-        {pages &&
-          pages.map((page) => (
-            <li key={page.title}>
-              <a href={page.route}>{page.title}</a>
-            </li>
-          ))}
+        {taxonomyTerms.map((term) => (
+          <li key={term}>
+            <a href={`/tags/${term}/`}>{term}</a>
+          </li>
+        ))}
       </ul>
     </>
   )
 }
 
 export const frontmatter: Partial<Frontmatter> = {
-  title: 'Tag cloud',
-  inject: {
-    pages: {
-      tags: ['posttax'],
-    },
-  },
+  title: 'Tagcloud',
+  kind: 'term',
+  taxonomyName: 'tags',
 }

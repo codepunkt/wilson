@@ -1,8 +1,9 @@
 ---
 title: Glossary
 date: Last modified
-tags:
-  - docs
+taxonomies:
+  tags:
+    - docs
 ---
 
 wat

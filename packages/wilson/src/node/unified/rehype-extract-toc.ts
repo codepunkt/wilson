@@ -4,7 +4,7 @@ import cache from '../cache'
 import { Heading } from '../../types'
 
 export function findHeadings(node: Node): Heading[] {
-  let headingNodes: Heading[] = []
+  const headingNodes: Heading[] = []
   findHeadingsRecursive(node, headingNodes)
   return headingNodes
 }
@@ -23,8 +23,8 @@ function findHeadingsRecursive(node: Node, headingNodes: Heading[]): void {
     }
   }
   if (node.children) {
-    let parent = node as Parent
-    for (let child of parent.children) {
+    const parent = node as Parent
+    for (const child of parent.children) {
       findHeadingsRecursive(child, headingNodes)
     }
   }
@@ -36,7 +36,7 @@ const toString: (heading: Heading) => string = (h) =>
 const validateHeadings: (headings: Heading[]) => string | void = (headings) => {
   const lowestLevel = Math.min(...headings.map((h) => h.level))
   let previous: Heading | null = null
-  for (let i in headings) {
+  for (const i in headings) {
     const current = headings[i]
     if (!previous && current.level > lowestLevel) {
       return `Starts with wrong heading: Page includes <h${lowestLevel}>, but starts with ${toString(
@@ -64,7 +64,7 @@ interface Options {
 const rehypeExtractToc: (
   options: Options
 ) => (tree: Node, file: VFile) => void = ({ moduleId }) => {
-  return (tree: Node, file: VFile) => {
+  return (tree: Node) => {
     const headings = findHeadings(tree)
     const message = validateHeadings(headings)
     if (message) throw new Error(message)

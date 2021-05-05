@@ -2,6 +2,8 @@ export {
   Frontmatter,
   Page,
   SiteData,
-  UserConfig,
-  ComponentProps,
+  SiteConfig,
+  PageProps,
+  TaxonomyPageProps,
+  TermPageProps,
 } from '../types'

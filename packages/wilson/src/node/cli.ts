@@ -5,11 +5,12 @@ import { startDevServer } from './scripts/dev'
 import { build } from './scripts/build'
 import { serve } from './scripts/serve'
 
-const argv: any = minimist(process.argv.slice(2))
+const argv = minimist(process.argv.slice(2))
 
 console.info(
   boxen(
     `You are running ${chalk.cyan(
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       `wilson ${require('wilson/package.json').version}`
     )}`,
     {

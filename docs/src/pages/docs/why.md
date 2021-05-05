@@ -1,7 +1,8 @@
 ---
 title: Why Wilson?
-tags:
-  - docs
+taxonomies:
+  tags:
+    - docs
 ---
 
 wat

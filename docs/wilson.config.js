@@ -1,5 +1,5 @@
 /**
- * @type { import('wilson').UserConfig }
+ * @type { import('wilson').SiteConfig }
  */
 module.exports = {
   siteData: {

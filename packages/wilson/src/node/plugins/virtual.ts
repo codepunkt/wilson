@@ -1,7 +1,7 @@
 import { Plugin } from 'vite'
 import { LoadResult, ResolveIdResult } from 'rollup'
 import { transformJsx } from '../util'
-import { resolveSiteData } from '../config'
+import { getConfig } from '../config'
 import { getPagefiles, getPageSources } from '../state'
 
 const virtualExportsPath = 'wilson/virtual'
@@ -71,7 +71,7 @@ const virtualPlugin = async (): Promise<Plugin> => {
             </PageContext.Provider>
           );
           const usePages = () => useContext(PageContext);
-          const siteData = ${JSON.stringify(await resolveSiteData())};
+          const siteData = ${JSON.stringify((await getConfig()).siteData)};
           
           export { routes, siteData, PageProvider, usePages };
         `

@@ -16,10 +16,9 @@ import {
   Identifier,
 } from 'estree'
 import { generate } from 'astring'
-import { objectSourceToObject } from './eval'
 import PageFile from './page-file'
-import { pageTypes } from './constants'
-import { getTags } from './state'
+import { pageFileTypes } from './constants'
+import { getTaxonomyTerms } from './state'
 import rehypeSlug from 'rehype-slug'
 import remarkParse from 'remark-parse'
 import remarkToRehype from 'remark-rehype'
@@ -31,6 +30,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import remarkRelativeAssets from './unified/remark-relative-assets'
 import rehypeExtractToc from './unified/rehype-extract-toc'
 import { transformJsx } from './util'
+import { getConfig } from './config'
 
 /**
  * Defines attributes on HTML/SVG elements that should be considered when
@@ -55,11 +55,12 @@ const assetUrlPrefix = '_assetUrl_'
 const defaultFrontmatter: FrontmatterDefaults = {
   draft: false,
   date: 'Created',
-  tags: [],
   opengraphType: 'website',
+  kind: 'page',
+  taxonomies: {},
 }
 
-type PageSourceType = 'markdown' | 'typescript'
+type FileType = 'markdown' | 'typescript'
 
 /**
  * Represence a page source file in `pages` directory.
@@ -91,16 +92,15 @@ class PageSource {
   public status: 'constructed' | 'initialized'
 
   /**
-   * The type of page source.
+   * The file type of page source.
    */
-  public type: PageSourceType
+  public fileType: FileType
 
   /**
    * Array of page files created from page source.
    *
-   * In most cases, one page source will lead to one page file.
-   * If the page source has `multiple` in frontmatter, it is
-   * possible that multiple page files are created.
+   * Depending on page source frontmatter `kind`, this can be one or more
+   * pages.
    */
   public pageFiles: PageFile[] = []
 
@@ -112,7 +112,7 @@ class PageSource {
   constructor(path: string, fullPath: string) {
     this.path = path
     this.fullPath = fullPath
-    this.type = this.getType()
+    this.fileType = this.getType()
     this.originalSource = readFileSync(this.fullPath, 'utf-8')
     this.frontmatter = this.parseFrontmatter()
     this.transformedSource = null
@@ -131,7 +131,7 @@ class PageSource {
    *
    */
   private async transformSource(): Promise<string | null> {
-    switch (this.type) {
+    switch (this.fileType) {
       case 'typescript':
         return null
       case 'markdown':
@@ -193,39 +193,45 @@ class PageSource {
   }
 
   /**
+   * Creates pages created from the page source.
    *
+   * For page source kind `page`, this creates a single page.
+   * For page source kind `taxonomy`, it creates:
+   * - a single page (if frontmatter.taxonomyTerms is set)
+   * - one page for each taxonomy term (if frontmatter.taxonomyTerms is not set)
    */
-  public setPageFiles(): void {
-    if (this.frontmatter.multiple === 'tags') {
-      const tags = getTags()
-
-      this.pageFiles = tags.map((tag) => {
-        return new PageFile(this, {
-          '{{tag}}': tag,
-        })
-        // return new PageFile(
-        //   {
-        //     ...this.frontmatter,
-        //     permalink: this.frontmatter.permalink!.replace(/\{\{tag\}\}/, tag),
-        //     title: this.frontmatter.title.replace(/\{\{tag\}\}/, tag),
-        //   },
-        //   this.path
-        // )
-      })
-    } else {
+  public async setPageFiles(): Promise<void> {
+    if (
+      this.frontmatter.kind === 'page' ||
+      this.frontmatter.kind === 'term' ||
+      (this.frontmatter.kind === 'taxonomy' &&
+        Array.isArray(this.frontmatter.taxonomyTerms))
+    ) {
       this.pageFiles = [new PageFile(this)]
+    } else if (this.frontmatter.kind === 'taxonomy') {
+      // eslint-disable-next-line
+      const taxonomyName = this.frontmatter.taxonomyName!
+      const terms = await getTaxonomyTerms(taxonomyName)
+      const config = await getConfig()
+
+      this.pageFiles = terms.map((term) => {
+        return new PageFile(this, {
+          placeholder: config.taxonomies[taxonomyName],
+          value: term,
+        })
+      })
     }
   }
 
   /**
    * Returns the type (e.g. `markdown`) of the page source.
    */
-  private getType(): PageSourceType {
+  private getType(): FileType {
     const moduleExtension = extname(this.fullPath)
 
-    for (const pageType in pageTypes) {
-      if (pageTypes[pageType].includes(moduleExtension)) {
-        return pageType as PageSourceType
+    for (const pageFileType in pageFileTypes) {
+      if (pageFileTypes[pageFileType].includes(moduleExtension)) {
+        return pageFileType as FileType
       }
     }
 
@@ -237,7 +243,7 @@ class PageSource {
    */
   private parseFrontmatter(): FrontmatterWithDefaults {
     let frontmatter: Partial<Frontmatter>
-    if (this.type === 'markdown') {
+    if (this.fileType === 'markdown') {
       frontmatter = this.parseMarkdownFrontmatter()
     } else {
       frontmatter = this.parseTypescriptFrontmatter()
@@ -311,7 +317,9 @@ class PageSource {
       ? generate(frontmatterNode, { indent: '', lineEnd: '' })
       : '{}'
 
-    return { ...objectSourceToObject(objSource) } as Partial<Frontmatter>
+    return {
+      ...eval(`const obj=()=>(${objSource});obj`)(),
+    } as Frontmatter
   }
 
   /**

@@ -7,12 +7,13 @@ const NotFound: FunctionalComponent = () => <>Not Found</>
 
 const App: FunctionalComponent = () => {
   useTitleTemplate(siteData.titleTemplate)
+
   return (
     <PageProvider>
       <LocationProvider>
         <div>
           <ErrorBoundary>
-            <Router>{[...routes, <NotFound default />]}</Router>
+            <Router>{[...routes, <NotFound key="notFound" default />]}</Router>
           </ErrorBoundary>
         </div>
       </LocationProvider>

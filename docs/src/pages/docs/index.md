@@ -1,7 +1,8 @@
 ---
 title: Getting started
-tags:
-  - docs
+taxonomies:
+  tags:
+    - docs
 ---
 
 ## Lorem Ipsum

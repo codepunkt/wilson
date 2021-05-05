@@ -26,7 +26,9 @@ const remarkRelativeAssets: (
     function visitor(node: Element) {
       const attributes = assetUrlTagConfig[node.tagName]
       if (!attributes) return
-      const properties = node.properties!
+      if (node.properties === undefined) return
+
+      const properties = node.properties
 
       attributes.forEach((attribute) => {
         if (typeof properties[attribute] !== 'string') return

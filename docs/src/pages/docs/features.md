@@ -1,7 +1,8 @@
 ---
 title: Features
-tags:
-  - docs
+taxonomies:
+  tags:
+    - docs
 ---
 
 wat

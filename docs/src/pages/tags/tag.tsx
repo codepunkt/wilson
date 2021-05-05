@@ -1,15 +1,15 @@
 import { FunctionalComponent } from 'preact'
-import { ComponentProps, Frontmatter } from 'wilson'
+import { TaxonomyPageProps, Frontmatter } from 'wilson'
 
-export const Page: FunctionalComponent<ComponentProps> = ({
+export const Page: FunctionalComponent<TaxonomyPageProps> = ({
   title,
-  inject: { pages = [] },
+  taxonomyPages,
 }) => {
   return (
     <>
       <h1>{title}</h1>
       <ul>
-        {pages.map((page) => (
+        {taxonomyPages.map((page) => (
           <li key={page.title}>
             <a href={page.route}>{page.title}</a>
           </li>
@@ -19,9 +19,12 @@ export const Page: FunctionalComponent<ComponentProps> = ({
   )
 }
 
+/**
+ * @todo validate that kind: taxonomy pages don't have taxonomies themselves
+ */
 export const frontmatter: Frontmatter = {
-  multiple: 'tags',
+  kind: 'taxonomy',
+  taxonomyName: 'tags',
   title: 'Tag: {{tag}}',
-  permalink: '/tag/{{tag}}/',
-  tags: ['posttax'],
+  permalink: '/tags/{{tag}}/',
 }

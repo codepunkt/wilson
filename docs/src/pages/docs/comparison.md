@@ -1,7 +1,11 @@
 ---
 title: Comparison
-tags:
-  - docs
+taxonomies:
+  tags:
+    - docs
+    - har
+  categories:
+    - writing
 ---
 
 wat

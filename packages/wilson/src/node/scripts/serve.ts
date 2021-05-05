@@ -3,7 +3,7 @@ import os from 'os'
 import chalk from 'chalk'
 import compression from 'compression'
 
-export function serve(port: number = 5000) {
+export function serve(port = 5000): void {
   const server = express()
   server.disable('x-powered-by')
   server.use(compression())

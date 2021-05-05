@@ -1,7 +1,7 @@
 import { HtmlTagDescriptor, Plugin } from 'vite'
 import visit from 'unist-util-visit'
 import is from 'unist-util-is'
-import { resolveUserConfig } from '../config'
+import { getConfig } from '../config'
 import { Node, Element } from 'hast'
 import parse from 'rehype-parse'
 import stringify from 'rehype-stringify'
@@ -23,9 +23,9 @@ const createPropertyMeta = createMetaFactory('property')
  * Transforms index html.
  *
  * - Adds `lang` attribute from siteData, defaulting to 'en'.
- * - Adds `meta` tags that don't change between pages.
+ * - Adds `meta` elements that don't change between pages.
  *
- * Certain meta tags like title, twitter:sitle, og:image, og:url or og:type
+ * Certain meta elements like title, twitter:sitle, og:image, og:url or og:type
  * are page specific and thus handled by pages plugin.
  */
 const indexHtmlPlugin = async (): Promise<Plugin> => {
@@ -44,7 +44,7 @@ const indexHtmlPlugin = async (): Promise<Plugin> => {
           twitterCreator,
           twitterSite,
         },
-      } = await resolveUserConfig()
+      } = await getConfig()
 
       interface Options {
         lang: string
@@ -83,6 +83,7 @@ const indexHtmlPlugin = async (): Promise<Plugin> => {
           // generator meta
           createNameMeta(
             'generator',
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
             `Wilson ${require('wilson/package.json').version}`
           ),
           // fixed metas

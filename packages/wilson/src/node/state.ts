@@ -1,6 +1,7 @@
 import { basename, extname } from 'path'
 import readdirp from 'readdirp'
-import { pageTypes } from './constants'
+import { getConfig } from './config'
+import { pageFileTypes } from './constants'
 import PageFile from './page-file'
 import PageSource from './page-source'
 
@@ -21,22 +22,38 @@ const state: State = {
 const initializePagesources = async (pageDir: string): Promise<void> => {
   for await (const { path, fullPath } of readdirp(pageDir)) {
     const extension = extname(basename(path))
-    if (!Object.values(pageTypes).flat().includes(extension)) continue
+    if (!Object.values(pageFileTypes).flat().includes(extension)) continue
     const pageSource = new PageSource(path, fullPath)
     await pageSource.initialize()
     state.pageSources.push(pageSource)
   }
 
-  state.pageSources.forEach((pageSource) => pageSource.setPageFiles())
+  for (const pageSource of state.pageSources) {
+    await pageSource.setPageFiles()
+  }
 }
 
 /**
- * Returns array of all unique page tags.
+ * Returns array of all unique taxonomy terms.
  */
-const getTags = (): string[] => {
+const getTaxonomyTerms = async (taxonomyName: string): Promise<string[]> => {
+  const config = await getConfig()
+
+  if (!(taxonomyName in config.taxonomies)) {
+    const taxonomyNames = Object.keys(config.taxonomies)
+    throw new Error(
+      `Loading terms for taxonomy ${taxonomyName} failed. Available taxonomies: ${taxonomyNames.join(
+        ', '
+      )}`
+    )
+  }
+
   return [
     ...new Set(
-      state.pageSources.map((pageSource) => pageSource.frontmatter.tags).flat()
+      state.pageSources
+        .filter((source) => source.frontmatter.kind === 'page')
+        .map((source) => source.frontmatter.taxonomies[taxonomyName] ?? [])
+        .flat()
     ),
   ]
 }
@@ -55,4 +72,4 @@ const getPagefiles = (): PageFile[] => {
   return state.pageSources.map((pageSource) => pageSource.pageFiles).flat()
 }
 
-export { getTags, getPageSources, getPagefiles, initializePagesources }
+export { getTaxonomyTerms, getPageSources, getPagefiles, initializePagesources }

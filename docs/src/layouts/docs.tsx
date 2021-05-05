@@ -1,4 +1,4 @@
-import { LayoutProps } from 'wilson'
+import { PageProps } from 'wilson'
 import { createContext, FunctionalComponent } from 'preact'
 import classes from './docs.module.scss'
 import Header from '../components/header'
@@ -10,7 +10,7 @@ import '../assets/global.scss'
 const ActiveSectionContext = createContext<string | null>(null)
 
 const Toc: FunctionalComponent<{
-  toc: LayoutProps['toc']
+  toc: PageProps['tableOfContents']
 }> = ({ toc }) => {
   const activeSection = useContext(ActiveSectionContext)
   const baseLevel = toc[0].level
@@ -44,7 +44,7 @@ const Toc: FunctionalComponent<{
 const MenuItem: FunctionalComponent<{
   href: string
   isActive?: boolean
-  toc: LayoutProps['toc']
+  toc: PageProps['tableOfContents']
   showToc?: boolean
 }> = ({ children, href, isActive = false, toc, showToc = false }) => {
   const url = useLocation().url
@@ -56,10 +56,10 @@ const MenuItem: FunctionalComponent<{
   )
 }
 
-const DocsLayout: FunctionalComponent<LayoutProps> = ({
+const DocsLayout: FunctionalComponent<PageProps> = ({
   children,
   title,
-  tags,
+  taxonomies,
   tableOfContents,
 }) => {
   const [activeSection, setActiveSection] = useState<string | null>(null)
@@ -124,14 +124,8 @@ const DocsLayout: FunctionalComponent<LayoutProps> = ({
         </aside>
         <article className={classes.markdown}>
           <h1>{title}</h1>
-          <h2>Tags</h2>
-          <ul>
-            {tags.map((tag: string) => (
-              <li key={tag}>
-                <a href={`/tag/${tag}/`}>{tag}</a>
-              </li>
-            ))}
-          </ul>
+          <h2>Taxonomies</h2>
+          <pre>{JSON.stringify(taxonomies, null, 2)}</pre>
           {children}
         </article>
       </main>

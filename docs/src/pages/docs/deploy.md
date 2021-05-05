@@ -1,7 +1,8 @@
 ---
 title: Deploying
-tags:
-  - docs
+taxonomies:
+  tags:
+    - docs
 ---
 
 wat

@@ -4,10 +4,16 @@ import { readFile, toRoot, readJson, writeFile } from './util'
 import { minify } from 'html-minifier-terser'
 import chalk from 'chalk'
 import size from 'brotli-size'
-import { resolveUserConfig } from './config'
+import { getConfig } from './config'
 import { Dependencies } from '../types'
 import { getPagefiles, getPageSources } from './state'
 
+/**
+ * @todo don't add all preload links to __WILSON_DATA__
+ * instead use only those that the current page links to - this should be
+ * rather easy. what also needs to be done is to update the global
+ * object with additional preloadlinks when loading new page js.
+ */
 type PrerenderFn = (
   route: string
 ) => Promise<{
@@ -53,7 +59,6 @@ export async function prerenderStaticPages(): Promise<void> {
         `wilson v${require('wilson/package.json').version}`
       )} prerendering static pages...`
     )
-    const userConfig = await resolveUserConfig()
     const manifest = await readJson<Manifest>('./dist/manifest.json')
     const template = await readFile('./dist/index.html')
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -138,10 +143,11 @@ export async function prerenderStaticPages(): Promise<void> {
           const targetPage = getPagefiles().find(
             (pageFile) => pageFile.route === path
           )
+          const config = await getConfig()
           if (
             targetPage &&
-            (typeof userConfig.linkPreloadTest !== 'function' ||
-              userConfig.linkPreloadTest(targetPage.route))
+            (typeof config.linkPreloadTest !== 'function' ||
+              config.linkPreloadTest(targetPage.route))
           ) {
             filteredLinkDependencies[path] = linkDependencies[path]
           }
