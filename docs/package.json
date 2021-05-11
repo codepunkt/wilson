@@ -9,10 +9,6 @@
     "build": "rm -rf ./node_modules/.vite && wilson build",
     "serve": "wilson serve"
   },
-  "engines": {
-    "node": "^14.16.0",
-    "yarn": "^1.22.10"
-  },
   "dependencies": {
     "hoofd": "^1.2.2",
     "preact": "^10.5.13",

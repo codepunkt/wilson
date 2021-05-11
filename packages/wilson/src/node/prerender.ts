@@ -6,7 +6,7 @@ import chalk from 'chalk'
 import size from 'brotli-size'
 import { getConfig } from './config'
 import { Dependencies } from '../types'
-import { getPagefiles, getPageSources } from './state'
+import { getPages, getPageSources } from './state'
 
 /**
  * @todo don't add all preload links to __WILSON_DATA__
@@ -71,7 +71,7 @@ export async function prerenderStaticPages(): Promise<void> {
     const linkDependencies: Record<string, Dependencies> = {}
 
     for (const [i, pageSource] of getPageSources().entries()) {
-      for (const [j, page] of pageSource.pageFiles.entries()) {
+      for (const [j, page] of pageSource.pages.entries()) {
         if (page.path.length > longestPath) {
           longestPath = page.path.length
         }
@@ -84,7 +84,7 @@ export async function prerenderStaticPages(): Promise<void> {
         prerenderResult.links.forEach((link) => {
           if (!linkDependencies[link]) {
             for (const [i, pageSource] of getPageSources().entries()) {
-              for (const [j, page] of pageSource.pageFiles.entries()) {
+              for (const [j, page] of pageSource.pages.entries()) {
                 if (page.route === link) {
                   linkDependencies[
                     link
@@ -137,12 +137,10 @@ export async function prerenderStaticPages(): Promise<void> {
     }
 
     for (const pageSource of getPageSources()) {
-      for (const page of pageSource.pageFiles) {
+      for (const page of pageSource.pages) {
         const filteredLinkDependencies: Record<string, Dependencies> = {}
         for (const path in linkDependencies) {
-          const targetPage = getPagefiles().find(
-            (pageFile) => pageFile.route === path
-          )
+          const targetPage = getPages().find((p) => p.route === path)
           const config = await getConfig()
           if (
             targetPage &&
@@ -175,7 +173,7 @@ export async function prerenderStaticPages(): Promise<void> {
       }
     }
 
-    console.info(`${chalk.green('✓')} ${getPagefiles().length} pages rendered.`)
+    console.info(`${chalk.green('✓')} ${getPages().length} pages rendered.`)
     for (const page of Object.keys(sources)) {
       console.info(
         `${chalk.grey(chalk.white.dim('dist/'))}${chalk.green(

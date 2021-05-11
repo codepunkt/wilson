@@ -1,9 +1,9 @@
 import { UserConfig as ViteUserConfig } from 'vite'
 import prefresh from '@prefresh/vite'
-import markdownPlugin from './plugins/markdown'
-import virtualPlugin from './plugins/virtual'
-import pagesPlugin from './plugins/pages'
-import indexHtmlPlugin from './plugins/indexHtml'
+import markdownPlugin from './plugins/markdown-plugin'
+import virtualPlugin from './plugins/virtual-plugin'
+import pagesPlugin from './plugins/pages-plugin'
+import indexHtmlPlugin from './plugins/index-html-plugin'
 import { join } from 'path'
 
 interface ViteConfigOptions {

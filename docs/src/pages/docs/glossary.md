@@ -1,9 +1,11 @@
 ---
 title: Glossary
-date: Last modified
+date: Modified at
 taxonomies:
   tags:
     - docs
+  categories:
+    - writing
 ---
 
 wat

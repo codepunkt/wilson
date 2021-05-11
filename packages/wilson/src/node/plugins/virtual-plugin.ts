@@ -2,7 +2,7 @@ import { Plugin } from 'vite'
 import { LoadResult, ResolveIdResult } from 'rollup'
 import { transformJsx } from '../util'
 import { getConfig } from '../config'
-import { getPagefiles, getPageSources } from '../state'
+import { getPages, getPageSources } from '../state'
 
 const virtualExportsPath = 'wilson/virtual'
 const clientEntryPath = '/@wilson/client.js'
@@ -33,11 +33,11 @@ const virtualPlugin = async (): Promise<Plugin> => {
 
       if (id === virtualExportsPath) {
         const pageSources = getPageSources()
-        const pageFiles = getPagefiles()
+        const pages = getPages()
 
         const lazyPageImports = pageSources
           .map((pageSource, i) =>
-            pageSource.pageFiles.map((pageFile, j) => {
+            pageSource.pages.map((page, j) => {
               return `const PageSource${i}Page${j} = lazy(() => import('${pageEntryPath(
                 i,
                 j
@@ -49,9 +49,8 @@ const virtualPlugin = async (): Promise<Plugin> => {
 
         const routes = pageSources
           .map((pageSource, i) =>
-            pageSource.pageFiles.map(
-              (pageFile, j) =>
-                `<PageSource${i}Page${j} path="${pageFile.route}" />`
+            pageSource.pages.map(
+              (page, j) => `<PageSource${i}Page${j} path="${page.route}" />`
             )
           )
           .flat()
@@ -66,13 +65,13 @@ const virtualPlugin = async (): Promise<Plugin> => {
           const routes = [${routes}];
           const PageContext = createContext(null);
           const PageProvider = ({ children }) => (
-            <PageContext.Provider value={${JSON.stringify(pageFiles)}}>
+            <PageContext.Provider value={${JSON.stringify(pages)}}>
               {children}
             </PageContext.Provider>
           );
           const usePages = () => useContext(PageContext);
           const siteData = ${JSON.stringify((await getConfig()).siteData)};
-          
+
           export { routes, siteData, PageProvider, usePages };
         `
 

@@ -18,9 +18,9 @@
     "build": "run-s wilson:build docs:build docs:serve"
   },
   "engines": {
-    "node": "^14.16.0",
-    "yarn": "^1.22.10",
-    "npm": "^7.11.1"
+    "node": ">= 14.16.0",
+    "yarn": ">= 1.22.10",
+    "npm": ">= 7.11.1"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"

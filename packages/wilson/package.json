@@ -14,10 +14,6 @@
     "dist/**",
     "virtual.d.ts"
   ],
-  "engines": {
-    "node": "^14.16.0",
-    "yarn": "^1.22.10"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/codepunkt/wilson",
@@ -60,6 +56,7 @@
     "ora": "^5.4.0",
     "preact": "^10.5.13",
     "preact-render-to-string": "^5.1.19",
+    "pretty-error": "^3.0.3",
     "readdirp": "^3.6.0",
     "rehype-autolink-headings": "^5.0.1",
     "rehype-parse": "^7.0.1",

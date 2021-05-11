@@ -3,6 +3,13 @@ import { readFile as fsRead, writeFile as write, ensureDir } from 'fs-extra'
 import { transform } from 'sucrase'
 
 /**
+ * Checks if two arrays have one or more common elements.
+ */
+export const hasCommonElements = (arr1: string[], arr2: string[]): boolean => {
+  return arr1.some((item) => arr2.includes(item))
+}
+
+/**
  * Prefixes a relative path with the project root directory, turning it into
  * an absolute path.
  */

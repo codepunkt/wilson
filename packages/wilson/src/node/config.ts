@@ -8,6 +8,11 @@ import { pathExists } from 'fs-extra'
 
 const configDefaults: SiteConfigDefaults = {
   pageLayouts: [{ pattern: '**/*.md', layout: 'markdown' }],
+  pagination: {
+    size: 10,
+    routeSuffix: (pageNumber: number): string =>
+      pageNumber === 0 ? '' : `/page/${pageNumber}`,
+  },
   taxonomies: {
     categories: 'category',
     tags: 'tag',
@@ -48,6 +53,10 @@ export async function getConfig(
   const config: SiteConfig = require(configPath)
 
   // Cache and return configuration data.
-  cachedConfig = { ...configDefaults, ...config }
+  cachedConfig = {
+    ...configDefaults,
+    ...config,
+    pagination: { ...configDefaults.pagination, ...config.pagination },
+  }
   return cachedConfig
 }

@@ -26,68 +26,83 @@ export interface Dependencies {
   assets?: string[]
 }
 
-export interface Pagination {
-  size: number
-}
-
-/**
- * Optional frontmatter fields.
- */
 interface FrontmatterOptional {
-  draft?: boolean
   date?: string | Date
   permalink?: string
   layout?: string
   opengraphType?: string
-  kind?: 'page' | 'term' | 'taxonomy'
-  taxonomies?: TaxonomyData // optional for 'page' kind
-  taxonomyName?: string // required for 'term' and 'taxonomy' kinds
-  taxonomyTerms?: string[] // optional for 'taxonomy' kind
 }
 
-/**
- * Required frontmatter fields.
- */
 interface FrontmatterRequired {
   title: string
 }
 
-/**
- * Optional frontmatter fields that are set to default values when not defined.
- */
+type TaxonomyDefinition = Record<string, string>
+type TaxonomyTerms = string[]
+type TaxonomyData = Record<string, TaxonomyTerms>
+
+export type FrontmatterContent = {
+  kind: 'content'
+  taxonomies?: TaxonomyData
+  draft?: boolean
+}
+
+interface FrontmatterTerms {
+  kind: 'terms'
+  taxonomyName: string
+}
+
+interface FrontmatterTaxonomy {
+  kind: 'taxonomy'
+  taxonomyName: string
+}
+
+interface FrontmatterSelect {
+  kind: 'select'
+  taxonomyName: string
+  selectedTerms: TaxonomyTerms
+}
+
 export type FrontmatterDefaults = Required<
-  Pick<
-    FrontmatterOptional,
-    'draft' | 'date' | 'kind' | 'opengraphType' | 'taxonomies'
-  >
->
+  Pick<FrontmatterOptional, 'date' | 'opengraphType'>
+> & {
+  kind:
+    | FrontmatterContent['kind']
+    | FrontmatterTerms['kind']
+    | FrontmatterTaxonomy['kind']
+    | FrontmatterSelect['kind']
+}
 
-/**
- * Page frontmatter.
- */
-export type Frontmatter = FrontmatterOptional & FrontmatterRequired
+export type Frontmatter = FrontmatterOptional &
+  FrontmatterRequired &
+  (
+    | FrontmatterContent
+    | FrontmatterTerms
+    | FrontmatterTaxonomy
+    | FrontmatterSelect
+  )
 
-/**
- * Page frontmatter combined with default values.
- */
 export type FrontmatterWithDefaults = Frontmatter & FrontmatterDefaults
 
-/**
- * Page-related information, used internally.
- */
-export interface Page {
-  type: 'typescript' | 'markdown'
-  frontmatter: Frontmatter
-  date: Date
-  source: {
-    path: string
-    absolutePath: string
-  }
-  result: {
-    path: string
-    url: string
-  }
-}
+export type ContentFrontmatterWithDefaults = FrontmatterOptional &
+  FrontmatterRequired &
+  FrontmatterContent &
+  FrontmatterDefaults & { kind: FrontmatterContent['kind']; draft: boolean }
+
+export type TermsFrontmatterWithDefaults = FrontmatterOptional &
+  FrontmatterRequired &
+  FrontmatterTerms &
+  FrontmatterDefaults & { kind: FrontmatterTerms['kind'] }
+
+export type TaxonomyFrontmatterWithDefaults = FrontmatterOptional &
+  FrontmatterRequired &
+  FrontmatterTaxonomy &
+  FrontmatterDefaults & { kind: FrontmatterTaxonomy['kind'] }
+
+export type SelectFrontmatterWithDefaults = FrontmatterOptional &
+  FrontmatterRequired &
+  FrontmatterSelect &
+  FrontmatterDefaults & { kind: FrontmatterSelect['kind'] }
 
 /**
  * Page-related information, edited for use in the client,
@@ -113,7 +128,7 @@ export type PageLayouts = Array<{
 }>
 
 export interface OpengraphImageText {
-  text: (page: PageFile) => string
+  text: (page: Page) => string
   font: string
   fontSize?: number
   color?: string
@@ -123,6 +138,14 @@ export interface OpengraphImageText {
   maxHeight?: number
   horizontalAlign?: 'left' | 'center' | 'right'
   verticalAlign?: 'top' | 'center' | 'bottom'
+}
+
+/**
+ * Pagination options.
+ */
+interface PaginationOptions {
+  size?: number
+  routeSuffix?: (pageNumber: number) => string
 }
 
 /**
@@ -140,13 +163,14 @@ interface SiteConfigOptional {
   pageLayouts?: { layout: string; pattern?: string }[]
   linkPreloadTest?: (route: string) => boolean
   taxonomies?: TaxonomyDefinition
+  pagination?: PaginationOptions
 }
 
 /**
  * Optional site configuration that is set to default values when not defined.
  */
 export type SiteConfigDefaults = Required<
-  Pick<SiteConfigOptional, 'pageLayouts' | 'taxonomies'>
+  Pick<SiteConfigOptional, 'pageLayouts' | 'taxonomies' | 'pagination'>
 >
 
 /**
@@ -159,31 +183,10 @@ export type SiteConfig = SiteConfigRequired & SiteConfigOptional
  */
 export type SiteConfigWithDefaults = SiteConfig & SiteConfigDefaults
 
-/**
- * Taxonomy data.
- *
- * Maps taxonomy name (plural) to an array of taxonomy terms,
- * e.g. the `tags` taxonomy to an array of tag strings.
- */
-export interface TaxonomyData {
-  [taxonomy: string]: string[]
-}
-
-/**
- * Taxonomy definition.
- *
- * Maps taxonomy name (plural) to taxonomy placeholder (singular).
- */
-export interface TaxonomyDefinition {
-  [taxonomy: string]: string
-}
-
-export interface PageFile {
+export interface Page {
   public route: string
   public path: string
   public title: string
-  public taxonomies: TaxonomyData | null
-  public draft: boolean
   public date: Date
 }
 
@@ -194,12 +197,12 @@ export interface PageFile {
 export interface PageProps {
   title: string
   date: number // timestamp
-  taxonomies: TaxonomyData
   tableOfContents: Heading[]
+  taxonomies?: TaxonomyData
 }
 
 export type TaxonomyPageProps = PageProps & {
-  pages: PageFile[]
+  taxonomyPages: Page[]
 }
 
 export type TermPageProps = PageProps & {

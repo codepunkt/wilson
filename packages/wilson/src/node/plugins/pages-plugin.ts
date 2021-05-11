@@ -5,8 +5,8 @@ import { toRoot, transformJsx } from '../util'
 import minimatch from 'minimatch'
 import { getConfig } from '../config'
 import cache from '../cache'
-import PageFile from '../page-file'
-import { getPagefiles, getPageSources, getTaxonomyTerms } from '../state'
+import { ContentPage, SelectPage, TaxonomyPage, TermsPage } from '../page'
+import { getPageSources } from '../state'
 
 const virtualPageRegex = /^@wilson\/page-source\/(\d+)\/page\/(\d+)/
 
@@ -40,7 +40,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
       const pageSourceIndex = parseInt(match[1], 10)
       const pageSource = getPageSources()[pageSourceIndex]
       const pageIndex = parseInt(match[2], 10)
-      const page = pageSource.pageFiles[pageIndex]
+      const page = pageSource.pages[pageIndex]
 
       if (page === undefined) {
         throw new Error('kaput!')
@@ -60,73 +60,6 @@ const pagesPlugin = async (): Promise<Plugin> => {
               )
             )?.layout
 
-      /**
-       * TaxonomyPages are given as props to kind = 'taxonomy' pages.
-       *
-       * The taxonomy is defined by the page's frontmatter.taxonomyName.
-       *
-       * If frontmatter.taxonomyTerms is defined, taxonomyPages is a
-       * list of every page that matches one or more terms of the defined
-       * taxonomy.
-       *
-       * If frontmatter.taxonomyTerms is not defined, a page is created for
-       * every existing term of the taxonomy and taxonomyPages is a list of
-       * every page that matches the specific term.
-       */
-      const taxonomyPages: PageFile[] = []
-      if (pageSource.frontmatter.kind === 'taxonomy') {
-        // eslint-disable-next-line
-        const taxonomyName = pageSource.frontmatter.taxonomyName!
-
-        const hasCommonElements = (arr1: string[], arr2: string[]): boolean => {
-          return arr1.some((item) => arr2.includes(item))
-        }
-
-        const taxonomyTerms = pageSource.frontmatter.taxonomyTerms
-        if (taxonomyTerms !== undefined) {
-          taxonomyPages.push(
-            ...getPagefiles().filter((p) => {
-              const pageIds = taxonomyPages.map((p) => p.id)
-              return (
-                !pageIds.includes(p.id) &&
-                hasCommonElements(
-                  taxonomyTerms,
-                  p.taxonomies?.[taxonomyName] ?? []
-                )
-              )
-            })
-          )
-        } else {
-          taxonomyPages.push(
-            ...getPagefiles().filter((p) => {
-              const pageIds = taxonomyPages.map((p) => p.id)
-              return (
-                page.taxonomyReplace &&
-                !pageIds.includes(p.id) &&
-                p.taxonomies?.[taxonomyName]?.includes(
-                  page.taxonomyReplace.value
-                )
-              )
-            })
-          )
-        }
-      }
-
-      let taxonomyTerms: Set<string> = new Set()
-      if (pageSource.frontmatter.kind === 'term') {
-        // eslint-disable-next-line
-        const taxonomyName = pageSource.frontmatter.taxonomyName!
-
-        taxonomyTerms = new Set([
-          ...getPagefiles()
-            .map((page) => {
-              if (page.taxonomies === null) return []
-              return page.taxonomies[taxonomyName] ?? []
-            })
-            .flat(),
-        ])
-      }
-
       const layoutImport = pageLayout
         ? `import Layout from '${relative(
             dirname(id),
@@ -137,7 +70,11 @@ const pagesPlugin = async (): Promise<Plugin> => {
       const componentProps = `
         title="${page.title}"
         date={${+page.date}}
-        taxonomies={${JSON.stringify(page.taxonomies)}}
+        ${
+          page instanceof ContentPage
+            ? `taxonomies={${JSON.stringify(page.taxonomies)}}`
+            : ''
+        }
         tableOfContents={${JSON.stringify(
           cache.markdown.toc.get(pageSource.fullPath)
         )}}
@@ -168,15 +105,13 @@ const pagesPlugin = async (): Promise<Plugin> => {
             <Page
               ${componentProps}
               ${
-                pageSource.frontmatter.kind === 'taxonomy'
-                  ? `taxonomyPages={${JSON.stringify(taxonomyPages)}}`
+                page instanceof TaxonomyPage || page instanceof SelectPage
+                  ? `taxonomyPages={${JSON.stringify(page.contentPages)}}`
                   : ''
               }
               ${
-                pageSource.frontmatter.kind === 'term'
-                  ? `taxonomyTerms={${JSON.stringify(
-                      Array.from(taxonomyTerms)
-                    )}}`
+                page instanceof TermsPage
+                  ? `taxonomyTerms={${JSON.stringify(page.getTaxonomyTerms())}}`
                   : ''
               }
             />

@@ -4,6 +4,10 @@ import classes from './index.module.scss'
 import logoSrc from '../assets/wilson.svg'
 import InstallButton from '../components/install-button'
 
+/**
+ * landing page inspiration:
+ * - product hunt https://readme.so/
+ */
 export const Page: FunctionalComponent<PageProps> = () => {
   return (
     <>
@@ -60,6 +64,10 @@ export const Page: FunctionalComponent<PageProps> = () => {
           <li>
             <b>Fully Typed APIs</b>
             Flexible programmatic APIs with full TypeScript typing.
+          </li>
+          <li>
+            <b>Taxonomies</b>
+            Supports user-defined groupings of content called taxonomies
           </li>
         </ul>
       </div>

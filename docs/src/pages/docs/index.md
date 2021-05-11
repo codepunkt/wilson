@@ -3,6 +3,9 @@ title: Getting started
 taxonomies:
   tags:
     - docs
+    - javascript
+  categories:
+    - writing
 ---
 
 ## Lorem Ipsum

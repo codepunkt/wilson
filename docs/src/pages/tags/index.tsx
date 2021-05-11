@@ -21,6 +21,6 @@ export const Page: FunctionalComponent<TermPageProps> = ({
 
 export const frontmatter: Partial<Frontmatter> = {
   title: 'Tagcloud',
-  kind: 'term',
+  kind: 'terms',
   taxonomyName: 'tags',
 }

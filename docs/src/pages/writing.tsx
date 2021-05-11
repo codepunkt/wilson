@@ -15,7 +15,7 @@ export const Page: FunctionalComponent<TaxonomyPageProps> = ({
 
 export const frontmatter: Frontmatter = {
   title: 'Writing',
-  kind: 'taxonomy',
+  kind: 'select',
   taxonomyName: 'categories',
-  taxonomyTerms: ['writing'],
+  selectedTerms: ['writing'],
 }

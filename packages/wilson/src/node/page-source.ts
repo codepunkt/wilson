@@ -1,24 +1,15 @@
-import { extname } from 'path'
 import {
+  ContentFrontmatterWithDefaults,
   Frontmatter,
-  FrontmatterDefaults,
   FrontmatterWithDefaults,
+  SelectFrontmatterWithDefaults,
+  TaxonomyFrontmatterWithDefaults,
+  TermsFrontmatterWithDefaults,
 } from '../types'
 import grayMatter from 'gray-matter'
 import { readFileSync } from 'fs-extra'
-import { transpileModule, ModuleKind, JsxEmit } from 'typescript'
-import acorn, { parse } from 'acorn'
-import { walk } from 'estree-walker'
-import {
-  ObjectExpression,
-  AssignmentExpression,
-  MemberExpression,
-  Identifier,
-} from 'estree'
-import { generate } from 'astring'
-import PageFile from './page-file'
-import { pageFileTypes } from './constants'
-import { getTaxonomyTerms } from './state'
+import Page, { ContentPage, SelectPage, TaxonomyPage, TermsPage } from './page'
+import { getContentPages, getTaxonomyTerms } from './state'
 import rehypeSlug from 'rehype-slug'
 import remarkParse from 'remark-parse'
 import remarkToRehype from 'remark-rehype'
@@ -29,7 +20,8 @@ import rehypeRaw from 'rehype-raw'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import remarkRelativeAssets from './unified/remark-relative-assets'
 import rehypeExtractToc from './unified/rehype-extract-toc'
-import { transformJsx } from './util'
+import { hasCommonElements, transformJsx } from './util'
+import { extname } from 'path'
 import { getConfig } from './config'
 
 /**
@@ -50,22 +42,9 @@ const assetUrlTagConfig: Record<string, string[]> = {
 const assetUrlPrefix = '_assetUrl_'
 
 /**
- * Default values for optional properties in frontmatter.
+ * Represents a page source file in `pages` directory.
  */
-const defaultFrontmatter: FrontmatterDefaults = {
-  draft: false,
-  date: 'Created',
-  opengraphType: 'website',
-  kind: 'page',
-  taxonomies: {},
-}
-
-type FileType = 'markdown' | 'typescript'
-
-/**
- * Represence a page source file in `pages` directory.
- */
-class PageSource {
+abstract class PageSource {
   /**
    * Relative path to page source.
    */
@@ -87,62 +66,46 @@ class PageSource {
   public transformedSource: string | null
 
   /**
-   *
-   */
-  public status: 'constructed' | 'initialized'
-
-  /**
-   * The file type of page source.
-   */
-  public fileType: FileType
-
-  /**
    * Array of page files created from page source.
    *
    * Depending on page source frontmatter `kind`, this can be one or more
    * pages.
    */
-  public pageFiles: PageFile[] = []
+  public pages: Page[] = []
 
-  /**
-   * The frontmatter, parsed from page source.
-   */
-  public frontmatter: FrontmatterWithDefaults
+  public frontmatter: Frontmatter = {} as Frontmatter
 
-  constructor(path: string, fullPath: string) {
+  constructor({ path, fullPath }: BaseOpts) {
     this.path = path
     this.fullPath = fullPath
-    this.fileType = this.getType()
     this.originalSource = readFileSync(this.fullPath, 'utf-8')
-    this.frontmatter = this.parseFrontmatter()
-    this.transformedSource = null
-    this.status = 'constructed'
+    this.transformedSource = this.transformSource()
   }
 
-  /**
-   *
-   */
-  public async initialize(): Promise<void> {
-    this.transformedSource = await this.transformSource()
-    this.status = 'initialized'
+  public abstract createPages(): Promise<void>
+
+  protected transformSource(): string {
+    return this.originalSource
+  }
+}
+
+export class ContentPageSource extends PageSource {
+  public frontmatter: ContentFrontmatterWithDefaults
+  constructor(options: Opts) {
+    super(options)
+    this.frontmatter = options.frontmatter as ContentFrontmatterWithDefaults
+  }
+  public async createPages(): Promise<void> {
+    this.pages.push(new ContentPage(this))
+  }
+}
+
+export class MarkdownContentPageSource extends ContentPageSource {
+  protected transformSource(): string {
+    return transformJsx(this.transformMarkdown(this.originalSource))
   }
 
-  /**
-   *
-   */
-  private async transformSource(): Promise<string | null> {
-    switch (this.fileType) {
-      case 'typescript':
-        return null
-      case 'markdown':
-        return transformJsx(await this.transformMarkdown(this.originalSource))
-    }
-  }
-
-  /**
-   *
-   */
-  private async transformMarkdown(markdownSource: string): Promise<string> {
+  private transformMarkdown(markdownSource: string): string {
     const processor = unified()
       .use(remarkParse)
       // apply plugins that change MDAST
@@ -161,7 +124,7 @@ class PageSource {
       })
 
     const parsed = grayMatter(markdownSource, {})
-    const vfile = await processor.process(parsed.content)
+    const vfile = processor.processSync(parsed.content)
     const html = vfile.contents as string
     const relativeAssetUrls = (vfile.data as { assetUrls: string[] })
       .assetUrls as string[]
@@ -183,168 +146,136 @@ class PageSource {
     })
 
     return `
-      import { h, Fragment } from "preact";
-      ${relativeAssetImports.join('')}
-      
-      export const Page = () => {
-        return <Fragment>${html}</Fragment>;
-      };
-    `
-  }
+    import { h, Fragment } from "preact";
+    ${relativeAssetImports.join('')}
 
-  /**
-   * Creates pages created from the page source.
-   *
-   * For page source kind `page`, this creates a single page.
-   * For page source kind `taxonomy`, it creates:
-   * - a single page (if frontmatter.taxonomyTerms is set)
-   * - one page for each taxonomy term (if frontmatter.taxonomyTerms is not set)
-   */
-  public async setPageFiles(): Promise<void> {
-    if (
-      this.frontmatter.kind === 'page' ||
-      this.frontmatter.kind === 'term' ||
-      (this.frontmatter.kind === 'taxonomy' &&
-        Array.isArray(this.frontmatter.taxonomyTerms))
-    ) {
-      this.pageFiles = [new PageFile(this)]
-    } else if (this.frontmatter.kind === 'taxonomy') {
-      // eslint-disable-next-line
-      const taxonomyName = this.frontmatter.taxonomyName!
-      const terms = await getTaxonomyTerms(taxonomyName)
-      const config = await getConfig()
-
-      this.pageFiles = terms.map((term) => {
-        return new PageFile(this, {
-          placeholder: config.taxonomies[taxonomyName],
-          value: term,
-        })
-      })
-    }
-  }
-
-  /**
-   * Returns the type (e.g. `markdown`) of the page source.
-   */
-  private getType(): FileType {
-    const moduleExtension = extname(this.fullPath)
-
-    for (const pageFileType in pageFileTypes) {
-      if (pageFileTypes[pageFileType].includes(moduleExtension)) {
-        return pageFileType as FileType
-      }
-    }
-
-    throw new Error(`unknown page source type: ${this.path}`)
-  }
-
-  /**
-   *
-   */
-  private parseFrontmatter(): FrontmatterWithDefaults {
-    let frontmatter: Partial<Frontmatter>
-    if (this.fileType === 'markdown') {
-      frontmatter = this.parseMarkdownFrontmatter()
-    } else {
-      frontmatter = this.parseTypescriptFrontmatter()
-    }
-
-    if (Object.values(frontmatter).length === 0)
-      throw new Error(`page has no or empty frontmatter: ${this.path}!`)
-    if (frontmatter.title === undefined)
-      throw new Error(`frontmatter has no title: ${this.path}!`)
-
-    return { ...defaultFrontmatter, ...frontmatter } as FrontmatterWithDefaults
-  }
-
-  /**
-   *
-   * @param markdownString
-   * @returns
-   */
-  private parseMarkdownFrontmatter(): Partial<Frontmatter> {
-    const graymatterOptions = {}
-    const parsed = grayMatter(this.originalSource, graymatterOptions)
-    return parsed.data as Partial<Frontmatter>
-  }
-
-  /**
-   *
-   */
-  private parseTypescriptFrontmatter(): Partial<Frontmatter> {
-    const javascriptString = this.transpileTypescriptToJavascript(
-      this.originalSource
-    )
-    const javascriptAST = this.createJavascriptAST(javascriptString)
-
-    let frontmatterNode: ObjectExpression | null = null
-    walk(javascriptAST, {
-      enter(node) {
-        // we're only interested in AssignmentExpression
-        if (node.type !== 'AssignmentExpression') return
-
-        // we're only interested in equal assignments between a MemberExpression
-        // and an ObjectExpression
-        const ae = node as AssignmentExpression
-        if (
-          ae.operator !== '=' ||
-          ae.left.type !== 'MemberExpression' ||
-          ae.right.type !== 'ObjectExpression'
-        ) {
-          return
-        }
-
-        // we're only interested in AssignmentExpression where the left
-        // MemberExpression has object and property Identifier that say
-        // `exports frontmatter`
-        const me = ae.left as MemberExpression
-        if (
-          me.object.type !== 'Identifier' ||
-          me.property.type !== 'Identifier' ||
-          (me.object as Identifier).name !== 'exports' ||
-          (me.property as Identifier).name !== 'frontmatter'
-        ) {
-          return
-        }
-
-        // found an `exports frontmatter = <ObjectExpression>` node.
-        // we are interested in the ObjectExpression, so that's what we keep.
-        frontmatterNode = ae.right as ObjectExpression
-      },
-    })
-
-    const objSource = frontmatterNode
-      ? generate(frontmatterNode, { indent: '', lineEnd: '' })
-      : '{}'
-
-    return {
-      ...eval(`const obj=()=>(${objSource});obj`)(),
-    } as Frontmatter
-  }
-
-  /**
-   * Transpiles TypeScript source code to JavaScript source code.
-   */
-  private transpileTypescriptToJavascript(typescriptString: string): string {
-    const compilerOptions = {
-      module: ModuleKind.CommonJS,
-      jsx: JsxEmit.ReactJSX,
-      jsxImportSource: 'preact',
-    }
-    const transpileOptions = { compilerOptions }
-    const transpileOutput = transpileModule(typescriptString, transpileOptions)
-
-    return transpileOutput.outputText
-  }
-
-  /**
-   * Creates a JavaScript AST for JavaScript source code.
-   */
-  private createJavascriptAST(javascriptString: string): acorn.Node {
-    const acornOptions: acorn.Options = { ecmaVersion: 'latest' }
-    const ast = parse(javascriptString, acornOptions)
-    return ast
+    export const Page = () => {
+      return <Fragment>${html}</Fragment>;
+    };
+  `
   }
 }
+
+export class TaxonomyPageSource extends PageSource {
+  public frontmatter: TaxonomyFrontmatterWithDefaults
+  constructor(options: Opts) {
+    super(options)
+    this.frontmatter = options.frontmatter as TaxonomyFrontmatterWithDefaults
+  }
+  public async createPages(): Promise<void> {
+    const terms = await getTaxonomyTerms(this.frontmatter.taxonomyName)
+    const config = await getConfig()
+    for await (const term of terms) {
+      const pages = getContentPages()
+        .filter((contentPage) =>
+          contentPage.taxonomies?.[this.frontmatter.taxonomyName]?.includes(
+            term
+          )
+        )
+        // sort by page date, descending
+        .sort((a, b) => +b.date - +a.date)
+      /**
+       * @todo size should have a default value prior to this
+       * code being executed
+       */
+      const pageSize = config.pagination.size ?? 2
+      let currentPage = 1
+      for (let i = 0, j = pages.length; i < j; i += pageSize) {
+        const page = new TaxonomyPage(
+          this,
+          term,
+          pages.slice(i, i + pageSize),
+          {
+            currentPage,
+            hasPreviousPage: currentPage > 1,
+            hasNextPage: pages.length > currentPage * pageSize,
+          }
+        )
+        await page.replacePlaceholder()
+        this.pages.push(page)
+        currentPage++
+      }
+    }
+  }
+}
+
+export class TermsPageSource extends PageSource {
+  public frontmatter: TermsFrontmatterWithDefaults
+  constructor(options: Opts) {
+    super(options)
+    this.frontmatter = options.frontmatter as TermsFrontmatterWithDefaults
+  }
+  public async createPages(): Promise<void> {
+    this.pages.push(new TermsPage(this))
+  }
+}
+
+export class SelectPageSource extends PageSource {
+  public frontmatter: SelectFrontmatterWithDefaults
+  constructor(options: Opts) {
+    super(options)
+    this.frontmatter = options.frontmatter as SelectFrontmatterWithDefaults
+  }
+  public async createPages(): Promise<void> {
+    const { selectedTerms, taxonomyName } = this.frontmatter
+    const config = await getConfig()
+    const pages = getContentPages()
+      .reduce(
+        (acc, p) =>
+          hasCommonElements(selectedTerms, p.taxonomies?.[taxonomyName] ?? [])
+            ? [...acc, p]
+            : acc,
+        [] as ContentPage[]
+      )
+      // sort by page date, descending
+      .sort((a, b) => +b.date - +a.date)
+    /**
+     * @todo size should have a default value prior to this
+     * code being executed
+     */
+    const pageSize = config.pagination.size ?? 2
+    let currentPage = 1
+    for (let i = 0, j = pages.length; i < j; i += pageSize) {
+      this.pages.push(
+        new SelectPage(this, pages.slice(i, i + pageSize), {
+          currentPage,
+          hasPreviousPage: currentPage > 1,
+          hasNextPage: pages.length > currentPage * pageSize,
+        })
+      )
+      currentPage++
+    }
+  }
+}
+
+interface BaseOpts {
+  path: string
+  fullPath: string
+}
+
+type Opts = BaseOpts & {
+  frontmatter: FrontmatterWithDefaults
+}
+
+export const createPageSource = (options: Opts): PageSourceType => {
+  switch (options.frontmatter.kind) {
+    case 'content':
+      return extname(options.fullPath) === '.md'
+        ? new MarkdownContentPageSource(options)
+        : new ContentPageSource(options)
+    case 'taxonomy':
+      return new TaxonomyPageSource(options)
+    case 'terms':
+      return new TermsPageSource(options)
+    case 'select':
+      return new SelectPageSource(options)
+  }
+}
+
+export type PageSourceType =
+  | ContentPageSource
+  | TaxonomyPageSource
+  | TermsPageSource
+  | SelectPageSource
 
 export default PageSource
