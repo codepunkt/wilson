@@ -39,25 +39,11 @@ const initializePagesources = async (pageDir: string): Promise<void> => {
     state.pageSources.push(createPageSource({ path, fullPath, frontmatter }))
   }
 
-  // Page sources of kind `content` or `terms` always create one page, which is
-  // done in `pageSource.initialize` above.
-  //
-  // For page sources of kind `taxonomy`, we need to have additional information
-  // to calculate how many pages we create for each of the sources:
-  //
-  // - all taxonomies on page sources of kind `content`
-  // - pagination configuration
-  // - the number of `taxonomyPages` injected into the page.
-  //
-  // Some of that info is only accessible after all pages for sources of kind `content`
-  // have been created, which is why we derive the kind `taxonomy` and kind `select`
-  // pages afterwards.
-  for (const pageSource of getContentPageSources()) {
-    await pageSource.createPages()
-  }
-  for (const pageSource of getNonContentPageSources()) {
-    await pageSource.createPages()
-  }
+  // Pages for `content` sources need to be created first, because the
+  // number of pages created for `taxonomy`, `terms` and `select` sources
+  // depend on them.
+  for (const pageSource of getContentPageSources()) pageSource.createPages()
+  for (const pageSource of getNonContentPageSources()) pageSource.createPages()
 
   console.log(getPages())
 }

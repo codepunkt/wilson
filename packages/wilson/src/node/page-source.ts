@@ -162,7 +162,7 @@ export class TaxonomyPageSource extends PageSource {
     super(options)
     this.frontmatter = options.frontmatter as TaxonomyFrontmatterWithDefaults
   }
-  public async createPages(): Promise<void> {
+  public createPages(): void {
     const terms = getTaxonomyTerms(this.frontmatter.taxonomyName)
     const config = getConfig()
     for (const term of terms) {
