@@ -1,7 +1,8 @@
 import { FunctionalComponent } from 'preact'
-import { TaxonomyPageProps, Frontmatter } from 'wilson'
+import { SelectPageProps, Frontmatter } from 'wilson'
 
-export const Page: FunctionalComponent<TaxonomyPageProps> = ({
+export const Page: FunctionalComponent<SelectPageProps> = ({
+  paginationInfo,
   title,
   taxonomyPages,
 }) => {
@@ -9,6 +10,22 @@ export const Page: FunctionalComponent<TaxonomyPageProps> = ({
     <>
       <h1>{title}</h1>
       <pre>{JSON.stringify(taxonomyPages, null, 2)}</pre>
+      {paginationInfo.hasPreviousPage && (
+        <a
+          href={
+            paginationInfo.currentPage === 2
+              ? '/writing/'
+              : `/writing/page-${paginationInfo.currentPage - 1}/`
+          }
+        >
+          &lt; Previous
+        </a>
+      )}
+      {paginationInfo.hasNextPage && (
+        <a href={`/writing/page-${paginationInfo.currentPage + 1}/`}>
+          Next &gt;
+        </a>
+      )}
     </>
   )
 }

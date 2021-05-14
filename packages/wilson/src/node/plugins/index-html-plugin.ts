@@ -44,7 +44,7 @@ const indexHtmlPlugin = async (): Promise<Plugin> => {
           twitterCreator,
           twitterSite,
         },
-      } = await getConfig()
+      } = getConfig()
 
       interface Options {
         lang: string

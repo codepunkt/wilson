@@ -65,8 +65,8 @@ const initializePagesources = async (pageDir: string): Promise<void> => {
 /**
  * Returns array of all unique taxonomy terms.
  */
-const getTaxonomyTerms = async (taxonomyName: string): Promise<string[]> => {
-  const config = await getConfig()
+const getTaxonomyTerms = (taxonomyName: string): string[] => {
+  const config = getConfig()
 
   if (!(taxonomyName in config.taxonomies)) {
     const taxonomyNames = Object.keys(config.taxonomies)

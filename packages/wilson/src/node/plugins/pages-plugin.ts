@@ -46,7 +46,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
         throw new Error('kaput!')
       }
 
-      const { pageLayouts } = await getConfig()
+      const { pageLayouts } = getConfig()
       const pageLayout =
         pageSource.frontmatter.layout ?? typeof pageLayouts === 'undefined'
           ? undefined
@@ -106,7 +106,13 @@ const pagesPlugin = async (): Promise<Plugin> => {
               ${componentProps}
               ${
                 page instanceof TaxonomyPage || page instanceof SelectPage
-                  ? `taxonomyPages={${JSON.stringify(page.contentPages)}}`
+                  ? `taxonomyPages={${JSON.stringify(page.contentPages)}}
+                     paginationInfo={${JSON.stringify(page.paginationInfo)}}`
+                  : ''
+              }
+              ${
+                page instanceof TaxonomyPage
+                  ? `selectedTerm="${page.selectedTerm}"`
                   : ''
               }
               ${

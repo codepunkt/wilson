@@ -48,10 +48,16 @@ class FrontmatterParser {
       parsed = this.parseTypescriptFrontmatter()
     }
 
-    const frontmatter = {
+    // apply generic defaults
+    let frontmatter = {
       ...defaultFrontmatter,
       ...parsed,
     } as FrontmatterWithDefaults
+
+    // apply kind-specific defaults
+    if (frontmatter.kind === 'content') {
+      frontmatter = { draft: false, ...frontmatter }
+    }
 
     this.validateFrontmatter(frontmatter)
     return frontmatter

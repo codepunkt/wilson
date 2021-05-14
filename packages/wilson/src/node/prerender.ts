@@ -141,7 +141,7 @@ export async function prerenderStaticPages(): Promise<void> {
         const filteredLinkDependencies: Record<string, Dependencies> = {}
         for (const path in linkDependencies) {
           const targetPage = getPages().find((p) => p.route === path)
-          const config = await getConfig()
+          const config = getConfig()
           if (
             targetPage &&
             (typeof config.linkPreloadTest !== 'function' ||

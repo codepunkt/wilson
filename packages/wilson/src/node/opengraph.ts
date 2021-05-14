@@ -7,7 +7,7 @@ import { dirname } from 'path'
 import { getPages } from './state'
 
 export async function createOpengraphImages(): Promise<void> {
-  const config = await getConfig()
+  const config = getConfig()
 
   const { background, texts } = config.opengraphImage ?? {
     background: '#ffffff',

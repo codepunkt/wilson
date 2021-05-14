@@ -18,8 +18,8 @@ import remarkStringify from 'remark-stringify'
 import unified from 'unified'
 import rehypeRaw from 'rehype-raw'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
-import remarkRelativeAssets from './unified/remark-relative-assets'
-import rehypeExtractToc from './unified/rehype-extract-toc'
+import remarkRelativeAssets from './unified-plugins/remark-relative-assets'
+import rehypeExtractToc from './unified-plugins/rehype-extract-toc'
 import { hasCommonElements, transformJsx } from './util'
 import { extname } from 'path'
 import { getConfig } from './config'
@@ -82,7 +82,7 @@ abstract class PageSource {
     this.transformedSource = this.transformSource()
   }
 
-  public abstract createPages(): Promise<void>
+  public abstract createPages(): void
 
   protected transformSource(): string {
     return this.originalSource
@@ -95,7 +95,7 @@ export class ContentPageSource extends PageSource {
     super(options)
     this.frontmatter = options.frontmatter as ContentFrontmatterWithDefaults
   }
-  public async createPages(): Promise<void> {
+  public createPages(): void {
     this.pages.push(new ContentPage(this))
   }
 }
@@ -163,9 +163,9 @@ export class TaxonomyPageSource extends PageSource {
     this.frontmatter = options.frontmatter as TaxonomyFrontmatterWithDefaults
   }
   public async createPages(): Promise<void> {
-    const terms = await getTaxonomyTerms(this.frontmatter.taxonomyName)
-    const config = await getConfig()
-    for await (const term of terms) {
+    const terms = getTaxonomyTerms(this.frontmatter.taxonomyName)
+    const config = getConfig()
+    for (const term of terms) {
       const pages = getContentPages()
         .filter((contentPage) =>
           contentPage.taxonomies?.[this.frontmatter.taxonomyName]?.includes(
@@ -181,18 +181,13 @@ export class TaxonomyPageSource extends PageSource {
       const pageSize = config.pagination.size ?? 2
       let currentPage = 1
       for (let i = 0, j = pages.length; i < j; i += pageSize) {
-        const page = new TaxonomyPage(
-          this,
-          term,
-          pages.slice(i, i + pageSize),
-          {
+        this.pages.push(
+          new TaxonomyPage(this, term, pages.slice(i, i + pageSize), {
             currentPage,
             hasPreviousPage: currentPage > 1,
             hasNextPage: pages.length > currentPage * pageSize,
-          }
+          })
         )
-        await page.replacePlaceholder()
-        this.pages.push(page)
         currentPage++
       }
     }
@@ -205,7 +200,7 @@ export class TermsPageSource extends PageSource {
     super(options)
     this.frontmatter = options.frontmatter as TermsFrontmatterWithDefaults
   }
-  public async createPages(): Promise<void> {
+  public createPages(): void {
     this.pages.push(new TermsPage(this))
   }
 }
@@ -216,9 +211,9 @@ export class SelectPageSource extends PageSource {
     super(options)
     this.frontmatter = options.frontmatter as SelectFrontmatterWithDefaults
   }
-  public async createPages(): Promise<void> {
+  public createPages(): void {
     const { selectedTerms, taxonomyName } = this.frontmatter
-    const config = await getConfig()
+    const config = getConfig()
     const pages = getContentPages()
       .reduce(
         (acc, p) =>

@@ -70,7 +70,7 @@ const virtualPlugin = async (): Promise<Plugin> => {
             </PageContext.Provider>
           );
           const usePages = () => useContext(PageContext);
-          const siteData = ${JSON.stringify((await getConfig()).siteData)};
+          const siteData = ${JSON.stringify(getConfig().siteData)};
 
           export { routes, siteData, PageProvider, usePages };
         `

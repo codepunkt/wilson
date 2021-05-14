@@ -190,19 +190,29 @@ export interface Page {
   public date: Date
 }
 
-/**
- * Exported to the user, can be used as generic props type variable on
- * Layout and Page components.
- */
-export interface PageProps {
+interface PageProps {
   title: string
   date: number // timestamp
+}
+
+export interface PaginationInfo {
+  currentPage: number
+  hasPreviousPage: boolean
+  hasNextPage: boolean
+}
+
+export type ContentPageProps = PageProps & {
   tableOfContents: Heading[]
   taxonomies?: TaxonomyData
 }
 
-export type TaxonomyPageProps = PageProps & {
+export type SelectPageProps = PageProps & {
   taxonomyPages: Page[]
+  paginationInfo: PaginationInfo
+}
+
+export type TaxonomyPageProps = SelectPageProps & {
+  selectedTerm: string
 }
 
 export type TermPageProps = PageProps & {

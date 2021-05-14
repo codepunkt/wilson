@@ -3,7 +3,8 @@ export {
   Page,
   SiteData,
   SiteConfig,
-  PageProps,
+  ContentPageProps,
+  SelectPageProps,
   TaxonomyPageProps,
   TermPageProps,
 } from '../types'
