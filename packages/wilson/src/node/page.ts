@@ -89,18 +89,19 @@ abstract class Page implements PageInterface {
       // ensure there's exactly one leading and trailing slash
       return permalink.replace(/^\/?([^/]+(?:\/[^/]+)*)\/?$/, '/$1/')
     }
-    /**
-     * @todo simplify. basename?
-     */
     return `/${relativePath
       .replace(new RegExp(`${extname(relativePath)}$`), '')
       .replace(/index$/, '')}/`.replace(/\/\/$/, '/')
   }
 
-  protected getPath(): string {
-    return this.route.split('/').pop() === 'index'
-      ? `${this.route.replace(/^\//, '')}.html`
-      : `${this.route.replace(/^\//, '')}index.html`
+  /**
+   * Returns relative path to static `.html` file for given route.
+   *
+   * @param route Page route.
+   * @returns Relative path to static `.html`.
+   */
+  protected getPath(route: string): string {
+    return `${route.replace(/^\//, '')}index.html`
   }
 }
 
@@ -119,7 +120,7 @@ export class ContentPage extends Page {
     this.taxonomies = source.frontmatter.taxonomies
     this.draft = source.frontmatter.draft
     this.route = Page.getRoute(source.path, source.frontmatter.permalink)
-    this.path = this.getPath()
+    this.path = this.getPath(this.route)
     this.title = source.frontmatter.title
   }
 }
@@ -148,7 +149,7 @@ export class TaxonomyPage extends Page {
     )
     this.route = currentPage
     this.paginationRoutes = { previousPage, nextPage }
-    this.path = this.getPath()
+    this.path = this.getPath(this.route)
     this.title = this.replacePlaceholder(source.frontmatter.title)
   }
 
@@ -163,10 +164,16 @@ export class TaxonomyPage extends Page {
     return getPaginationRoutes(baseRoute, this.pagination)
   }
 
+  /**
+   * Replaces taxonomy placeholders with the page's selected term.
+   *
+   * @param input Input string.
+   * @param slugify Should the selected term be slugified?
+   * @returns Resulting string with replaced placeholders.
+   */
   private replacePlaceholder(input: string, slugify = false): string {
-    const placeholder = getConfig().taxonomies[this.taxonomyName]
     return input.replace(
-      new RegExp(`{{${placeholder}}}`),
+      /\${term}/g,
       slugify ? toSlug(this.selectedTerm) : this.selectedTerm
     )
   }
@@ -190,7 +197,7 @@ export class TermsPage extends Page {
       slug: toSlug(name),
     }))
     this.route = Page.getRoute(source.path, source.frontmatter.permalink)
-    this.path = this.getPath()
+    this.path = this.getPath(this.route)
     this.title = source.frontmatter.title
   }
 }
@@ -220,7 +227,7 @@ export class SelectPage extends Page {
     )
     this.route = currentPage
     this.paginationRoutes = { previousPage, nextPage }
-    this.path = this.getPath()
+    this.path = this.getPath(this.route)
     this.title = source.frontmatter.title
   }
 

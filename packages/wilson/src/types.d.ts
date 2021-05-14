@@ -41,68 +41,73 @@ type TaxonomyDefinition = Record<string, string>
 type TaxonomyTerms = string[]
 type TaxonomyData = Record<string, TaxonomyTerms>
 
-export type FrontmatterContent = {
-  kind: 'content'
-  taxonomies?: TaxonomyData
-  draft?: boolean
-}
+export type ContentFrontmatter = FrontmatterOptional &
+  FrontmatterRequired & {
+    kind: 'content'
+    taxonomies?: TaxonomyData
+    draft?: boolean
+  }
 
-interface FrontmatterTerms {
-  kind: 'terms'
-  taxonomyName: string
-}
+export type TermsFrontmatter = FrontmatterOptional &
+  FrontmatterRequired & {
+    kind: 'terms'
+    taxonomyName: string
+  }
 
-interface FrontmatterTaxonomy {
-  kind: 'taxonomy'
-  taxonomyName: string
-}
+/**
+ * Has to have `kind`, `title`, `taxonomyName` and `permalink`.
+ */
+export type TaxonomyFrontmatter = FrontmatterOptional &
+  FrontmatterRequired & {
+    kind: 'taxonomy'
+    taxonomyName: string
+    permalink: string
+  }
 
-interface FrontmatterSelect {
-  kind: 'select'
-  taxonomyName: string
-  selectedTerms: TaxonomyTerms
-}
+export type SelectFrontmatter = FrontmatterOptional &
+  FrontmatterRequired & {
+    kind: 'select'
+    taxonomyName: string
+    selectedTerms: TaxonomyTerms
+  }
 
 export type FrontmatterDefaults = Required<
   Pick<FrontmatterOptional, 'date' | 'opengraphType'>
 > & {
   kind:
-    | FrontmatterContent['kind']
-    | FrontmatterTerms['kind']
-    | FrontmatterTaxonomy['kind']
-    | FrontmatterSelect['kind']
+    | ContentFrontmatter['kind']
+    | TermsFrontmatter['kind']
+    | TaxonomyFrontmatter['kind']
+    | SelectFrontmatter['kind']
 }
 
-export type Frontmatter = FrontmatterOptional &
-  FrontmatterRequired &
-  (
-    | FrontmatterContent
-    | FrontmatterTerms
-    | FrontmatterTaxonomy
-    | FrontmatterSelect
-  )
+export type Frontmatter =
+  | ContentFrontmatter
+  | TermsFrontmatter
+  | TaxonomyFrontmatter
+  | SelectFrontmatter
 
 export type FrontmatterWithDefaults = Frontmatter & FrontmatterDefaults
 
 export type ContentFrontmatterWithDefaults = FrontmatterOptional &
   FrontmatterRequired &
-  FrontmatterContent &
-  FrontmatterDefaults & { kind: FrontmatterContent['kind']; draft: boolean }
+  ContentFrontmatter &
+  FrontmatterDefaults & { kind: ContentFrontmatter['kind']; draft: boolean }
 
 export type TermsFrontmatterWithDefaults = FrontmatterOptional &
   FrontmatterRequired &
-  FrontmatterTerms &
-  FrontmatterDefaults & { kind: FrontmatterTerms['kind'] }
+  TermsFrontmatter &
+  FrontmatterDefaults & { kind: TermsFrontmatter['kind'] }
 
 export type TaxonomyFrontmatterWithDefaults = FrontmatterOptional &
   FrontmatterRequired &
-  FrontmatterTaxonomy &
-  FrontmatterDefaults & { kind: FrontmatterTaxonomy['kind'] }
+  TaxonomyFrontmatter &
+  FrontmatterDefaults & { kind: TaxonomyFrontmatter['kind'] }
 
 export type SelectFrontmatterWithDefaults = FrontmatterOptional &
   FrontmatterRequired &
-  FrontmatterSelect &
-  FrontmatterDefaults & { kind: FrontmatterSelect['kind'] }
+  SelectFrontmatter &
+  FrontmatterDefaults & { kind: SelectFrontmatter['kind'] }
 
 /**
  * Page-related information, edited for use in the client,

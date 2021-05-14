@@ -7,4 +7,8 @@ export {
   SelectPageProps,
   TaxonomyPageProps,
   TermPageProps,
+  ContentFrontmatter,
+  SelectFrontmatter,
+  TaxonomyFrontmatter,
+  TermsFrontmatter,
 } from '../types'

@@ -1,5 +1,5 @@
 import { FunctionalComponent } from 'preact'
-import { TaxonomyPageProps, Frontmatter } from 'wilson'
+import { TaxonomyPageProps, TaxonomyFrontmatter } from 'wilson'
 
 export const Page: FunctionalComponent<TaxonomyPageProps> = ({
   pagination,
@@ -24,14 +24,11 @@ export const Page: FunctionalComponent<TaxonomyPageProps> = ({
   )
 }
 
-/**
- * @todo validate that kind: taxonomy pages don't have taxonomies themselves
- */
-export const frontmatter: Frontmatter = {
+export const frontmatter: TaxonomyFrontmatter = {
   kind: 'taxonomy',
   taxonomyName: 'tags',
-  title: 'Tag: {{tag}}',
-  permalink: '/tags/{{tag}}/',
+  title: 'Tag: ${term}',
+  permalink: '/tags/${term}/',
 }
 
 /**

@@ -65,6 +65,14 @@ class FrontmatterParser {
 
   /**
    * Validates frontmatter.
+   *
+   * @todo taxonomy must have permalink
+   * @todo taxonomy must have taxonomyName
+   * @todo content can only have taxonomies defined in config
+   * @todo content can have draft, but must be boolean
+   * @todo terms must have taxonomyName
+   * @todo select must have taxonomyName
+   * @todo select must have selectedTerms
    */
   private validateFrontmatter(frontmatter: FrontmatterWithDefaults): void {
     if (Object.values(frontmatter).length === 0)
