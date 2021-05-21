@@ -24,12 +24,12 @@ const markdownPlugin = async (): Promise<Plugin> => {
         throw new Error(`couldn't find page source of ${id}!`)
       }
 
-      if (pageSource.transformedSource === null) {
+      if (pageSource.transformedCode === null) {
         throw new Error(`couldn't return transformed source for ${id}!`)
       }
 
       return {
-        code: pageSource.transformedSource,
+        code: pageSource.transformedCode,
       }
     },
   }

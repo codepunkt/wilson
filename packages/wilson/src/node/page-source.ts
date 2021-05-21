@@ -46,27 +46,12 @@ const assetUrlPrefix = '_assetUrl_'
  */
 abstract class PageSource {
   /**
-   * Relative path to page source.
-   */
-  public path: string
-
-  /**
-   * Absolute path to page source.
-   */
-  public fullPath: string
-
-  /**
-   * Original page source.
-   */
-  public originalSource: string
-
-  /**
    * Transformed page source.
    */
-  public transformedSource: string | null
+  public transformedCode: string
 
   /**
-   * Array of page files created from page source.
+   * Array of pages created from page source.
    *
    * Depending on page source frontmatter `kind`, this can be one or more
    * pages.
@@ -75,25 +60,28 @@ abstract class PageSource {
 
   public frontmatter: Frontmatter = {} as Frontmatter
 
-  constructor({ path, fullPath }: BaseOpts) {
-    this.path = path
-    this.fullPath = fullPath
-    this.originalSource = readFileSync(this.fullPath, 'utf-8')
-    this.transformedSource = this.transformSource()
+  constructor(public path: string, public fullPath: string) {
+    this.transformedCode = this.transformCode(
+      readFileSync(this.fullPath, 'utf-8')
+    )
   }
 
   public abstract createPages(): void
 
-  protected transformSource(): string {
-    return this.originalSource
+  protected transformCode(originalSource: string): string {
+    return originalSource
   }
 }
 
 export class ContentPageSource extends PageSource {
   public frontmatter: ContentFrontmatterWithDefaults
-  constructor(options: Opts) {
-    super(options)
-    this.frontmatter = options.frontmatter as ContentFrontmatterWithDefaults
+  constructor(
+    path: string,
+    fullPath: string,
+    frontmatter: FrontmatterWithDefaults
+  ) {
+    super(path, fullPath)
+    this.frontmatter = frontmatter as ContentFrontmatterWithDefaults
   }
   public createPages(): void {
     this.pages.push(new ContentPage(this))
@@ -101,8 +89,8 @@ export class ContentPageSource extends PageSource {
 }
 
 export class MarkdownContentPageSource extends ContentPageSource {
-  protected transformSource(): string {
-    return transformJsx(this.transformMarkdown(this.originalSource))
+  protected transformCode(originalSource: string): string {
+    return transformJsx(this.transformMarkdown(originalSource))
   }
 
   private transformMarkdown(markdownSource: string): string {
@@ -158,9 +146,13 @@ export class MarkdownContentPageSource extends ContentPageSource {
 
 export class TaxonomyPageSource extends PageSource {
   public frontmatter: TaxonomyFrontmatterWithDefaults
-  constructor(options: Opts) {
-    super(options)
-    this.frontmatter = options.frontmatter as TaxonomyFrontmatterWithDefaults
+  constructor(
+    path: string,
+    fullPath: string,
+    frontmatter: FrontmatterWithDefaults
+  ) {
+    super(path, fullPath)
+    this.frontmatter = frontmatter as TaxonomyFrontmatterWithDefaults
   }
   public createPages(): void {
     const terms = getTaxonomyTerms(this.frontmatter.taxonomyName)
@@ -193,9 +185,13 @@ export class TaxonomyPageSource extends PageSource {
 
 export class TermsPageSource extends PageSource {
   public frontmatter: TermsFrontmatterWithDefaults
-  constructor(options: Opts) {
-    super(options)
-    this.frontmatter = options.frontmatter as TermsFrontmatterWithDefaults
+  constructor(
+    path: string,
+    fullPath: string,
+    frontmatter: FrontmatterWithDefaults
+  ) {
+    super(path, fullPath)
+    this.frontmatter = frontmatter as TermsFrontmatterWithDefaults
   }
   public createPages(): void {
     this.pages.push(new TermsPage(this))
@@ -204,9 +200,13 @@ export class TermsPageSource extends PageSource {
 
 export class SelectPageSource extends PageSource {
   public frontmatter: SelectFrontmatterWithDefaults
-  constructor(options: Opts) {
-    super(options)
-    this.frontmatter = options.frontmatter as SelectFrontmatterWithDefaults
+  constructor(
+    path: string,
+    fullPath: string,
+    frontmatter: FrontmatterWithDefaults
+  ) {
+    super(path, fullPath)
+    this.frontmatter = frontmatter as SelectFrontmatterWithDefaults
   }
   public createPages(): void {
     const { selectedTerms, taxonomyName } = this.frontmatter
@@ -240,27 +240,22 @@ export class SelectPageSource extends PageSource {
   }
 }
 
-interface BaseOpts {
-  path: string
-  fullPath: string
-}
-
-type Opts = BaseOpts & {
+export const createPageSource = (
+  path: string,
+  fullPath: string,
   frontmatter: FrontmatterWithDefaults
-}
-
-export const createPageSource = (options: Opts): PageSourceType => {
-  switch (options.frontmatter.kind) {
+): PageSourceType => {
+  switch (frontmatter.kind) {
     case 'content':
-      return extname(options.fullPath) === '.md'
-        ? new MarkdownContentPageSource(options)
-        : new ContentPageSource(options)
+      return extname(fullPath) === '.md'
+        ? new MarkdownContentPageSource(path, fullPath, frontmatter)
+        : new ContentPageSource(path, fullPath, frontmatter)
     case 'taxonomy':
-      return new TaxonomyPageSource(options)
+      return new TaxonomyPageSource(path, fullPath, frontmatter)
     case 'terms':
-      return new TermsPageSource(options)
+      return new TermsPageSource(path, fullPath, frontmatter)
     case 'select':
-      return new SelectPageSource(options)
+      return new SelectPageSource(path, fullPath, frontmatter)
   }
 }
 
