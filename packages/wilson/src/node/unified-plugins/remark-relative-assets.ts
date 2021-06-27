@@ -1,6 +1,6 @@
 import visit from 'unist-util-visit'
-import { Element, Node } from 'hast'
-import { VFile } from 'vfile'
+import { Element } from 'hast'
+import { Transformer } from 'unified'
 
 const isRelativeUrl = (url: string): boolean => /^\./.test(url)
 
@@ -12,16 +12,14 @@ interface Options {
 /**
  *
  */
-const remarkRelativeAssets: (
-  options: Options
-) => (tree: Node, file: VFile) => void = ({
+const remarkRelativeAssets: (options: Options) => Transformer = ({
   assetUrlPrefix,
   assetUrlTagConfig,
 }) => {
-  return (tree: Node, file: VFile) => {
+  return (tree, file) => {
     const assetUrls: string[] = []
     visit(tree, 'element', visitor)
-    file.data = { assetUrls }
+    ;(file.data as Record<string, unknown>).assetUrls = assetUrls
 
     function visitor(node: Element) {
       const attributes = assetUrlTagConfig[node.tagName]

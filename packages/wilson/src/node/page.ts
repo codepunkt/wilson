@@ -47,9 +47,11 @@ abstract class Page implements PageInterface {
   public abstract path: string
   public abstract title: string
   public date: Date
+  public sourcePath: string
 
   constructor(source: PageSourceType) {
     this.date = this.getDate(source)
+    this.sourcePath = source.path
   }
 
   private getDate(source: PageSourceType): Date {
@@ -114,6 +116,7 @@ export class ContentPage extends Page {
   public title: string
   public taxonomies?: TaxonomyData
   public draft: boolean
+  public description?: string
 
   constructor(source: ContentPageSource) {
     super(source)
@@ -122,6 +125,7 @@ export class ContentPage extends Page {
     this.route = Page.getRoute(source.path, source.frontmatter.permalink)
     this.path = this.getPath(this.route)
     this.title = source.frontmatter.title
+    this.description = source.frontmatter.description
   }
 }
 

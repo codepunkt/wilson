@@ -4,7 +4,6 @@ import {
   FrontmatterWithDefaults,
 } from '../types'
 import { extname } from 'path'
-import grayMatter from 'gray-matter'
 import { readFileSync } from 'fs-extra'
 import {
   AssignmentExpression,
@@ -16,6 +15,7 @@ import { generate } from 'astring'
 import { walk } from 'estree-walker'
 import acorn, { parse } from 'acorn'
 import { JsxEmit, ModuleKind, transpileModule } from 'typescript'
+import { parseFrontmatter } from './markdown'
 
 /**
  * Default values for optional properties in frontmatter.
@@ -85,9 +85,8 @@ class FrontmatterParser {
    * Parses markdown frontmatter.
    */
   private parseMarkdownFrontmatter(): Partial<Frontmatter> {
-    const graymatterOptions = {}
-    const parsed = grayMatter(this.source, graymatterOptions)
-    return parsed.data as Partial<Frontmatter>
+    const { frontmatter } = parseFrontmatter(this.source)
+    return frontmatter as Partial<Frontmatter>
   }
 
   /**

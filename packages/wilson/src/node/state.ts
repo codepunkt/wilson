@@ -110,4 +110,5 @@ export {
   getPages,
   initializePagesources,
   getContentPages,
+  getContentPageSources,
 }

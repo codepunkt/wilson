@@ -26,6 +26,6 @@ module.exports = {
     ],
   },
   pagination: {
-    size: 2,
+    pageSize: 2,
   },
 }
