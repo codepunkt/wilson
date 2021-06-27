@@ -56,6 +56,16 @@ export const hexToRgb = (hex: string): [r: number, g: number, b: number] => {
 }
 
 /**
+ * Cleans URL by removing duplicate slashes.
+ *
+ * @param url URL to clean
+ * @returns Cleaned URL
+ */
+export const cleanUrl = (url: string): string => {
+  return url.replace(/([^:])(\/\/+)/g, '$1/')
+}
+
+/**
  * Transforms TypeScript/JSX to standard JavaScript.
  */
 export const transformJsx = (code: string): string => {

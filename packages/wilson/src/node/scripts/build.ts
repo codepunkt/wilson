@@ -3,6 +3,7 @@ import { emptyDir } from 'fs-extra'
 import { getViteConfig } from '../vite'
 import { prerenderStaticPages } from '../prerender'
 import { createOpengraphImages } from '../opengraph'
+import { createRssFeed } from '../rss'
 import { initializePagesources } from '../state'
 
 export async function build(root: string = process.cwd()): Promise<void> {
@@ -13,6 +14,7 @@ export async function build(root: string = process.cwd()): Promise<void> {
   await viteBuild(await getViteConfig({ ssr: true }))
   await viteBuild(await getViteConfig({ ssr: false }))
 
-  await prerenderStaticPages()
+  const feeds = await createRssFeed()
+  await prerenderStaticPages(feeds)
   await createOpengraphImages()
 }

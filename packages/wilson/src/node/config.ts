@@ -9,7 +9,7 @@ import { pathExistsSync } from 'fs-extra'
 const configDefaults: SiteConfigDefaults = {
   pageLayouts: [{ pattern: '**/*.md', layout: 'markdown' }],
   pagination: {
-    size: 10,
+    pageSize: 10,
     routeSuffix: (pageNumber: number): string =>
       pageNumber === 0 ? '' : `page-${pageNumber}/`,
   },
@@ -17,6 +17,7 @@ const configDefaults: SiteConfigDefaults = {
     categories: 'category',
     tags: 'tag',
   },
+  feeds: [],
 }
 
 /**

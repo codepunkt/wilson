@@ -25,7 +25,7 @@ export const Page: FunctionalComponent<TaxonomyPageProps> = ({
 }
 
 export const frontmatter: TaxonomyFrontmatter = {
-  kind: 'taxonomy',
+  type: 'taxonomy',
   taxonomyName: 'tags',
   title: 'Tag: ${term}',
   permalink: '/tags/${term}/',

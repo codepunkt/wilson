@@ -19,8 +19,8 @@ export const Page: FunctionalComponent<SelectPageProps> = ({
 }
 
 export const frontmatter: Frontmatter = {
+  type: 'select',
   title: 'Writing',
-  kind: 'select',
   taxonomyName: 'categories',
   selectedTerms: ['writing'],
 }

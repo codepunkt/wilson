@@ -3,6 +3,7 @@ import { LoadResult, ResolveIdResult } from 'rollup'
 import { transformJsx } from '../util'
 import { getConfig } from '../config'
 import { getPages, getPageSources } from '../state'
+import { PageType } from '../page'
 
 const virtualExportsPath = 'wilson/virtual'
 const clientEntryPath = '/@wilson/client.js'
@@ -37,7 +38,7 @@ const virtualPlugin = async (): Promise<Plugin> => {
 
         const lazyPageImports = pageSources
           .map((pageSource, i) =>
-            pageSource.pages.map((page, j) => {
+            pageSource.pages.map((page: PageType, j: number) => {
               return `const PageSource${i}Page${j} = lazy(() => import('${pageEntryPath(
                 i,
                 j
@@ -50,7 +51,8 @@ const virtualPlugin = async (): Promise<Plugin> => {
         const routes = pageSources
           .map((pageSource, i) =>
             pageSource.pages.map(
-              (page, j) => `<PageSource${i}Page${j} path="${page.route}" />`
+              (page: PageType, j: number) =>
+                `<PageSource${i}Page${j} path="${page.route}" />`
             )
           )
           .flat()

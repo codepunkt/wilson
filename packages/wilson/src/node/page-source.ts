@@ -7,40 +7,14 @@ import {
   TaxonomyFrontmatterWithDefaults,
   TermsFrontmatterWithDefaults,
 } from '../types'
-import grayMatter from 'gray-matter'
 import { readFileSync } from 'fs-extra'
-import Page, { ContentPage, SelectPage, TaxonomyPage, TermsPage } from './page'
+import { ContentPage, SelectPage, TaxonomyPage, TermsPage } from './page'
 import { getContentPages, getTaxonomyTerms } from './state'
-import rehypeSlug from 'rehype-slug'
-import remarkParse from 'remark-parse'
-import remarkToRehype from 'remark-rehype'
-import rehypeStringify from 'rehype-stringify'
-import remarkStringify from 'remark-stringify'
-import unified from 'unified'
-import rehypeRaw from 'rehype-raw'
-import rehypeAutolinkHeadings from 'rehype-autolink-headings'
-import remarkRelativeAssets from './unified-plugins/remark-relative-assets'
-import rehypeExtractToc from './unified-plugins/rehype-extract-toc'
 import { hasCommonElements, transformJsx } from './util'
 import { extname } from 'path'
 import { getConfig } from './config'
-
-/**
- * Defines attributes on HTML/SVG elements that should be considered when
- * converting relative URLs to imports.
- */
-const assetUrlTagConfig: Record<string, string[]> = {
-  video: ['src', 'poster'],
-  source: ['src'],
-  img: ['src'],
-  image: ['xlink:href', 'href'],
-  use: ['xlink:href', 'href'],
-}
-
-/**
- * Asset URL prefix
- */
-const assetUrlPrefix = '_assetUrl_'
+import { transformMarkdown } from './markdown'
+import { assetUrlPrefix } from './constants'
 
 /**
  * Represents a page source file in `pages` directory.
@@ -49,7 +23,7 @@ abstract class PageSource {
   public path: string
   public fullPath: string
   public transformedCode: string | null = null
-  public pages: Page[] = []
+  abstract pages: unknown[]
   public headings?: Heading[]
   public frontmatter: Frontmatter = {} as Frontmatter
 
@@ -72,7 +46,9 @@ abstract class PageSource {
 }
 
 export class ContentPageSource extends PageSource {
+  public pages: ContentPage[] = []
   public frontmatter: ContentFrontmatterWithDefaults
+
   constructor(
     path: string,
     fullPath: string,
@@ -81,6 +57,7 @@ export class ContentPageSource extends PageSource {
     super(path, fullPath)
     this.frontmatter = frontmatter as ContentFrontmatterWithDefaults
   }
+
   public createPages(): void {
     this.pages.push(new ContentPage(this))
   }
@@ -89,64 +66,42 @@ export class ContentPageSource extends PageSource {
 export class MarkdownPageSource extends ContentPageSource {
   public headings: Heading[] = []
 
-  protected transformCode(originalSource: string): string {
-    return transformJsx(this.transformMarkdown(originalSource))
-  }
+  protected transformCode(markdownCode: string): string {
+    const { html, headings, assetUrls } = transformMarkdown(markdownCode)
 
-  private transformMarkdown(markdownSource: string): string {
-    const processor = unified()
-      .use(remarkParse)
-      // apply plugins that change MDAST
-      .use(remarkStringify)
-      .use(remarkToRehype, { allowDangerousHtml: true })
-      .use(rehypeRaw)
-      // apply plugins that change HAST
-      .use(remarkRelativeAssets, { assetUrlPrefix, assetUrlTagConfig })
-      .use(rehypeSlug)
-      .use(rehypeExtractToc, {
-        callback: (headings) => {
-          this.headings = headings
-        },
-      })
-      // TODO: configure autolink headings
-      .use(rehypeAutolinkHeadings, {})
-      .use(rehypeStringify, {
-        allowDangerousHtml: true,
-        closeSelfClosing: true,
-      })
+    // store headings for further use
+    this.headings = headings
 
-    const parsed = grayMatter(markdownSource, {})
-    const vfile = processor.processSync(parsed.content)
-    const html = vfile.contents as string
-    const relativeAssetUrls = (vfile.data as { assetUrls: string[] })
-      .assetUrls as string[]
-
-    // if (this.frontmatter.title === 'Getting started')
-    return this.htmlToPreact(html, relativeAssetUrls)
-  }
-
-  private htmlToPreact(html: string, relativeAssetUrls: string[]): string {
-    // create imports from relative asset urls and replace placeholders with imported vars
-    const relativeAssetImports = relativeAssetUrls.map((url, i) => {
-      html = html.replace(
+    // replace relative asset URL string attributes with react-style variable
+    // interpolations
+    let htmlCode = html
+    assetUrls.forEach((_, i) => {
+      htmlCode = htmlCode.replace(
         new RegExp(`"${assetUrlPrefix}${i}"`, 'g'),
         `{${assetUrlPrefix}${i}}`
       )
-      return `import ${assetUrlPrefix}${i} from '${url}';`
     })
 
-    return `
-    import { h, Fragment } from "preact";
-    ${relativeAssetImports.join('')}
+    const relativeAssetImports = assetUrls.map(
+      (url, i) => `import ${assetUrlPrefix}${i} from '${url}';`
+    )
 
-    export const Page = () => {
-      return <Fragment>${html}</Fragment>;
-    };
-  `
+    const preactCode = `
+      import { h, Fragment } from "preact";
+      ${relativeAssetImports.join('')}
+
+      export const Page = () => {
+        return <div dangerouslySetInnerHTML={{ __html: \`${htmlCode}\` }} />;
+      };
+    `
+
+    const jsCode = transformJsx(preactCode)
+    return jsCode
   }
 }
 
 export class TaxonomyPageSource extends PageSource {
+  public pages: TaxonomyPage[] = []
   public frontmatter: TaxonomyFrontmatterWithDefaults
   constructor(
     path: string,
@@ -169,7 +124,7 @@ export class TaxonomyPageSource extends PageSource {
         // sort by page date, descending
         .sort((a, b) => +b.date - +a.date)
 
-      const pageSize = config.pagination.size
+      const pageSize = config.pagination.pageSize
       let currentPage = 1
       for (let i = 0, j = pages.length; i < j; i += pageSize) {
         this.pages.push(
@@ -186,6 +141,7 @@ export class TaxonomyPageSource extends PageSource {
 }
 
 export class TermsPageSource extends PageSource {
+  public pages: TermsPage[] = []
   public frontmatter: TermsFrontmatterWithDefaults
   constructor(
     path: string,
@@ -201,6 +157,7 @@ export class TermsPageSource extends PageSource {
 }
 
 export class SelectPageSource extends PageSource {
+  public pages: SelectPage[] = []
   public frontmatter: SelectFrontmatterWithDefaults
   constructor(
     path: string,
@@ -227,7 +184,7 @@ export class SelectPageSource extends PageSource {
      * @todo size should have a default value prior to this
      * code being executed
      */
-    const pageSize = config.pagination.size ?? 2
+    const pageSize = config.pagination.pageSize ?? 2
     let currentPage = 1
     for (let i = 0, j = pages.length; i < j; i += pageSize) {
       this.pages.push(
@@ -255,12 +212,6 @@ export const createPageSource = (
   ]
 
   switch (frontmatter.type) {
-    case 'content':
-      pageSource =
-        extname(fullPath) === '.md'
-          ? new MarkdownPageSource(...constructorArgs)
-          : new ContentPageSource(...constructorArgs)
-      break
     case 'taxonomy':
       pageSource = new TaxonomyPageSource(...constructorArgs)
       break
@@ -269,6 +220,13 @@ export const createPageSource = (
       break
     case 'select':
       pageSource = new SelectPageSource(...constructorArgs)
+      break
+    case 'content':
+    default:
+      pageSource =
+        extname(fullPath) === '.md'
+          ? new MarkdownPageSource(...constructorArgs)
+          : new ContentPageSource(...constructorArgs)
       break
   }
 

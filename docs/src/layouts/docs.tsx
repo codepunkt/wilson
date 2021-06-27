@@ -48,7 +48,6 @@ const MenuItem: FunctionalComponent<{
   showToc?: boolean
 }> = ({ children, href, isActive = false, headings, showToc = false }) => {
   const url = useLocation().url
-  console.log(headings)
   return (
     <li data-active={isActive}>
       <Link href={href}>{children}</Link>

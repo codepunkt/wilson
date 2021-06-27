@@ -5,7 +5,7 @@ import { minify } from 'html-minifier-terser'
 import chalk from 'chalk'
 import size from 'brotli-size'
 import { getConfig } from './config'
-import { Dependencies } from '../types'
+import { Dependencies, Feed } from '../types'
 import { getPages, getPageSources } from './state'
 
 /**
@@ -14,9 +14,7 @@ import { getPages, getPageSources } from './state'
  * rather easy. what also needs to be done is to update the global
  * object with additional preloadlinks when loading new page js.
  */
-type PrerenderFn = (
-  route: string
-) => Promise<{
+type PrerenderFn = (route: string) => Promise<{
   html: string
   head: {
     lang: string
@@ -51,7 +49,7 @@ const filterExistingTags = (template: string) => (path: string) =>
 /**
  *
  */
-export async function prerenderStaticPages(): Promise<void> {
+export async function prerenderStaticPages(feeds: Feed[]): Promise<void> {
   try {
     console.info(
       `${chalk.yellow(
@@ -86,9 +84,7 @@ export async function prerenderStaticPages(): Promise<void> {
             for (const [i, pageSource] of getPageSources().entries()) {
               for (const [j, page] of pageSource.pages.entries()) {
                 if (page.route === link) {
-                  linkDependencies[
-                    link
-                  ] = wrappedManifest.getPageDependencies(
+                  linkDependencies[link] = wrappedManifest.getPageDependencies(
                     `@wilson/page-source/${i}/page/${j}`,
                     { assets: false }
                   )
@@ -115,6 +111,10 @@ export async function prerenderStaticPages(): Promise<void> {
 
         const head = `
           <title>${prerenderResult.head.title}</title>
+          ${feeds.map(
+            ({ href, title }) =>
+              `<link rel="alternate" type="application/rss+xml" title="${title}" href="${href}" />`
+          )}
           ${prerenderResult.head.metas
             .map(
               ({ name, property, content }) =>

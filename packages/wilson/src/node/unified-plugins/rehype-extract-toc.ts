@@ -1,6 +1,6 @@
 import { Element, Node, Parent, Properties, Text } from 'hast'
-import { VFile } from 'vfile'
 import { Heading } from '../../types'
+import { Transformer } from 'unified'
 
 function findHeadings(node: Node): Heading[] {
   const headingNodes: Heading[] = []
@@ -53,21 +53,15 @@ const validateHeadings: (headings: Heading[]) => string | void = (headings) => {
   }
 }
 
-interface Options {
-  callback: (headings: Heading[]) => unknown
-}
-
 /**
  *
  */
-const rehypeExtractToc: (
-  options: Options
-) => (tree: Node, file: VFile) => void = ({ callback }) => {
-  return (tree: Node) => {
+const rehypeExtractToc: () => Transformer = () => {
+  return (tree, file) => {
     const headings = findHeadings(tree)
     const message = validateHeadings(headings)
     if (message) throw new Error(message)
-    callback(headings)
+    ;(file.data as Record<string, unknown>).headings = headings
   }
 }
 

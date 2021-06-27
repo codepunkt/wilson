@@ -43,9 +43,10 @@ type TaxonomyData = Record<string, TaxonomyTerms>
 
 export type ContentFrontmatter = FrontmatterOptional &
   FrontmatterRequired & {
-    type: 'content'
+    type?: 'content'
     taxonomies?: TaxonomyData
     draft?: boolean
+    description?: string
   }
 
 export type TermsFrontmatter = FrontmatterOptional &
@@ -121,6 +122,11 @@ export interface ClientPage {
   taxonomies: TaxonomyData
 }
 
+export type Feed = {
+  href: string
+  title: string
+}
+
 export interface Heading {
   level: number
   text: string
@@ -149,8 +155,22 @@ export interface OpengraphImageText {
  * Pagination options.
  */
 interface PaginationOptions {
-  size?: number
+  pageSize?: number
   routeSuffix?: (pageNumber: number) => string
+}
+
+/**
+ * Feed options.
+ */
+interface FeedOptions {
+  title: string
+  output: string
+  match?: string | ((frontmatter: Frontmatter) => boolean)
+  language?: string
+  ttl?: number
+  managingEditor?: string
+  webMaster?: string
+  copyright?: string
 }
 
 /**
@@ -169,13 +189,14 @@ interface SiteConfigOptional {
   linkPreloadTest?: (route: string) => boolean
   taxonomies?: TaxonomyDefinition
   pagination?: PaginationOptions
+  feeds?: FeedOptions[]
 }
 
 /**
  * Optional site configuration that is set to default values when not defined.
  */
 export type SiteConfigDefaults = Required<
-  Pick<SiteConfigOptional, 'pageLayouts' | 'taxonomies'>
+  Pick<SiteConfigOptional, 'pageLayouts' | 'taxonomies' | 'feeds'>
 > & { pagination: Required<PaginationOptions> }
 
 /**

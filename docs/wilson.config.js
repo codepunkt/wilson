@@ -26,6 +26,14 @@ module.exports = {
     ],
   },
   pagination: {
-    size: 2,
+    pageSize: 2,
   },
+  feeds: [
+    {
+      title: 'Docs rss feed',
+      language: 'en',
+      output: 'docs/rss.xml',
+      match: 'docs/**/*',
+    },
+  ],
 }
