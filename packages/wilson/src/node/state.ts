@@ -43,7 +43,7 @@ const initializePagesources = async (pageDir: string): Promise<void> => {
     const frontmatter = frontmatterParser.parseFrontmatter()
 
     // create page source
-    state.pageSources.push(createPageSource(path, fullPath, frontmatter))
+    state.pageSources.push(await createPageSource(path, fullPath, frontmatter))
   }
 
   // Pages for `content` sources need to be created first, because the

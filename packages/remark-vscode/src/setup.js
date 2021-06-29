@@ -7,7 +7,7 @@ import { createOnce } from './utils.js'
 
 const once = createOnce()
 
-export async function setup(options, cache) {
+export function setup(options, cache) {
   return once(() => setupOptions(options, cache), 'setup')
 }
 
@@ -41,7 +41,6 @@ async function setupOptions(
     host,
     getLineTransformers,
   })
-
   await processExtensions(extensions, host, cache)
   return {
     theme,

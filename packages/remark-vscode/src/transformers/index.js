@@ -2,7 +2,6 @@ import { highlightMetaTransformer } from './highlightMetaTransformer.js'
 import { createHighlightDirectiveLineTransformer } from './highlightDirectiveLineTransformer.js'
 import { createLineNumberLineTransformer } from './lineNumberTransformer.js'
 import { createDiffLineTransformer } from './diffLineTransformer.js'
-// import getTransformedLines from './getTransformedLines.js'
 
 export const getDefaultLineTransformers = (pluginOptions, cache) => [
   createHighlightDirectiveLineTransformer(pluginOptions.languageAliases, cache),

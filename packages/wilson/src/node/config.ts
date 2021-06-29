@@ -21,6 +21,10 @@ const configDefaults: SiteConfigDefaults = {
     tags: 'tag',
   },
   feeds: [],
+  syntaxHighlighting: {
+    extensions: [],
+    theme: 'Default Dark+',
+  },
 }
 
 /**

@@ -182,6 +182,26 @@ interface SiteConfigRequired {
   siteData: SiteData
 }
 
+type SyntaxHighlightingTheme =
+  | string
+  | ThemeSettings
+  | ((data: CodeBlockData) => string | ThemeSettings)
+
+/**
+ * Syntax highlighting options
+ */
+interface SyntaxHighlightingOptions {
+  extensions: string[]
+  theme: SyntaxHighlightingTheme
+  inlineCode?: {
+    theme: SyntaxHighlightingTheme
+    marker: string
+    className:
+      | string
+      | ((obj: { language: string; node: RemarkASTNode }) => string)
+  }
+}
+
 /**
  * Optional site configuration.
  */
@@ -192,13 +212,17 @@ interface SiteConfigOptional {
   taxonomies?: TaxonomyDefinition
   pagination?: PaginationOptions
   feeds?: FeedOptions[]
+  syntaxHighlighting?: SyntaxHighlightingOptions
 }
 
 /**
  * Optional site configuration that is set to default values when not defined.
  */
 export type SiteConfigDefaults = Required<
-  Pick<SiteConfigOptional, 'pageLayouts' | 'taxonomies' | 'feeds'>
+  Pick<
+    SiteConfigOptional,
+    'pageLayouts' | 'taxonomies' | 'feeds' | 'syntaxHighlighting'
+  >
 > & { pagination: Required<PaginationOptions> }
 
 /**

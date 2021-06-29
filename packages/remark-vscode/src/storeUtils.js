@@ -1,8 +1,10 @@
 import path from 'path'
 import { exists } from './utils.js'
 import { fileURLToPath } from 'url'
+import { createRequire } from 'module'
 
-const __dirname = path.resolve(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const require = createRequire(import.meta.url)
 
 let grammarManifest
 let themeManifest

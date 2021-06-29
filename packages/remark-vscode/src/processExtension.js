@@ -13,10 +13,11 @@ import { createRequire } from 'module'
 import { getHighestBuiltinLanguageId } from './storeUtils.js'
 import { fileURLToPath } from 'url'
 
-const __dirname = path.resolve(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const unzipDir = path.resolve(__dirname, '../lib/extensions')
 
 // const requireMain = createRequire(require.main.filename)
+const require = createRequire(import.meta.url)
 const requireCwd = createRequire(path.join(process.cwd(), 'index.js'))
 
 export async function processExtension(packageJsonPath) {
@@ -102,7 +103,7 @@ export async function processExtension(packageJsonPath) {
 }
 
 async function mergeCache(cache, key, value) {
-  await cache.set(key, { ...(await cache.get(key)), ...value })
+  cache.set(key, { ...cache.get(key), ...value })
 }
 
 async function getExtensionPackageJsonPath(specifier, host) {
@@ -118,7 +119,7 @@ async function getExtensionPackageJsonPath(specifier, host) {
 
   return absolute
 
-  async function searchDirectory(/** @type {string} */ dir, stop = false) {
+  async function searchDirectory(dir, stop = false) {
     if (await exists(path.join(dir, 'extension', 'package.json'))) {
       return path.join(dir, 'extension', 'package.json')
     }

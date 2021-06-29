@@ -68,7 +68,7 @@ export async function renderToString(url: string): Promise<PrerenderResult> {
 
   try {
     const html = await render()
-    const head = (toStatic() as unknown) as PrerenderResult['head']
+    const head = toStatic() as unknown as PrerenderResult['head']
     return { links, html, head }
   } finally {
     vnodeHook = null

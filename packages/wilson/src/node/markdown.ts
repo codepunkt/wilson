@@ -15,6 +15,7 @@ import unified from 'unified'
 // eslint-disable-next-line
 // @ts-ignore
 import syntaxPlugin from '@wilson/remark-vscode'
+import { getConfig } from './config.js'
 
 const frontmatterCache = new NodeCache()
 
@@ -89,20 +90,22 @@ type MarkdownTransformResult = {
  * @param markdownCode The markdown code to parse
  * @returns The MarkdownTransformResult object
  */
-export const transformMarkdown = (
+export const transformMarkdown = async (
   markdownCode: string
-): MarkdownTransformResult => {
+): Promise<MarkdownTransformResult> => {
   const cachedResult = transformCache.get<MarkdownTransformResult>(markdownCode)
 
   if (cachedResult) {
     return cachedResult
   }
 
+  const { syntaxHighlighting: syntaxHighlightingOptions } = getConfig()
+
   const processor = unified()
     .use(remarkParse)
     // apply plugins that change MDAST
     .use(remarkStringify)
-    .use(syntaxPlugin)
+    .use(syntaxPlugin, syntaxHighlightingOptions)
     .use(remarkToRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     // apply plugins that change HAST and gather additional information
@@ -117,7 +120,7 @@ export const transformMarkdown = (
     })
 
   const { markdown: withoutFrontmatter } = parseFrontmatter(markdownCode)
-  const vfile = processor.processSync(withoutFrontmatter)
+  const vfile = await processor.process(withoutFrontmatter)
   const { assetUrls, headings } = vfile.data as Omit<
     MarkdownTransformResult,
     'html'
