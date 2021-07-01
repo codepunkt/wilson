@@ -12,10 +12,10 @@ import rehypeExtractToc from './unified-plugins/rehype-extract-toc.js'
 import { assetUrlPrefix, assetUrlTagConfig } from './constants.js'
 import { Heading } from '../types'
 import unified from 'unified'
+import { getConfig } from './config.js'
 // eslint-disable-next-line
 // @ts-ignore
-import syntaxPlugin from '@wilson/remark-vscode'
-import { getConfig } from './config.js'
+import syntaxHighlighting from 'gatsby-remark-vscode'
 
 const frontmatterCache = new NodeCache()
 
@@ -105,7 +105,7 @@ export const transformMarkdown = async (
     .use(remarkParse)
     // apply plugins that change MDAST
     .use(remarkStringify)
-    .use(syntaxPlugin, syntaxHighlightingOptions)
+    .use(syntaxHighlighting.remarkPlugin, syntaxHighlightingOptions)
     .use(remarkToRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     // apply plugins that change HAST and gather additional information

@@ -66,6 +66,7 @@
     "estree-walker": "2.0.2",
     "express": "^4.17.1",
     "fs-extra": "^9.1.0",
+    "gatsby-remark-vscode": "wilsonjs/gatsby-remark-vscode#usage-without-gatsby",
     "gray-matter": "^4.0.2",
     "hast": "^1.0.0",
     "hoofd": "^1.2.2",
