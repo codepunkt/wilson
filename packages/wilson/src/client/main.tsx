@@ -37,7 +37,29 @@ if (process.env.NODE_ENV === 'production') {
     href?: string
     target?: string
     onMouseOver?: (e: MouseEvent) => void
+    onFocus?: (e: FocusEvent) => void
   }>) => {
+    const handleInteraction = () => {
+      const preloads = [
+        ...(pathPreloads[props.href!] ?? { js: [] }).js,
+        ...(pathPreloads[props.href!] ?? { css: [] }).css,
+      ]
+      preloads.forEach((href) => {
+        href = `/${href}`
+        if (!assets.has(href)) {
+          const tag = document.createElement('link')
+          const isScript = href.endsWith('.js')
+          tag.setAttribute('rel', isScript ? 'modulepreload' : 'preload')
+          tag.setAttribute('as', isScript ? 'script' : 'style')
+          tag.setAttribute('crossorigin', '')
+          tag.setAttribute('href', href)
+          document.head.appendChild(tag)
+          assets.add(href)
+        }
+      })
+    }
+
+    // if node is relative link opened in same tab
     if (
       type === 'a' &&
       props &&
@@ -45,25 +67,8 @@ if (process.env.NODE_ENV === 'production') {
       !props.href.startsWith('http') &&
       (!props.target || props.target === '_self')
     ) {
-      props.onMouseOver = (e) => {
-        const preloads = [
-          ...(pathPreloads[props.href!] ?? { js: [] }).js,
-          ...(pathPreloads[props.href!] ?? { css: [] }).css,
-        ]
-        preloads.forEach((href) => {
-          href = `/${href}`
-          if (!assets.has(href)) {
-            const tag = document.createElement('link')
-            const isScript = href.endsWith('.js')
-            tag.setAttribute('rel', isScript ? 'modulepreload' : 'preload')
-            tag.setAttribute('as', isScript ? 'script' : 'style')
-            tag.setAttribute('crossorigin', '')
-            tag.setAttribute('href', href)
-            document.head.appendChild(tag)
-            assets.add(href)
-          }
-        })
-      }
+      props.onMouseOver = handleInteraction
+      props.onFocus = handleInteraction
     }
   }
 
