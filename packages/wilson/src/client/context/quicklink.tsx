@@ -6,11 +6,10 @@ import {
   useRef,
   useState,
 } from 'preact/hooks'
-import { Dependencies } from '../../types'
 
 declare global {
   interface Window {
-    __WILSON_DATA__: { pathPreloads: Record<string, Dependencies> }
+    __WILSON_DATA__: { pathPreloads: Record<string, string[]> }
   }
 }
 
@@ -25,14 +24,14 @@ type State = {
   assets: string[]
   setAssets: StateUpdater<string[]>
   previousAssets: string[]
-  dependencies: Record<string, Dependencies>
+  dependencies: Record<string, string[]>
 }
 
 const Context = createContext<null | State>(null)
 
 export const QuicklinkProvider: FunctionComponent = ({ children }) => {
   const [dependencies, setDependencies] =
-    useState<Record<string, Dependencies> | null>(null)
+    useState<Record<string, string[]> | null>(null)
   const [assets, setAssets] = useState<string[]>([])
   const previousAssets = usePrevious<string[]>(assets)
 
@@ -110,17 +109,13 @@ export const useQuicklink = (): void => {
   useEffect(() => {
     if (state !== null) {
       const { assets, dependencies, setAssets } = state
-      const getDeps = (href: string) => {
-        return [
-          ...(dependencies[href] ?? { js: [] }).js,
-          ...(dependencies[href] ?? { css: [] }).css,
-        ]
-      }
 
       const observer = new window.IntersectionObserver((entries) => {
         const urlsToPrefetch = entries
           .map(({ isIntersecting, target }) =>
-            isIntersecting ? getDeps(target.getAttribute('href') as string) : []
+            isIntersecting
+              ? dependencies[target.getAttribute('href') as string]
+              : []
           )
           .flat()
           .filter((url) => !assets.includes(url))

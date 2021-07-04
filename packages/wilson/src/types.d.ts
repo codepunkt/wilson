@@ -20,12 +20,6 @@ export interface SiteData {
   keywords?: string[]
 }
 
-export interface Dependencies {
-  js: string[]
-  css: string[]
-  assets?: string[]
-}
-
 interface FrontmatterOptional {
   date?: string | Date
   permalink?: string
