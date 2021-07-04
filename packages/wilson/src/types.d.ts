@@ -177,6 +177,15 @@ interface SiteConfigRequired {
 }
 
 /**
+ * Auto-prefetch options
+ */
+export interface AutoPrefetchOptions {
+  enabled?: boolean
+  maxConcurrentFetches?: number
+  timeout?: number
+}
+
+/**
  * Optional site configuration.
  */
 interface SiteConfigOptional {
@@ -186,14 +195,21 @@ interface SiteConfigOptional {
   taxonomies?: TaxonomyDefinition
   pagination?: PaginationOptions
   feeds?: FeedOptions[]
+  autoPrefetch?: AutoPrefetchOptions
 }
 
 /**
  * Optional site configuration that is set to default values when not defined.
  */
 export type SiteConfigDefaults = Required<
-  Pick<SiteConfigOptional, 'pageLayouts' | 'taxonomies' | 'feeds'>
-> & { pagination: Required<PaginationOptions> }
+  Pick<
+    SiteConfigOptional,
+    'pageLayouts' | 'taxonomies' | 'feeds' | 'autoPrefetch'
+  >
+> & {
+  pagination: Required<PaginationOptions>
+  autoPrefetch: Required<AutoPrefetchOptions>
+}
 
 /**
  * Site configuration.

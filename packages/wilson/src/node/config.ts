@@ -18,6 +18,11 @@ const configDefaults: SiteConfigDefaults = {
     tags: 'tag',
   },
   feeds: [],
+  autoPrefetch: {
+    enabled: true,
+    maxConcurrentFetches: 8,
+    timeout: 2000,
+  },
 }
 
 /**
@@ -58,6 +63,7 @@ export function getConfig(
     ...configDefaults,
     ...config,
     pagination: { ...configDefaults.pagination, ...config.pagination },
+    autoPrefetch: { ...configDefaults.autoPrefetch, ...config.autoPrefetch },
   }
   return cachedConfig
 }

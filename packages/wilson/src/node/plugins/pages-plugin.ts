@@ -42,6 +42,8 @@ const pagesPlugin = async (): Promise<Plugin> => {
       const pageIndex = parseInt(match[2], 10)
       const page = pageSource.pages[pageIndex]
 
+      const { autoPrefetch } = getConfig()
+
       if (page === undefined) {
         throw new Error('kaput!')
       }
@@ -88,7 +90,10 @@ const pagesPlugin = async (): Promise<Plugin> => {
         import { h } from 'preact';
         import { useMeta, useTitle } from 'hoofd/preact';
         import { siteData } from 'wilson/virtual';
-        import { useQuicklink } from 'wilson/dist/client/context/quicklink';
+        ${
+          autoPrefetch.enabled &&
+          `import { useAutoPrefetch } from 'wilson/dist/client/context/prefetch'`
+        };
         import { Page } from '${pageSource.fullPath}';
         ${layoutImport}
 
@@ -105,8 +110,10 @@ const pagesPlugin = async (): Promise<Plugin> => {
           }' });
           useMeta({ property: 'twitter:title', content: title });
           useTitle(title);
-
-          useQuicklink();
+          ${
+            autoPrefetch.enabled &&
+            `useAutoPrefetch(${JSON.stringify(autoPrefetch)})`
+          };
           
           return <Layout ${componentProps}>
             <Page
