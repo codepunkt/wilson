@@ -27,7 +27,7 @@ campus_, iunctisque equidem prima, nascuntur? Ulla coniecit quarum.
 ## Wat
 
 Praecipitant aeris per aduncis multos querellas voluisse recusem vulnere manus
-plangebat linguae, et [eque factos](http://nontemplis.org/vulguscytherea.html),
+plangebat linguae, et eque factos,
 femina ibi ille. Matris aristis deum, et querorque mons Iove Cyparissus ripas
 mollescat iuvenum elige unum. Oeten trementi fama quicquid reverti faciles sacra
 ubi, et erant mente, cum mater liquidis pro _precatur_; tellus?
@@ -37,7 +37,7 @@ edideras. **Natalibus urbes**, Baccho tanto Talia, veteres, crescit, et ferrem
 obsuntque sonum turba. Bracchia plenaque Latona ecquem.
 
 Praecipitant aeris per aduncis multos querellas voluisse recusem vulnere manus
-plangebat linguae, et [eque factos](http://nontemplis.org/vulguscytherea.html),
+plangebat linguae, et eque factos,
 femina ibi ille. Matris aristis deum, et querorque mons Iove Cyparissus ripas
 mollescat iuvenum elige unum. Oeten trementi fama quicquid reverti faciles sacra
 ubi, et erant mente, cum mater liquidis pro _precatur_; tellus?
@@ -91,7 +91,7 @@ campus_, iunctisque equidem prima, nascuntur? Ulla coniecit quarum.
 ## Really?
 
 Praecipitant aeris per aduncis multos querellas voluisse recusem vulnere manus
-plangebat linguae, et [eque factos](http://nontemplis.org/vulguscytherea.html),
+plangebat linguae, et eque factos,
 femina ibi ille. Matris aristis deum, et querorque mons Iove Cyparissus ripas
 mollescat iuvenum elige unum. Oeten trementi fama quicquid reverti faciles sacra
 ubi, et erant mente, cum mater liquidis pro _precatur_; tellus?
@@ -101,7 +101,7 @@ edideras. **Natalibus urbes**, Baccho tanto Talia, veteres, crescit, et ferrem
 obsuntque sonum turba. Bracchia plenaque Latona ecquem.
 
 Praecipitant aeris per aduncis multos querellas voluisse recusem vulnere manus
-plangebat linguae, et [eque factos](http://nontemplis.org/vulguscytherea.html),
+plangebat linguae, et eque factos,
 femina ibi ille. Matris aristis deum, et querorque mons Iove Cyparissus ripas
 mollescat iuvenum elige unum. Oeten trementi fama quicquid reverti faciles sacra
 ubi, et erant mente, cum mater liquidis pro _precatur_; tellus?
@@ -131,5 +131,5 @@ miserae humanum creverat et Seriphi penetralia.
 - Vocat iram mores et regis si de
 
 Dixit meae; feruntque cepit, ab quis cervix dixit pennae alteraque Interea
-tonitruque, tu. Dumque nimiique: felicesque datum, regalis, iura agitat adorat
+tonitruque, tu. [Dumque nimiique](/writing/page-2/): felicesque datum, regalis, iura agitat adorat
 et secrevit.

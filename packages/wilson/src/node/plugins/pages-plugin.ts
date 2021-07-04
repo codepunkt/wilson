@@ -88,6 +88,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
         import { h } from 'preact';
         import { useMeta, useTitle } from 'hoofd/preact';
         import { siteData } from 'wilson/virtual';
+        import { useQuicklink } from 'wilson/dist/client/context/quicklink';
         import { Page } from '${pageSource.fullPath}';
         ${layoutImport}
 
@@ -105,6 +106,8 @@ const pagesPlugin = async (): Promise<Plugin> => {
           useMeta({ property: 'twitter:title', content: title });
           useTitle(title);
 
+          useQuicklink();
+          
           return <Layout ${componentProps}>
             <Page
               ${componentProps}
