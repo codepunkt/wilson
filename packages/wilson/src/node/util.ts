@@ -1,5 +1,5 @@
 import { dirname, join } from 'path'
-import { readFile as fsRead, writeFile as write, ensureDir } from 'fs-extra'
+import fs from 'fs-extra'
 import { transform } from 'sucrase'
 import slugify from 'slugify'
 
@@ -21,7 +21,7 @@ export const toRoot = (path: string): string => join(process.cwd(), path)
  * UTF-8 string.
  */
 export const readFile = async (path: string): Promise<string> =>
-  await fsRead(toRoot(path), 'utf-8')
+  await fs.readFile(toRoot(path), 'utf-8')
 
 /**
  * Parses the contents of a json file relative to the project root directory
@@ -39,8 +39,8 @@ export const writeFile = async (
   path: string,
   content: string
 ): Promise<void> => {
-  await ensureDir(dirname(path))
-  return await write(path, content)
+  await fs.ensureDir(dirname(path))
+  return await fs.writeFile(path, content)
 }
 
 /**

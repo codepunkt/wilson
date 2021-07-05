@@ -5,4 +5,8 @@ taxonomies:
     - docs
 ---
 
-wat
+- Markdown support
+- Taxonomies
+- RSS feeds
+- Opengraph images and meta
+- Syntax highlighting

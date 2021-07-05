@@ -1,5 +1,5 @@
 ---
-title: Deploying
+title: Taxonomies
 taxonomies:
   tags:
     - docs

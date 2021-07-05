@@ -7,14 +7,14 @@ import {
   TaxonomyFrontmatterWithDefaults,
   TermsFrontmatterWithDefaults,
 } from '../types'
-import { readFileSync } from 'fs-extra'
-import { ContentPage, SelectPage, TaxonomyPage, TermsPage } from './page'
-import { getContentPages, getTaxonomyTerms } from './state'
-import { hasCommonElements, transformJsx } from './util'
+import { readFileSync } from 'fs'
+import { ContentPage, SelectPage, TaxonomyPage, TermsPage } from './page.js'
+import { getContentPages, getTaxonomyTerms } from './state.js'
+import { hasCommonElements, transformJsx } from './util.js'
 import { extname } from 'path'
-import { getConfig } from './config'
-import { transformMarkdown } from './markdown'
-import { assetUrlPrefix } from './constants'
+import { getConfig } from './config.js'
+import { transformMarkdown } from './markdown.js'
+import { assetUrlPrefix } from './constants.js'
 
 /**
  * Represents a page source file in `pages` directory.
@@ -32,15 +32,15 @@ abstract class PageSource {
     this.fullPath = fullPath
   }
 
-  public initialize(): void {
-    this.transformedCode = this.transformCode(
+  public async initialize(): Promise<void> {
+    this.transformedCode = await this.transformCode(
       readFileSync(this.fullPath, 'utf-8')
     )
   }
 
   public abstract createPages(): void
 
-  protected transformCode(originalSource: string): string {
+  protected async transformCode(originalSource: string): Promise<string> {
     return originalSource
   }
 }
@@ -66,8 +66,8 @@ export class ContentPageSource extends PageSource {
 export class MarkdownPageSource extends ContentPageSource {
   public headings: Heading[] = []
 
-  protected transformCode(markdownCode: string): string {
-    const { html, headings, assetUrls } = transformMarkdown(markdownCode)
+  protected async transformCode(markdownCode: string): Promise<string> {
+    const { html, headings, assetUrls } = await transformMarkdown(markdownCode)
 
     // store headings for further use
     this.headings = headings
@@ -87,11 +87,14 @@ export class MarkdownPageSource extends ContentPageSource {
     )
 
     const preactCode = `
-      import { h, Fragment } from "preact";
+      import { h } from "preact";
       ${relativeAssetImports.join('')}
 
       export const Page = () => {
-        return <div dangerouslySetInnerHTML={{ __html: \`${htmlCode}\` }} />;
+        return <div dangerouslySetInnerHTML={{ __html: \`${htmlCode.replace(
+          /([`$\\])/g,
+          '\\$1'
+        )}\` }} />
       };
     `
 
@@ -199,11 +202,11 @@ export class SelectPageSource extends PageSource {
   }
 }
 
-export const createPageSource = (
+export const createPageSource = async (
   path: string,
   fullPath: string,
   frontmatter: FrontmatterWithDefaults
-): PageSourceType => {
+): Promise<PageSourceType> => {
   let pageSource: PageSourceType
   const constructorArgs: Parameters<typeof createPageSource> = [
     path,
@@ -230,7 +233,7 @@ export const createPageSource = (
       break
   }
 
-  pageSource.initialize()
+  await pageSource.initialize()
   return pageSource
 }
 

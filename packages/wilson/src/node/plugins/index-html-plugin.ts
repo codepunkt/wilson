@@ -1,20 +1,22 @@
 import { HtmlTagDescriptor, Plugin } from 'vite'
 import visit from 'unist-util-visit'
 import is from 'unist-util-is'
-import { getConfig } from '../config'
+import { getConfig } from '../config.js'
 import { Node, Element } from 'hast'
 import parse from 'rehype-parse'
 import stringify from 'rehype-stringify'
 import unified from 'unified'
+import { createRequire } from 'module'
 
-const createMetaFactory = (attributeName: string) => (
-  name: string,
-  value: string
-): HtmlTagDescriptor => ({
-  tag: 'meta',
-  injectTo: 'head',
-  attrs: { [attributeName]: name, content: value },
-})
+const require = createRequire(import.meta.url)
+
+const createMetaFactory =
+  (attributeName: string) =>
+  (name: string, value: string): HtmlTagDescriptor => ({
+    tag: 'meta',
+    injectTo: 'head',
+    attrs: { [attributeName]: name, content: value },
+  })
 
 const createNameMeta = createMetaFactory('name')
 const createPropertyMeta = createMetaFactory('property')

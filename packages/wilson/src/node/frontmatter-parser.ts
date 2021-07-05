@@ -4,7 +4,7 @@ import {
   FrontmatterWithDefaults,
 } from '../types'
 import { extname } from 'path'
-import { readFileSync } from 'fs-extra'
+import { readFileSync } from 'fs'
 import {
   AssignmentExpression,
   Identifier,
@@ -14,8 +14,8 @@ import {
 import { generate } from 'astring'
 import { walk } from 'estree-walker'
 import acorn, { parse } from 'acorn'
-import { JsxEmit, ModuleKind, transpileModule } from 'typescript'
-import { parseFrontmatter } from './markdown'
+import typescript from 'typescript'
+import { parseFrontmatter } from './markdown.js'
 
 /**
  * Default values for optional properties in frontmatter.
@@ -146,12 +146,15 @@ class FrontmatterParser {
    */
   private transpileTypescriptToJavascript(typescriptString: string): string {
     const compilerOptions = {
-      module: ModuleKind.CommonJS,
-      jsx: JsxEmit.ReactJSX,
+      module: typescript.ModuleKind.CommonJS,
+      jsx: typescript.JsxEmit.ReactJSX,
       jsxImportSource: 'preact',
     }
     const transpileOptions = { compilerOptions }
-    const transpileOutput = transpileModule(typescriptString, transpileOptions)
+    const transpileOutput = typescript.transpileModule(
+      typescriptString,
+      transpileOptions
+    )
 
     return transpileOutput.outputText
   }

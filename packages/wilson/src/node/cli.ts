@@ -1,10 +1,12 @@
 import chalk from 'chalk'
 import boxen from 'boxen'
 import minimist from 'minimist'
-import { startDevServer } from './scripts/dev'
-import { build } from './scripts/build'
-import { serve } from './scripts/serve'
+import { startDevServer } from './scripts/dev.js'
+import { build } from './scripts/build.js'
+import { serve } from './scripts/serve.js'
+import { createRequire } from 'module'
 
+const require = createRequire(import.meta.url)
 const argv = minimist(process.argv.slice(2))
 
 console.info(
@@ -53,3 +55,5 @@ async function cli(command: string) {
 cli(argv._[0] || 'dev').catch((e) => {
   console.error(e)
 })
+
+export default 'wat'

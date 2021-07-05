@@ -1,9 +1,9 @@
 import { Plugin } from 'vite'
 import { LoadResult, ResolveIdResult } from 'rollup'
-import { transformJsx } from '../util'
-import { getConfig } from '../config'
-import { getPages, getPageSources } from '../state'
-import { PageType } from '../page'
+import { transformJsx } from '../util.js'
+import { getConfig } from '../config.js'
+import { getPages, getPageSources } from '../state.js'
+import { PageType } from '../page.js'
 
 const virtualExportsPath = 'wilson/virtual'
 const clientEntryPath = '/@wilson/client.js'

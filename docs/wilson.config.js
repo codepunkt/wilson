@@ -28,4 +28,11 @@ module.exports = {
   pagination: {
     pageSize: 2,
   },
+  syntaxHighlighting: {
+    theme: 'Default Light+',
+    extensions: ['vscode-styled-components'],
+    inlineCode: {
+      marker: '•',
+    },
+  },
 }

@@ -9,10 +9,23 @@
     "build": "rm -rf ./node_modules/.vite && wilson build",
     "serve": "wilson serve"
   },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "preact",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended"
+    ]
+  },
   "dependencies": {
     "hoofd": "^1.2.2",
     "preact": "^10.5.13",
-    "preact-iso": "^1.1.1"
+    "preact-iso": "^1.1.1",
+    "vscode-styled-components": "styled-components/vscode-styled-components"
   },
   "devDependencies": {
     "@prefresh/vite": "^2.2.0",

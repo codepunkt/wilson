@@ -5,13 +5,17 @@ import remarkParse from 'remark-parse'
 import remarkToRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import remarkStringify from 'remark-stringify'
-import unified from 'unified'
 import rehypeRaw from 'rehype-raw'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
-import remarkRelativeAssets from './unified-plugins/remark-relative-assets'
-import rehypeExtractToc from './unified-plugins/rehype-extract-toc'
-import { assetUrlPrefix, assetUrlTagConfig } from './constants'
+import remarkRelativeAssets from './unified-plugins/remark-relative-assets.js'
+import rehypeExtractToc from './unified-plugins/rehype-extract-toc.js'
+import { assetUrlPrefix, assetUrlTagConfig } from './constants.js'
 import { Heading } from '../types'
+import unified from 'unified'
+import { getConfig } from './config.js'
+// eslint-disable-next-line
+// @ts-ignore
+import syntaxHighlighting from '@codepunkt/gatsby-remark-vscode'
 
 const frontmatterCache = new NodeCache()
 
@@ -86,19 +90,22 @@ type MarkdownTransformResult = {
  * @param markdownCode The markdown code to parse
  * @returns The MarkdownTransformResult object
  */
-export const transformMarkdown = (
+export const transformMarkdown = async (
   markdownCode: string
-): MarkdownTransformResult => {
+): Promise<MarkdownTransformResult> => {
   const cachedResult = transformCache.get<MarkdownTransformResult>(markdownCode)
 
   if (cachedResult) {
     return cachedResult
   }
 
+  const { syntaxHighlighting: syntaxHighlightingOptions } = getConfig()
+
   const processor = unified()
     .use(remarkParse)
     // apply plugins that change MDAST
     .use(remarkStringify)
+    .use(syntaxHighlighting.remarkPlugin, syntaxHighlightingOptions)
     .use(remarkToRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     // apply plugins that change HAST and gather additional information
@@ -113,7 +120,7 @@ export const transformMarkdown = (
     })
 
   const { markdown: withoutFrontmatter } = parseFrontmatter(markdownCode)
-  const vfile = processor.processSync(withoutFrontmatter)
+  const vfile = await processor.process(withoutFrontmatter)
   const { assetUrls, headings } = vfile.data as Omit<
     MarkdownTransformResult,
     'html'

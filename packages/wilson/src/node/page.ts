@@ -1,5 +1,5 @@
-import { grey, green } from 'chalk'
-import { statSync } from 'fs-extra'
+import chalk from 'chalk'
+import { statSync } from 'fs'
 import { extname } from 'path'
 import {
   BasePagination,
@@ -8,16 +8,16 @@ import {
   TaxonomyData,
   TaxonomyTerm,
 } from '../types'
-import { getConfig } from './config'
+import { getConfig } from './config.js'
 import {
   ContentPageSource,
   PageSourceType,
   SelectPageSource,
   TaxonomyPageSource,
   TermsPageSource,
-} from './page-source'
-import { getTaxonomyTerms } from './state'
-import { toSlug } from './util'
+} from './page-source.js'
+import { getTaxonomyTerms } from './state.js'
+import { toSlug } from './util.js'
 
 const getPaginationRoutes = (
   baseRoute: string,
@@ -66,16 +66,16 @@ abstract class Page implements PageInterface {
 
     const dateObj = new Date(date)
     if (isNaN(+dateObj)) {
-      const err = new Error(`Invalid frontmatter date in ${green(
+      const err = new Error(`Invalid frontmatter date in ${chalk.green(
         `'${this.path}'`
       )}
 
        Allowed values are:
 
-         ${grey('-')} ${green(`'Created'`)}
-         ${grey('-')} ${green(`'Modified at'`)}
-         ${grey('-')} Date objects
-         ${grey('-')} strings parseable by Date.parse`)
+         ${chalk.grey('-')} ${chalk.green(`'Created'`)}
+         ${chalk.grey('-')} ${chalk.green(`'Modified at'`)}
+         ${chalk.grey('-')} Date objects
+         ${chalk.grey('-')} strings parseable by Date.parse`)
 
       throw err
     }

@@ -2,8 +2,10 @@
   "recommendations": [
     "christian-kohler.npm-intellisense",
     "christian-kohler.path-intellisense",
-    "codezombiech.gitignore",
     "esbenp.prettier-vscode",
-    "be5invis.toml"
+    "be5invis.toml",
+    "dbaeumer.vscode-eslint",
+    "syler.sass-indented",
+    "jock.svg"
   ]
 }

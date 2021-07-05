@@ -1,9 +1,9 @@
-import { getConfig } from './config'
+import { getConfig } from './config.js'
 import RSS from 'rss'
-import { getContentPageSources } from './state'
+import { getContentPageSources } from './state.js'
 import minimatch from 'minimatch'
-import { cleanUrl, toRoot, writeFile } from './util'
-import { ContentPageSource } from './page-source'
+import { cleanUrl, toRoot, writeFile } from './util.js'
+import { ContentPageSource } from './page-source.js'
 import { Feed } from '../types'
 
 const defaultOptions = {

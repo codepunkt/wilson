@@ -176,6 +176,26 @@ interface SiteConfigRequired {
   siteData: SiteData
 }
 
+type SyntaxHighlightingTheme =
+  | string
+  | ThemeSettings
+  | ((data: CodeBlockData) => string | ThemeSettings)
+
+/**
+ * Syntax highlighting options
+ */
+interface SyntaxHighlightingOptions {
+  extensions: string[]
+  theme: SyntaxHighlightingTheme
+  inlineCode?: {
+    theme: SyntaxHighlightingTheme
+    marker: string
+    className:
+      | string
+      | ((obj: { language: string; node: RemarkASTNode }) => string)
+  }
+}
+
 /**
  * Auto-prefetch options
  */
@@ -195,6 +215,7 @@ interface SiteConfigOptional {
   taxonomies?: TaxonomyDefinition
   pagination?: PaginationOptions
   feeds?: FeedOptions[]
+  syntaxHighlighting?: SyntaxHighlightingOptions
   autoPrefetch?: AutoPrefetchOptions
 }
 
@@ -204,7 +225,11 @@ interface SiteConfigOptional {
 export type SiteConfigDefaults = Required<
   Pick<
     SiteConfigOptional,
-    'pageLayouts' | 'taxonomies' | 'feeds' | 'autoPrefetch'
+    | 'pageLayouts'
+    | 'taxonomies'
+    | 'feeds'
+    | 'syntaxHighlighting'
+    | 'autoPrefetch'
   >
 > & {
   pagination: Required<PaginationOptions>

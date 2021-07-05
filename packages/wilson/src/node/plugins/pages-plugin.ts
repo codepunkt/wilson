@@ -1,12 +1,12 @@
 import { Plugin, normalizePath } from 'vite'
 import { TransformResult, LoadResult, ResolveIdResult } from 'rollup'
 import { dirname, join, relative } from 'path'
-import { toRoot, transformJsx } from '../util'
+import { toRoot, transformJsx } from '../util.js'
 import minimatch from 'minimatch'
-import { getConfig } from '../config'
-import { ContentPage, SelectPage, TaxonomyPage, TermsPage } from '../page'
-import { getPageSources } from '../state'
-import { MarkdownPageSource } from '../page-source'
+import { getConfig } from '../config.js'
+import { ContentPage, SelectPage, TaxonomyPage, TermsPage } from '../page.js'
+import { getPageSources } from '../state.js'
+import { MarkdownPageSource } from '../page-source.js'
 
 const virtualPageRegex = /^@wilson\/page-source\/(\d+)\/page\/(\d+)/
 

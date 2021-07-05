@@ -7,7 +7,13 @@
   "bin": {
     "wilson": "bin/wilson.js"
   },
-  "main": "dist/node/index.js",
+  "type": "module",
+  "exports": {
+    ".": "./dist/node/index.js",
+    "./package.json": "./package.json",
+    "./dist/client/main.js": "./dist/client/main.js",
+    "./dist/client/context/prefetch": "./dist/client/context/prefetch.js"
+  },
   "types": "dist/node/index.d.ts",
   "files": [
     "bin/**",
@@ -23,6 +29,7 @@
     "url": "https://github.com/codepunkt/wilson/issues"
   },
   "scripts": {
+    "wilson": "wilson",
     "build": "yarn run clean && run-p \"build:*\" && yarn run copy:types",
     "build:node": "tsc -p src/node",
     "build:client": "tsc -p src/client",
@@ -36,7 +43,20 @@
     "test:ci": "jest --coverage",
     "coverage": "serve coverage/lcov-report"
   },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "preact",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended"
+    ]
+  },
   "dependencies": {
+    "@codepunkt/gatsby-remark-vscode": "^3.2.1",
     "@codepunkt/wasm-layout-text": "^3.0.0",
     "@preact/preset-vite": "^2.1.0",
     "acorn": "^8.1.1",
@@ -53,10 +73,12 @@
     "hoofd": "^1.2.2",
     "html-minifier-terser": "^5.1.1",
     "jimp": "^0.16.1",
+    "json5": "^2.2.0",
     "minimatch": "^3.0.4",
     "minimist": "^1.2.5",
     "node-cache": "^5.1.2",
     "ora": "^5.4.0",
+    "plist": "^3.0.2",
     "preact": "^10.5.13",
     "preact-render-to-string": "^5.1.19",
     "pretty-error": "^3.0.3",
@@ -78,7 +100,8 @@
     "unified": "^9.2.1",
     "unist-util-is": "^4.1.0",
     "unist-util-visit": "^2.0.3",
-    "vite": "2.3.2"
+    "vite": "2.3.2",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@types/compression": "^1.7.0",

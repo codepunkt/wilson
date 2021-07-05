@@ -1,12 +1,15 @@
 import { Manifest } from 'vite'
-import { wrapManifest } from './manifest'
-import { readFile, toRoot, readJson, writeFile } from './util'
+import { wrapManifest } from './manifest.js'
+import { readFile, toRoot, readJson, writeFile } from './util.js'
 import { minify } from 'html-minifier-terser'
 import chalk from 'chalk'
-import size from 'brotli-size'
-import { getConfig } from './config'
+import { sync } from 'brotli-size'
+import { getConfig } from './config.js'
 import { Feed } from '../types'
-import { getPages, getPageSources } from './state'
+import { getPages, getPageSources } from './state.js'
+import { createRequire } from 'module'
+
+const require = createRequire(import.meta.url)
 
 /**
  * @todo don't add all preload links to __WILSON_DATA__
@@ -39,7 +42,7 @@ const getCompressedSize = async (code: string): Promise<string> => {
   return isLarge(code)
     ? 'skipped (large chunk)'
     : `${(
-        (await size(typeof code === 'string' ? code : Buffer.from(code))) / 1024
+        sync(typeof code === 'string' ? code : Buffer.from(code)) / 1024
       ).toFixed(2)}kb`
 }
 

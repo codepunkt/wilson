@@ -1,10 +1,12 @@
 import { UserConfig as ViteUserConfig } from 'vite'
-import markdownPlugin from './plugins/markdown-plugin'
-import virtualPlugin from './plugins/virtual-plugin'
-import pagesPlugin from './plugins/pages-plugin'
-import indexHtmlPlugin from './plugins/index-html-plugin'
-import { join } from 'path'
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
 import preact from '@preact/preset-vite'
+
+import markdownPlugin from './plugins/markdown-plugin.js'
+import virtualPlugin from './plugins/virtual-plugin.js'
+import pagesPlugin from './plugins/pages-plugin.js'
+import indexHtmlPlugin from './plugins/index-html-plugin.js'
 
 interface ViteConfigOptions {
   ssr?: boolean
@@ -31,7 +33,9 @@ export const getViteConfig = async ({
       await markdownPlugin(),
       await pagesPlugin(),
       await virtualPlugin(),
-      preact({
+      // eslint-disable-next-line
+      // @ts-ignore
+      preact.default({
         devtoolsInProd: true,
       }),
     ],
@@ -46,7 +50,10 @@ export const getViteConfig = async ({
         // important so that each page chunk and the index export things for each other
         preserveEntrySignatures: 'allow-extension',
         input: ssr
-          ? join(__dirname, '../client/ssr/serverRender.js')
+          ? join(
+              dirname(fileURLToPath(import.meta.url)),
+              '../client/ssr/serverRender.js'
+            )
           : 'index.html',
       },
       manifest: !ssr,

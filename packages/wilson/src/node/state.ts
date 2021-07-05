@@ -1,14 +1,14 @@
 import { extname } from 'path'
 import readdirp from 'readdirp'
-import { getConfig } from './config'
-import { pageFileTypes } from './constants'
-import FrontmatterParser from './frontmatter-parser'
-import Page, { ContentPage } from './page'
+import { getConfig } from './config.js'
+import { pageFileTypes } from './constants.js'
+import FrontmatterParser from './frontmatter-parser.js'
+import Page, { ContentPage } from './page.js'
 import {
   ContentPageSource,
   createPageSource,
   PageSourceType,
-} from './page-source'
+} from './page-source.js'
 
 interface InternalState {
   pageSources: PageSourceType[]
@@ -43,7 +43,7 @@ const initializePagesources = async (pageDir: string): Promise<void> => {
     const frontmatter = frontmatterParser.parseFrontmatter()
 
     // create page source
-    state.pageSources.push(createPageSource(path, fullPath, frontmatter))
+    state.pageSources.push(await createPageSource(path, fullPath, frontmatter))
   }
 
   // Pages for `content` sources need to be created first, because the

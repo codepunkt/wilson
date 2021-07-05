@@ -115,8 +115,17 @@ const DocsLayout: FunctionalComponent<ContentPageProps> = ({
               <MenuItem headings={headings} href="/docs/features/">
                 Features
               </MenuItem>
-              <MenuItem headings={headings} href="/docs/deploy/">
-                Deploying
+              <MenuItem headings={headings} href="/docs/taxonomies/">
+                Taxonomies
+              </MenuItem>
+              <MenuItem headings={headings} href="/docs/page-types/">
+                Page Types
+              </MenuItem>
+              <MenuItem headings={headings} href="/docs/syntax-highlighting/">
+                Syntax Highlighting
+              </MenuItem>
+              <MenuItem headings={headings} href="/docs/opengraph-images/">
+                Opengraph Images
               </MenuItem>
               <MenuItem headings={headings} href="/docs/comparison/">
                 Comparison

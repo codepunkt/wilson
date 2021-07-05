@@ -1,15 +1,14 @@
 import { createServer as createViteServer } from 'vite'
-import { getViteConfig } from '../vite'
-import { emptyDir } from 'fs-extra'
-import { initializePagesources } from '../state'
-import chalk from 'chalk'
+import { getViteConfig } from '../vite.js'
+import fs from 'fs-extra'
+import { initializePagesources } from '../state.js'
 import PrettyError from 'pretty-error'
 
 export async function startDevServer(
   root: string = process.cwd()
 ): Promise<void> {
   try {
-    await emptyDir(`${root}/.wilson`)
+    await fs.emptyDir(`${root}/.wilson`)
     await initializePagesources(`${root}/src/pages`)
 
     const config = await getViteConfig({ ssr: false })
