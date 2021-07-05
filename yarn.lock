@@ -317,6 +317,19 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@codepunkt/gatsby-remark-vscode@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@codepunkt/gatsby-remark-vscode/-/gatsby-remark-vscode-3.2.1.tgz#ff260185d7d5d2fd5ee8575bffd1407c6bf2a083"
+  integrity sha512-/ZMfRO49NIXzNT+PcT3wccVXhyQx6wCaL6T29jQv/YiQUvluxYo9dcCyUEC1pdiOkmtYTlPlObqSRwcqLewgLw==
+  dependencies:
+    decompress "^4.2.0"
+    json5 "^2.1.1"
+    loglevel "^1.6.4"
+    plist "^3.0.1"
+    unist-util-visit "^1.4.1"
+    vscode-oniguruma "^1.4.0"
+    vscode-textmate "^5.2.0"
+
 "@codepunkt/wasm-layout-text@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@codepunkt/wasm-layout-text/-/wasm-layout-text-3.0.0.tgz#b0f6c4d00e8caf02e332ab0c0246e42a88899466"
@@ -3262,18 +3275,6 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
-
-gatsby-remark-vscode@wilsonjs/gatsby-remark-vscode#usage-without-gatsby:
-  version "3.2.1"
-  resolved "https://codeload.github.com/wilsonjs/gatsby-remark-vscode/tar.gz/e13f710f68e2922df856c3c39f6d6b8a45c16603"
-  dependencies:
-    decompress "^4.2.0"
-    json5 "^2.1.1"
-    loglevel "^1.6.4"
-    plist "^3.0.1"
-    unist-util-visit "^1.4.1"
-    vscode-oniguruma "^1.4.0"
-    vscode-textmate "^5.2.0"
 
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"

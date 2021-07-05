@@ -15,7 +15,7 @@ import unified from 'unified'
 import { getConfig } from './config.js'
 // eslint-disable-next-line
 // @ts-ignore
-import syntaxHighlighting from 'gatsby-remark-vscode'
+import syntaxHighlighting from '@codepunkt/gatsby-remark-vscode'
 
 const frontmatterCache = new NodeCache()
 
