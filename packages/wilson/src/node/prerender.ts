@@ -5,7 +5,7 @@ import { minify } from 'html-minifier-terser'
 import chalk from 'chalk'
 import size from 'brotli-size'
 import { getConfig } from './config'
-import { Dependencies, Feed } from '../types'
+import { Feed } from '../types'
 import { getPages, getPageSources } from './state'
 
 /**
@@ -66,7 +66,7 @@ export async function prerenderStaticPages(feeds: Feed[]): Promise<void> {
 
     let longestPath = 0
     const sources: Record<string, string> = {}
-    const linkDependencies: Record<string, Dependencies> = {}
+    const linkDependencies: Record<string, string[]> = {}
 
     for (const [i, pageSource] of getPageSources().entries()) {
       for (const [j, page] of pageSource.pages.entries()) {
@@ -94,16 +94,18 @@ export async function prerenderStaticPages(feeds: Feed[]): Promise<void> {
           }
         })
 
-        const styleTags = pageDependencies.css.map(
-          (dependency) => `<link rel=stylesheet href=/${dependency}>`
-        )
-        const preloadTags = pageDependencies.js
+        const styleTags = pageDependencies
+          .filter((path) => path.endsWith('.css'))
+          .map((dependency) => `<link rel=stylesheet href=/${dependency}>`)
+        const preloadTags = pageDependencies
+          .filter((path) => path.endsWith('.js'))
           .filter(filterExistingTags(template))
           .map(
             (path) =>
               `<link rel=modulepreload as=script crossorigin href=/${path}></script>`
           )
-        const scriptTags = pageDependencies.js
+        const scriptTags = pageDependencies
+          .filter((path) => path.endsWith('.js'))
           .filter(filterExistingTags(template))
           .map(
             (path) => `<script type=module crossorigin src=/${path}></script>`
@@ -138,7 +140,7 @@ export async function prerenderStaticPages(feeds: Feed[]): Promise<void> {
 
     for (const pageSource of getPageSources()) {
       for (const page of pageSource.pages) {
-        const filteredLinkDependencies: Record<string, Dependencies> = {}
+        const filteredLinkDependencies: Record<string, string[]> = {}
         for (const path in linkDependencies) {
           const targetPage = getPages().find((p) => p.route === path)
           const config = getConfig()

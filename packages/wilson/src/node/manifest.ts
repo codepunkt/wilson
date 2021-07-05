@@ -1,5 +1,4 @@
 import { extname } from 'path'
-import { Dependencies } from '../types'
 import { Manifest } from 'vite'
 
 export const wrapManifest = (manifest: Manifest) => {
@@ -20,7 +19,7 @@ export const wrapManifest = (manifest: Manifest) => {
   const getPageDependencies = (
     pagePath: string,
     options: { assets: boolean } = { assets: true }
-  ): Dependencies => {
+  ): string[] => {
     // add dependencies to sets to get rid of duplicates
     const js = new Set<string>(getJsDependencies([pagePath]))
     const css = new Set<string>(getCssDependencies([pagePath]))
@@ -38,13 +37,13 @@ export const wrapManifest = (manifest: Manifest) => {
       getAssetDependencies(sub).map((a) => assets.add(a))
     } while (length > prevLength)
 
-    return {
-      js: Array.from(js).filter(
+    return [
+      ...Array.from(js).filter(
         (dep) => !dep.startsWith('_') && extname(dep) === '.js'
       ),
-      css: Array.from(css),
-      ...(options.assets ? { assets: Array.from(assets) } : {}),
-    }
+      ...Array.from(css),
+      ...(options.assets ? Array.from(assets) : []),
+    ]
   }
 
   return {

@@ -1,7 +1,8 @@
-import { routes, siteData, PageProvider } from 'wilson/virtual'
+import { routes, siteData } from 'wilson/virtual'
 import { ErrorBoundary, LocationProvider, Router } from 'preact-iso'
 import { FunctionalComponent } from 'preact'
 import { useTitleTemplate } from 'hoofd/preact'
+import { AutoPrefetchProvider } from '../context/prefetch'
 
 const NotFound: FunctionalComponent = () => <>Not Found</>
 
@@ -9,7 +10,7 @@ const App: FunctionalComponent = () => {
   useTitleTemplate(siteData.titleTemplate)
 
   return (
-    <PageProvider>
+    <AutoPrefetchProvider>
       <LocationProvider>
         <div>
           <ErrorBoundary>
@@ -17,7 +18,7 @@ const App: FunctionalComponent = () => {
           </ErrorBoundary>
         </div>
       </LocationProvider>
-    </PageProvider>
+    </AutoPrefetchProvider>
   )
 }
 
