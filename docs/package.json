@@ -24,7 +24,7 @@
   "dependencies": {
     "hoofd": "^1.2.2",
     "preact": "^10.5.13",
-    "preact-iso": "^1.1.1",
+    "preact-iso": "^2.0.3",
     "vscode-styled-components": "styled-components/vscode-styled-components"
   },
   "devDependencies": {
