@@ -10,7 +10,7 @@
   margin-top: 2rem;
 
   img {
-    height: 5rem;
+    height: 4rem;
     margin-right: 1rem;
   }
   span {
@@ -23,17 +23,16 @@
   font-size: 4.5rem;
   font-weight: 800;
   line-height: 1;
-  margin: 3.5rem 0 2.5rem 0;
-  color: #111827;
+  margin: 4.5rem 0 2.5rem 0;
+  color: #5c74ae;
 }
 
 .description {
   font-size: 1.5rem;
-  font-weight: 500;
   line-height: 2.5rem;
-  margin-bottom: 2.75rem;
+  margin: 0 0 2.75rem 0;
   max-width: 64rem;
-  color: #7b7280;
+  color: #111827;
 
   a {
     font-weight: 700;
@@ -47,22 +46,26 @@
 
 .ctaWrapper {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   flex-wrap: wrap;
 }
 
 .cta {
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1.5rem;
   border-radius: 0.75rem;
   font-size: 1.125rem;
   border: 1px solid;
   font-weight: 600;
   text-decoration: none;
-  background: #7073ae;
-  border-color: #7073ae;
+  background: #3c589b;
+  border-color: #3c589b;
   color: #f9fafb;
   &:hover {
-    background: #50549b;
-    border-color: #50549b;
+    background: #26407e;
+    border-color: #26407e;
   }
+}
+
+.features {
+  margin-top: 10rem;
 }

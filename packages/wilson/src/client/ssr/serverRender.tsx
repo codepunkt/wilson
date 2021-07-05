@@ -8,7 +8,7 @@ import { toStatic } from 'hoofd/preact'
 let vnodeHook: null | ((vnode: VNode) => void)
 
 const old = options.vnode
-options.vnode = (vnode) => {
+options.vnode = (vnode: VNode) => {
   if (old) old(vnode)
   if (vnodeHook) vnodeHook(vnode)
 }

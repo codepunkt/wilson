@@ -1,8 +1,14 @@
 ---
-title: Why Wilson?
+title: Why Wilson
 taxonomies:
   tags:
     - docs
 ---
 
-wat
+## Headline 2
+
+Some text
+
+### Headline 3
+
+More text

@@ -20,12 +20,6 @@ export interface SiteData {
   keywords?: string[]
 }
 
-export interface Dependencies {
-  js: string[]
-  css: string[]
-  assets?: string[]
-}
-
 interface FrontmatterOptional {
   date?: string | Date
   permalink?: string
@@ -203,6 +197,15 @@ interface SyntaxHighlightingOptions {
 }
 
 /**
+ * Auto-prefetch options
+ */
+export interface AutoPrefetchOptions {
+  enabled?: boolean
+  maxConcurrentFetches?: number
+  timeout?: number
+}
+
+/**
  * Optional site configuration.
  */
 interface SiteConfigOptional {
@@ -213,6 +216,7 @@ interface SiteConfigOptional {
   pagination?: PaginationOptions
   feeds?: FeedOptions[]
   syntaxHighlighting?: SyntaxHighlightingOptions
+  autoPrefetch?: AutoPrefetchOptions
 }
 
 /**
@@ -221,9 +225,16 @@ interface SiteConfigOptional {
 export type SiteConfigDefaults = Required<
   Pick<
     SiteConfigOptional,
-    'pageLayouts' | 'taxonomies' | 'feeds' | 'syntaxHighlighting'
+    | 'pageLayouts'
+    | 'taxonomies'
+    | 'feeds'
+    | 'syntaxHighlighting'
+    | 'autoPrefetch'
   >
-> & { pagination: Required<PaginationOptions> }
+> & {
+  pagination: Required<PaginationOptions>
+  autoPrefetch: Required<AutoPrefetchOptions>
+}
 
 /**
  * Site configuration.

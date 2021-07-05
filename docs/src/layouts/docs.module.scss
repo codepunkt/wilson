@@ -30,9 +30,13 @@
 .links {
   list-style: none;
   margin: 0.35rem 0;
-  padding: 0 0 0 1rem;
+  padding: 0;
   line-height: 2rem;
   font-size: 0.9rem;
+
+  .links {
+    padding: 0 0 0 1rem;
+  }
 
   li {
     margin: 0.35rem 0;
@@ -42,7 +46,9 @@
   }
   li li[data-active] a {
     color: #646cff;
+    font-weight: 600;
   }
+
   a {
     text-decoration: none;
     color: #111827;

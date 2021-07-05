@@ -34,7 +34,6 @@ const virtualPlugin = async (): Promise<Plugin> => {
 
       if (id === virtualExportsPath) {
         const pageSources = getPageSources()
-        const pages = getPages()
 
         const lazyPageImports = pageSources
           .map((pageSource, i) =>
@@ -59,22 +58,14 @@ const virtualPlugin = async (): Promise<Plugin> => {
           .join(',')
 
         const code = `
-          import { createContext, h } from 'preact';
-          import { useContext } from 'preact/hooks';
+          import { h } from 'preact';
           import { lazy } from 'preact-iso';
 
           ${lazyPageImports}
           const routes = [${routes}];
-          const PageContext = createContext(null);
-          const PageProvider = ({ children }) => (
-            <PageContext.Provider value={${JSON.stringify(pages)}}>
-              {children}
-            </PageContext.Provider>
-          );
-          const usePages = () => useContext(PageContext);
           const siteData = ${JSON.stringify(getConfig().siteData)};
 
-          export { routes, siteData, PageProvider, usePages };
+          export { routes, siteData };
         `
 
         return transformJsx(code)

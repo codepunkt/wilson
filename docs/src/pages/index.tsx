@@ -17,10 +17,9 @@ export const Page: FunctionalComponent<ContentPageProps> = () => {
         </div>
         <h1 className={classes.claim}>{frontmatter.title}.</h1>
         <p className={classes.description}>
-          Based on <a href="https://preactjs.com/">Preact</a> and{' '}
-          <a href="https://vitejs.dev/">Vite</a>, Wilson makes the hardest parts
-          of building an amazing experience simple and stays out of your way for
-          everything else.
+          Based on state of the art libraries and patterns, Wilson makes the
+          hardest parts of building an amazing experience simple and stays out
+          of your way for everything else.
         </p>
         <div className={classes.ctaWrapper}>
           <a href="/docs/" className={classes.cta}>
@@ -29,7 +28,7 @@ export const Page: FunctionalComponent<ContentPageProps> = () => {
           <InstallButton />
         </div>
       </div>
-      <div>
+      <div className={classes.features}>
         <ul>
           <li>
             <b>Instant Server Start</b> On demand file serving over native ESM,

@@ -100,11 +100,11 @@ const DocsLayout: FunctionalComponent<ContentPageProps> = ({
       <Header withLogo />
       <main className={classes.main}>
         <aside className={classes.toc}>
-          <p className={classes.headline}>Documentation</p>
+          <p className={classes.headline}>Guide</p>
           <ol className={`${classes.links} ${classes.toplevel}`}>
             <ActiveSectionContext.Provider value={activeSection}>
               <MenuItem headings={headings} href="/docs/why/">
-                Why Wilson?
+                Why Wilson
               </MenuItem>
               <MenuItem headings={headings} href="/docs/glossary/">
                 Glossary
