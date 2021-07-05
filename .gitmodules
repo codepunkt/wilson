@@ -1,4 +1,0 @@
-[submodule "packages/remark-vscode/vscode"]
-	path = packages/remark-vscode/vscode
-	url = https://github.com/Microsoft/vscode.git
-	shallow = true
