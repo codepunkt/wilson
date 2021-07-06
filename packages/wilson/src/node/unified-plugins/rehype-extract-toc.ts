@@ -21,8 +21,8 @@ function findHeadingsRecursive(node: Node, headingNodes: Heading[]): void {
       })
     }
   }
-  if (node.children) {
-    const parent = node as Parent
+  const parent = node as Parent
+  if (parent.children) {
     for (const child of parent.children) {
       findHeadingsRecursive(child, headingNodes)
     }
