@@ -1,5 +1,8 @@
 [build]
-  base = "/"
   publish = "docs/dist/"
   command = "yarn run wilson:build && yarn run docs:build"
-  environment = { NODE_ENV = "production", NODE_VERSION = "14", NETLIFY_USE_YARN = "true", YARN_VERSION="1.22.10" }
+
+[build.environment]
+  NODE_ENV = "production"
+  NODE_VERSION = "14"
+  YARN_VERSION = "1.22.10"
