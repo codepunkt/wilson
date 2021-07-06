@@ -100,7 +100,7 @@
     "unified": "^9.2.1",
     "unist-util-is": "^4.1.0",
     "unist-util-visit": "^2.0.3",
-    "vite": "2.3.2",
+    "vite": "2.4.0",
     "zlib": "^1.0.5"
   },
   "devDependencies": {
