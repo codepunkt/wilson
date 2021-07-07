@@ -23,29 +23,6 @@ const state: InternalState = {
 }
 
 /**
- * Returns a newly created PageSource.
- */
-const getPageSource = async (path: string): Promise<PageSourceType> => {
-  const frontmatterParser = new FrontmatterParser(path)
-  const frontmatter = frontmatterParser.parseFrontmatter()
-  return await createPageSource(path, frontmatter)
-}
-
-/**
- *
- */
-const updateMarkdownPageSource = async (path: string): Promise<void> => {
-  const pageSource = await getPageSource(path)
-  const existingIndex = state.pageSources.findIndex((s) => s.path === path)
-  state.pageSources.splice(existingIndex, 1, pageSource)
-
-  pageSource.createPages()
-  if (pageSource instanceof ContentPageSource) {
-    // update other pages referncing this.
-  }
-}
-
-/**
  * Initializes all page sources by recursively reading the files in the pages
  * directory.
  */
@@ -59,7 +36,9 @@ const initializePageSources = async (pageDir: string): Promise<void> => {
       continue
     }
 
-    const pageSource = await getPageSource(fullPath)
+    const frontmatterParser = new FrontmatterParser(fullPath)
+    const frontmatter = frontmatterParser.parseFrontmatter()
+    const pageSource = await createPageSource(fullPath, frontmatter)
     state.pageSources.push(pageSource)
   }
 
@@ -132,5 +111,4 @@ export {
   initializePageSources,
   getContentPages,
   getContentPageSources,
-  updateMarkdownPageSource,
 }

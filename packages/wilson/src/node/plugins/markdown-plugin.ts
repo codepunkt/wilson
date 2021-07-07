@@ -2,11 +2,8 @@ import { extname } from 'path'
 import { HmrContext, ModuleNode, normalizePath, Plugin } from 'vite'
 import { TransformResult } from 'rollup'
 import { toRoot } from '../util.js'
-import {
-  getContentPageSources,
-  getPageSources,
-  updateMarkdownPageSource,
-} from '../state.js'
+import { getPageSources } from '../state.js'
+import { MarkdownPageSource } from '../page-source.js'
 
 /**
  * Checks if a file is a markdown page source.
@@ -36,7 +33,12 @@ const markdownPlugin = async (): Promise<Plugin> => {
         return
       }
 
-      await updateMarkdownPageSource(file)
+      const pageSource = getPageSources().find((s) => s.path === file)
+      if (!pageSource) {
+        return
+      }
+
+      await (pageSource as MarkdownPageSource).handleHotUpdate()
       return modules
     },
 

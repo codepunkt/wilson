@@ -15,6 +15,7 @@ import { extname, join, relative } from 'path'
 import { getConfig } from './config.js'
 import { transformMarkdown } from './markdown.js'
 import { assetUrlPrefix } from './constants.js'
+import FrontmatterParser from './frontmatter-parser.js'
 
 /**
  * Represents a page source file in `pages` directory.
@@ -96,6 +97,13 @@ export class MarkdownPageSource extends ContentPageSource {
 
     const jsCode = transformJsx(preactCode)
     return jsCode
+  }
+
+  public async handleHotUpdate(): Promise<void> {
+    const frontmatterParser = new FrontmatterParser(this.path)
+    this.frontmatter =
+      frontmatterParser.parseFrontmatter() as ContentFrontmatterWithDefaults
+    await this.initialize()
   }
 }
 
