@@ -107,7 +107,7 @@
     "@types/compression": "^1.7.0",
     "@types/estree": "^0.0.50",
     "@types/fs-extra": "^9.0.12",
-    "@types/html-minifier-terser": "^5.1.1",
+    "@types/html-minifier-terser": "^5.1.2",
     "@types/jest": "^26.0.23",
     "@types/mime-types": "^2.1.0",
     "@types/minimatch": "^3.0.5",
