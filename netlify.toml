@@ -1,6 +1,6 @@
 [build]
   publish = "docs/dist/"
-  command = "yarn install && cd packages/wilson && yarn && yarn build && cd ../../docs && yarn && yarn build"
+  command = "yarn run wilson:build && yarn run docs:build"
 
 [build.environment]
   NODE_VERSION = "14"
