@@ -110,7 +110,7 @@
     "@types/html-minifier-terser": "^5.1.1",
     "@types/jest": "^26.0.23",
     "@types/mime-types": "^2.1.0",
-    "@types/minimatch": "^3.0.4",
+    "@types/minimatch": "^3.0.5",
     "@types/minimist": "^1.2.1",
     "@types/node": "^16.0.0",
     "@types/requestidlecallback": "^0.3.3",
