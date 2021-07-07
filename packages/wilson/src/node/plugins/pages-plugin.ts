@@ -1,6 +1,6 @@
-import { Plugin, normalizePath } from 'vite'
+import { Plugin } from 'vite'
 import { TransformResult, LoadResult, ResolveIdResult } from 'rollup'
-import { dirname, join, relative } from 'path'
+import { dirname, relative } from 'path'
 import { toRoot, transformJsx } from '../util.js'
 import minimatch from 'minimatch'
 import { getConfig } from '../config.js'
@@ -52,17 +52,9 @@ const pagesPlugin = async (): Promise<Plugin> => {
       const pageLayout =
         pageSource.frontmatter.layout ?? typeof pageLayouts === 'undefined'
           ? undefined
-          : pageLayouts.find(({ pattern = '**' }) => {
-              return minimatch(
-                pageSource.fullPath.replace(
-                  new RegExp(
-                    `^${normalizePath(join(process.cwd(), 'src', 'pages'))}/`
-                  ),
-                  ''
-                ),
-                pattern
-              )
-            })?.layout
+          : pageLayouts.find(({ pattern = '**' }) =>
+              minimatch(pageSource.relativePath, pattern)
+            )?.layout
 
       const layoutImport = pageLayout
         ? `import Layout from '${relative(
@@ -94,7 +86,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
           autoPrefetch.enabled &&
           `import { useAutoPrefetch } from 'wilson/dist/client/context/prefetch'`
         };
-        import { Page } from '${pageSource.fullPath}';
+        import { Page } from '${pageSource.path}';
         ${layoutImport}
 
         export default function PageWrapper() {

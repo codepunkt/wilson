@@ -2,7 +2,7 @@ import { Plugin } from 'vite'
 import { LoadResult, ResolveIdResult } from 'rollup'
 import { transformJsx } from '../util.js'
 import { getConfig } from '../config.js'
-import { getPages, getPageSources } from '../state.js'
+import { getPageSources } from '../state.js'
 import { PageType } from '../page.js'
 
 const virtualExportsPath = 'wilson/virtual'

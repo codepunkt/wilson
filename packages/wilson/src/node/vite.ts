@@ -24,6 +24,7 @@ export const getViteConfig = async ({
         'preact/jsx-runtime',
         'preact-iso',
         'hoofd/preact',
+        'throttles',
       ],
       exclude: ['wilson/virtual'],
     },

@@ -29,8 +29,8 @@ const defaultFrontmatter: FrontmatterDefaults = {
 class FrontmatterParser {
   private source: string
 
-  constructor(private path: string, private fullPath: string) {
-    this.source = readFileSync(fullPath, 'utf-8')
+  constructor(private path: string) {
+    this.source = readFileSync(path, 'utf-8')
   }
 
   /**
@@ -39,7 +39,7 @@ class FrontmatterParser {
    * @todo default draft on type: `content` to false
    */
   public parseFrontmatter(): FrontmatterWithDefaults {
-    const extension = extname(this.fullPath)
+    const extension = extname(this.path)
 
     let parsed: Partial<Frontmatter>
     if (extension === '.md') {

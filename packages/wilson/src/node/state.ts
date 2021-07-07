@@ -17,40 +17,40 @@ interface InternalState {
 /**
  * This object is used as a structured cache for various kinds
  * of internal data.
- *
- * @todo combine state with cache.markdown used in unified plugins
  */
 const state: InternalState = {
   pageSources: [],
 }
 
 /**
- *
+ * Initializes all page sources by recursively reading the files in the pages
+ * directory.
  */
-const initializePagesources = async (pageDir: string): Promise<void> => {
-  for await (let { path, fullPath } of readdirp(pageDir)) {
+const initializePageSources = async (pageDir: string): Promise<void> => {
+  for await (let { fullPath } of readdirp(pageDir)) {
     // replace \\ with / for paths on windows
-    path = path.replace(/\\/g, '/')
     fullPath = fullPath.replace(/\\/g, '/')
 
     // unknown page file extension: ignore file
-    if (!Object.values(pageFileTypes).flat().includes(extname(path))) {
+    if (!Object.values(pageFileTypes).flat().includes(extname(fullPath))) {
       continue
     }
 
-    // parse frontmatter
-    const frontmatterParser = new FrontmatterParser(path, fullPath)
+    const frontmatterParser = new FrontmatterParser(fullPath)
     const frontmatter = frontmatterParser.parseFrontmatter()
-
-    // create page source
-    state.pageSources.push(await createPageSource(path, fullPath, frontmatter))
+    const pageSource = await createPageSource(fullPath, frontmatter)
+    state.pageSources.push(pageSource)
   }
 
   // Pages for `content` sources need to be created first, because the
   // number of pages created for `taxonomy`, `terms` and `select` sources
   // depend on them.
-  for (const pageSource of getContentPageSources()) pageSource.createPages()
-  for (const pageSource of getNonContentPageSources()) pageSource.createPages()
+  for (const pageSource of getContentPageSources()) {
+    pageSource.createPages()
+  }
+  for (const pageSource of getNonContentPageSources()) {
+    pageSource.createPages()
+  }
 }
 
 /**
@@ -108,7 +108,7 @@ export {
   getTaxonomyTerms,
   getPageSources,
   getPages,
-  initializePagesources,
+  initializePageSources,
   getContentPages,
   getContentPageSources,
 }

@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import { statSync } from 'fs'
-import { extname } from 'path'
+import { extname, join, relative } from 'path'
 import {
   BasePagination,
   Page as PageInterface,
@@ -19,25 +19,35 @@ import {
 import { getTaxonomyTerms } from './state.js'
 import { toSlug } from './util.js'
 
+const ensureLeadingSlash = (str: string) => `/${str}`.replace(/^\/+/, '/')
+const ensureTrailingSlash = (str: string) => `${str}/`.replace(/\/+$/, '/')
+const ensureSlashWrap = (str: string) =>
+  ensureLeadingSlash(ensureTrailingSlash(str))
+
 const getPaginationRoutes = (
   baseRoute: string,
   pagination: BasePagination
 ): PaginationRoutes & { currentPage: string } => {
   const { count, currentPage, pageSize } = pagination
   const routeSuffix = getConfig().pagination.routeSuffix
+  const buildPageRoute = (baseRoute: string, pageSuffix: string) => {
+    return `${baseRoute}${pageSuffix}/`.replace(/\/+/g, '/')
+  }
 
   return {
     currentPage:
-      currentPage > 1 ? `${baseRoute}${routeSuffix(currentPage)}` : baseRoute,
+      currentPage > 1
+        ? buildPageRoute(baseRoute, routeSuffix(currentPage))
+        : baseRoute,
     previousPage:
       currentPage > 1
         ? currentPage > 2
-          ? `${baseRoute}${routeSuffix(currentPage - 1)}`
+          ? buildPageRoute(baseRoute, routeSuffix(currentPage - 1))
           : baseRoute
         : false,
     nextPage:
       count > currentPage * pageSize
-        ? `${baseRoute}${routeSuffix(currentPage + 1)}`
+        ? buildPageRoute(baseRoute, routeSuffix(currentPage + 1))
         : false,
   }
 }
@@ -60,7 +70,7 @@ abstract class Page implements PageInterface {
     if (date instanceof Date) {
       return date
     } else if (date === 'Created' || date === 'Modified at') {
-      const { ctime, mtime } = statSync(source.fullPath)
+      const { ctime, mtime } = statSync(source.path)
       return new Date(date === 'Created' ? ctime : mtime)
     }
 
@@ -86,14 +96,17 @@ abstract class Page implements PageInterface {
   /**
    * @todo validate permalink: does URL already exist? is URL not empty?
    */
-  static getRoute(relativePath: string, permalink?: string): string {
+  static getRoute(absPath: string, permalink?: string): string {
     if (permalink) {
       // ensure there's exactly one leading and trailing slash
       return permalink.replace(/^\/?([^/]+(?:\/[^/]+)*)\/?$/, '/$1/')
     }
-    return `/${relativePath
-      .replace(new RegExp(`${extname(relativePath)}$`), '')
-      .replace(/index$/, '')}/`.replace(/\/\/$/, '/')
+
+    const pagesDir = join(process.cwd(), 'src', 'pages')
+    const withoutExt = absPath.replace(new RegExp(`${extname(absPath)}$`), '')
+    const withoutIndex = withoutExt.replace(/\/index$/, '')
+
+    return ensureSlashWrap(relative(pagesDir, withoutIndex))
   }
 
   /**
@@ -158,11 +171,11 @@ export class TaxonomyPage extends Page {
   }
 
   protected getRoutes(
-    relativePath: string,
+    absPath: string,
     permalink?: string
   ): PaginationRoutes & { currentPage: string } {
     const baseRoute = this.replacePlaceholder(
-      Page.getRoute(relativePath, permalink),
+      Page.getRoute(absPath, permalink),
       true
     )
     return getPaginationRoutes(baseRoute, this.pagination)
@@ -236,10 +249,10 @@ export class SelectPage extends Page {
   }
 
   protected getRoutes(
-    relativePath: string,
+    absPath: string,
     permalink?: string
   ): PaginationRoutes & { currentPage: string } {
-    const baseRoute = Page.getRoute(relativePath, permalink)
+    const baseRoute = Page.getRoute(absPath, permalink)
     return getPaginationRoutes(baseRoute, this.pagination)
   }
 }

@@ -137,5 +137,4 @@ miserae humanum creverat et Seriphi penetralia.
 - Vocat iram mores et regis si de
 
 Dixit meae; feruntque cepit, ab quis cervix dixit pennae alteraque Interea
-tonitruque, tu. [Dumque nimiique](/writing/page-2/): felicesque datum, regalis, iura agitat adorat
-et secrevit.
+tonitruque, tu. [Dumque nimiique](/writing/page-2/): felicesque datum, regalis, iura agitat adorat et secrevit.

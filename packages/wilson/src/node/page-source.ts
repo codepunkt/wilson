@@ -11,31 +11,31 @@ import { readFileSync } from 'fs'
 import { ContentPage, SelectPage, TaxonomyPage, TermsPage } from './page.js'
 import { getContentPages, getTaxonomyTerms } from './state.js'
 import { hasCommonElements, transformJsx } from './util.js'
-import { extname } from 'path'
+import { extname, join, relative } from 'path'
 import { getConfig } from './config.js'
 import { transformMarkdown } from './markdown.js'
 import { assetUrlPrefix } from './constants.js'
+import FrontmatterParser from './frontmatter-parser.js'
 
 /**
  * Represents a page source file in `pages` directory.
  */
 abstract class PageSource {
   public path: string
-  public fullPath: string
+  public relativePath: string
   public transformedCode: string | null = null
   abstract pages: unknown[]
   public headings?: Heading[]
   public frontmatter: Frontmatter = {} as Frontmatter
 
-  constructor(path: string, fullPath: string) {
+  constructor(path: string) {
     this.path = path
-    this.fullPath = fullPath
+    this.relativePath = relative(join(process.cwd(), 'src', 'pages'), path)
   }
 
   public async initialize(): Promise<void> {
-    this.transformedCode = await this.transformCode(
-      readFileSync(this.fullPath, 'utf-8')
-    )
+    const originalCode = readFileSync(this.path, 'utf-8')
+    this.transformedCode = await this.transformCode(originalCode)
   }
 
   public abstract createPages(): void
@@ -49,16 +49,13 @@ export class ContentPageSource extends PageSource {
   public pages: ContentPage[] = []
   public frontmatter: ContentFrontmatterWithDefaults
 
-  constructor(
-    path: string,
-    fullPath: string,
-    frontmatter: FrontmatterWithDefaults
-  ) {
-    super(path, fullPath)
+  constructor(path: string, frontmatter: FrontmatterWithDefaults) {
+    super(path)
     this.frontmatter = frontmatter as ContentFrontmatterWithDefaults
   }
 
   public createPages(): void {
+    this.pages = []
     this.pages.push(new ContentPage(this))
   }
 }
@@ -101,22 +98,27 @@ export class MarkdownPageSource extends ContentPageSource {
     const jsCode = transformJsx(preactCode)
     return jsCode
   }
+
+  public async handleHotUpdate(): Promise<void> {
+    const frontmatterParser = new FrontmatterParser(this.path)
+    this.frontmatter =
+      frontmatterParser.parseFrontmatter() as ContentFrontmatterWithDefaults
+    await this.initialize()
+  }
 }
 
 export class TaxonomyPageSource extends PageSource {
   public pages: TaxonomyPage[] = []
   public frontmatter: TaxonomyFrontmatterWithDefaults
-  constructor(
-    path: string,
-    fullPath: string,
-    frontmatter: FrontmatterWithDefaults
-  ) {
-    super(path, fullPath)
+  constructor(path: string, frontmatter: FrontmatterWithDefaults) {
+    super(path)
     this.frontmatter = frontmatter as TaxonomyFrontmatterWithDefaults
   }
   public createPages(): void {
     const terms = getTaxonomyTerms(this.frontmatter.taxonomyName)
     const config = getConfig()
+
+    this.pages = []
     for (const term of terms) {
       const pages = getContentPages()
         .filter((contentPage) =>
@@ -146,15 +148,12 @@ export class TaxonomyPageSource extends PageSource {
 export class TermsPageSource extends PageSource {
   public pages: TermsPage[] = []
   public frontmatter: TermsFrontmatterWithDefaults
-  constructor(
-    path: string,
-    fullPath: string,
-    frontmatter: FrontmatterWithDefaults
-  ) {
-    super(path, fullPath)
+  constructor(path: string, frontmatter: FrontmatterWithDefaults) {
+    super(path)
     this.frontmatter = frontmatter as TermsFrontmatterWithDefaults
   }
   public createPages(): void {
+    this.pages = []
     this.pages.push(new TermsPage(this))
   }
 }
@@ -162,12 +161,8 @@ export class TermsPageSource extends PageSource {
 export class SelectPageSource extends PageSource {
   public pages: SelectPage[] = []
   public frontmatter: SelectFrontmatterWithDefaults
-  constructor(
-    path: string,
-    fullPath: string,
-    frontmatter: FrontmatterWithDefaults
-  ) {
-    super(path, fullPath)
+  constructor(path: string, frontmatter: FrontmatterWithDefaults) {
+    super(path)
     this.frontmatter = frontmatter as SelectFrontmatterWithDefaults
   }
   public createPages(): void {
@@ -189,6 +184,7 @@ export class SelectPageSource extends PageSource {
      */
     const pageSize = config.pagination.pageSize ?? 2
     let currentPage = 1
+    this.pages = []
     for (let i = 0, j = pages.length; i < j; i += pageSize) {
       this.pages.push(
         new SelectPage(this, pages.slice(i, i + pageSize), {
@@ -204,13 +200,11 @@ export class SelectPageSource extends PageSource {
 
 export const createPageSource = async (
   path: string,
-  fullPath: string,
   frontmatter: FrontmatterWithDefaults
 ): Promise<PageSourceType> => {
   let pageSource: PageSourceType
   const constructorArgs: Parameters<typeof createPageSource> = [
     path,
-    fullPath,
     frontmatter,
   ]
 
@@ -227,7 +221,7 @@ export const createPageSource = async (
     case 'content':
     default:
       pageSource =
-        extname(fullPath) === '.md'
+        extname(path) === '.md'
           ? new MarkdownPageSource(...constructorArgs)
           : new ContentPageSource(...constructorArgs)
       break

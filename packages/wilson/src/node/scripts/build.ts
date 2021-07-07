@@ -4,12 +4,12 @@ import { getViteConfig } from '../vite.js'
 import { prerenderStaticPages } from '../prerender.js'
 import { createOpengraphImages } from '../opengraph.js'
 import { createRssFeed } from '../rss.js'
-import { initializePagesources } from '../state.js'
+import { initializePageSources } from '../state.js'
 
 export async function build(root: string = process.cwd()): Promise<void> {
   await fs.emptyDir(`${process.cwd()}/.wilson`)
   await fs.emptyDir(`${process.cwd()}/dist`)
-  await initializePagesources(`${root}/src/pages`)
+  await initializePageSources(`${root}/src/pages`)
 
   await viteBuild(await getViteConfig({ ssr: true }))
   await viteBuild(await getViteConfig({ ssr: false }))

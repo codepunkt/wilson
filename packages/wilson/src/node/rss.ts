@@ -52,7 +52,7 @@ export async function createRssFeed(): Promise<Feed[]> {
           minimatch(pageSource.path, options.match) &&
             feedPageSources.push(pageSource)
         } else if (typeof options.match === 'function') {
-          options.match(pageSource.path, pageSource.frontmatter) &&
+          options.match(pageSource.relativePath, pageSource.frontmatter) &&
             feedPageSources.push(pageSource)
         }
       }

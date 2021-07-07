@@ -14,7 +14,7 @@ const configDefaults: SiteConfigDefaults = {
   pagination: {
     pageSize: 10,
     routeSuffix: (pageNumber: number): string =>
-      pageNumber === 0 ? '' : `page-${pageNumber}/`,
+      pageNumber === 0 ? '' : `page-${pageNumber}`,
   },
   taxonomies: {
     categories: 'category',
