@@ -104,7 +104,7 @@
     "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "@types/compression": "^1.7.0",
+    "@types/compression": "^1.7.1",
     "@types/estree": "^0.0.50",
     "@types/fs-extra": "^9.0.12",
     "@types/html-minifier-terser": "^5.1.1",
