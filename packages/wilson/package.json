@@ -117,7 +117,6 @@
     "@types/rss": "^0.0.28",
     "@types/serve-handler": "^6.1.0",
     "jest": "^27.0.6",
-    "npm-run-all": "^4.1.5",
     "serve": "^12.0.0",
     "ts-jest": "^26.5.5",
     "tslib": "^2.2.0"
