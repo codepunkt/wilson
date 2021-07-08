@@ -113,7 +113,7 @@
     "@types/minimatch": "^3.0.5",
     "@types/minimist": "^1.2.2",
     "@types/node": "^16.0.0",
-    "@types/requestidlecallback": "^0.3.3",
+    "@types/requestidlecallback": "^0.3.4",
     "@types/rss": "^0.0.28",
     "@types/serve-handler": "^6.1.1",
     "jest": "^27.0.6",
