@@ -1133,10 +1133,10 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
-"@types/requestidlecallback@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@types/requestidlecallback/-/requestidlecallback-0.3.3.tgz#07676e9b4b1c8834b582614052c2609beecec753"
-  integrity sha512-mfxnDYJ8joLlrwlr7v3ipl6NHidl+pLbZZ9hH0+h90UOH1oum43rMepyI/nZzykTuVKr90bH/LohLlRSxbe75g==
+"@types/requestidlecallback@^0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@types/requestidlecallback/-/requestidlecallback-0.3.4.tgz#819e22b8994cf547e1f17f9cb79805a5a3bb1db5"
+  integrity sha512-aTSyiZuRemRLTQkJPb25L7A4/eR2Teo5l4yJ1V6P3+MFxEZckTDkNKNtr/V1zEOMzS6H8DgxF22U6jPAPrzQvw==
 
 "@types/rss@^0.0.28":
   version "0.0.28"
