@@ -18,7 +18,7 @@ It consists of two major parts:
 - Part B
 
 ```js
-const foo = 'bar' // deployed! :D
+const foo = 'bar' // test
 ```
 
 Lorem markdownum **causa venisset vulnere** sistere tum conpagibus rura _sic
