@@ -28,23 +28,28 @@ jobs:
     if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main'
 
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
-
       - name: Wait for Netlify Deploy
         uses: probablyup/wait-for-netlify-action@3.2.0
-        id: waitForDeployment
+        id: deploy
         with:
           site_id: ${{ secrets.NETLIFY_SITE_ID }}
         env:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 
-      - name: Lighthouse CI
-        run: |
-          npm install -g @lhci/cli@0.3.x
-          lhci autorun --upload.target=temporary-public-storage --collect.url=${{ steps.waitForNetlifyDeploy.outputs.url }} || echo "LHCI failed!"
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      - run: mkdir /tmp/artifacts
+
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        with:
+          accessToken: ${{ secrets.RELEASE_TOKEN }}
+          author: ${{ github.actor }}
+          branch: ${{ github.ref }}
+          outputDirectory: /tmp/artifacts
+          urls: '${{ steps.deploy.outputs.url }}'
+          sha: ${{ github.sha }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Lighthouse reports
+          path: /tmp/artifacts
