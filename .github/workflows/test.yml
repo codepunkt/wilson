@@ -28,10 +28,10 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          path:
-            - ${{ steps.cache-dir.outputs.dir }}
-            - node_modules
-            - */*/node_modules
+          path: |
+            ${{ steps.cache-dir.outputs.dir }}
+            node_modules
+            */*/node_modules
           key: ${{ runner.os }}-yarn-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-${{ env.cache-name }}-
