@@ -25,7 +25,7 @@ console.info(
 )
 
 async function cli(command: string) {
-  if (command === 'dev') {
+  if (command === 'start' || command === 'dev') {
     try {
       startDevServer()
     } catch (err) {
@@ -52,8 +52,6 @@ async function cli(command: string) {
   }
 }
 
-cli(argv._[0] || 'dev').catch((e) => {
+cli(argv._[0] || 'start').catch((e) => {
   console.error(e)
 })
-
-export default 'wat'
