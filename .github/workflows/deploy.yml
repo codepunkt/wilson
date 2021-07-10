@@ -56,12 +56,15 @@ jobs:
           github-token: ${{ secrets.RELEASE_TOKEN }}
           script: |
             const { issue: { number: issue_number, owner, repo }  } = context;
+            const [netlifyUrl, lighthouseUrl] = Object.entries(
+              JSON.parse('${{ steps.lighthouse.outputs.links }}')
+            )[0];
             github.issues.createComment({
               issue_number,
               owner,
               repo, 
-              body: `
-                # Link:
-                ${JSON.parse('${{ steps.lighthouse.outputs.links }}')}! 👋
+              body: `### Links:
+                - ${netlifyUrl}
+                - ${lighthouseUrl}
               `
             });
