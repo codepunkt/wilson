@@ -1,4 +1,4 @@
-name: Deploy
+name: Lighthouse
 
 on:
   push:
@@ -10,70 +10,66 @@ on:
     paths:
       - 'docs/**'
       - 'packages/wilson/**'
+      - 'netlify.toml'
       - 'yarn.lock'
   workflow_dispatch:
 
 jobs:
-
-  # This job will
-  #   - deploy a preview every time there is a PR to the main branch
-  #     opened, synchronized or reopened
-  #   - comment on that PR with the preview deploy URL
-  deployPreview:
-    name: Deploy preview to Netlify
+  # Netlify will deploy a preview every time there is a PR to the main branch
+  # opened, synchronized or reopened.
+  # 
+  # The audit job will wait for the netlify deployment, run a lighthouse check
+  # against the preview deployment URL and update the PR with the result.
+  audit:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Node.js 14.x
-        uses: actions/setup-node@v2
+      - name: Wait for Netlify
+        uses: probablyup/wait-for-netlify-action@3.2.0
+        id: netlify
         with:
-          node-version: 14.x
-
-      - name: Set yarn cache dir as output
-        id: cache-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v2
+          site_id: ${{ secrets.NETLIFY_SITE_ID }}
         env:
-          cache-name: cache-node-modules
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+      - run: mkdir /tmp/artifacts
+
+      - name: Audit URLs using Lighthouse
+        uses: treosh/lighthouse-ci-action@v7
+        id: lighthouse
         with:
-          path: |
-            ${{ steps.cache-dir.outputs.dir }}
-            node_modules
-            */*/node_modules
-          key: ${{ runner.os }}-yarn-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-${{ env.cache-name }}-
-            ${{ runner.os }}-yarn-
-            ${{ runner.os }}-
+          urls: |
+            ${{ steps.netlify.outputs.url }}
+          runs: 3
+          uploadArtifacts: true
+          temporaryPublicStorage: true
 
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn --frozen-lockfile
-
-      - name: Build wilson
-        env:
-          NODE_ENV: production
-        run: |
-          yarn wilson:build
-
-      - name: Build website
-        env:
-          NODE_ENV: production
-        run: |
-          yarn docs:build
-
-      - name: Deploy website to Netlify
-        uses: South-Paw/action-netlify-deploy@v1.2.0
+      - name: Comment on PR
+        uses: actions/github-script@v4
+        if: github.event_name == 'pull_request'
         with:
           github-token: ${{ secrets.RELEASE_TOKEN }}
-          netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
-          build-dir: './docs/dist'
-          draft: true
-          comment-on-pull-request: true
+          script: |
+            const { issue: { number: issue_number, owner, repo }  } = context;
+            const links = Object.entries(JSON.parse('${{ steps.lighthouse.outputs.links }}'));
+            const [netlifyUrl, lighthouseUrl] = links[0];
+            const summary = JSON.parse('${{ steps.lighthouse.outputs.manifest }}')[0].summary;
+            const perf = ~~(summary.performance * 100);
+            const a11y = ~~(summary.accessibility * 100);
+            const best = ~~(summary['best-practices'] * 100);
+            const seo = ~~(summary.seo * 100);
+            const pwa = ~~(summary.pwa * 100);
+            const perfColor = perf >= 90 ? 'green' : perf >= 50 ? 'orange' : 'red';
+            const a11yColor = a11y >= 90 ? 'green' : a11y >= 50 ? 'orange' : 'red';
+            const bestColor = best >= 90 ? 'green' : best >= 50 ? 'orange' : 'red';
+            const seoColor = seo >= 90 ? 'green' : seo >= 50 ? 'orange' : 'red';
+            const pwaColor = pwa >= 90 ? 'green' : pwa >= 50 ? 'orange' : 'red';
+            github.issues.createComment({
+              issue_number,
+              owner,
+              repo, 
+              body: `[Preview Deployment](${netlifyUrl}) has these [Lighthouse Audit](${lighthouseUrl}) scores:\n\n![](https://img.shields.io/badge/Performance-${perf}-${perfColor}?style=flat-square) ![](https://img.shields.io/badge/Best-Practices-${best}-${bestColor}?style=flat-square) ![](https://img.shields.io/badge/Accessibility-${a11y}-${a11yColor}?style=flat-square) ![](https://img.shields.io/badge/Best%20Practices-${best}-${bestColor}?style=flat-square) ![](https://img.shields.io/badge/SEO-${seo}-${seoColor}?style=flat-square) ![](https://img.shields.io/badge/Progressive%20Web%20App-${pwa}-${pwaColor}?style=flat-square)`
+            });
