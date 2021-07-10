@@ -57,9 +57,19 @@ jobs:
             const links = Object.entries(JSON.parse('${{ steps.lighthouse.outputs.links }}'));
             const [netlifyUrl, lighthouseUrl] = links[0];
             const summary = JSON.parse('${{ steps.lighthouse.outputs.manifest }}')[0].summary;
+            const perf = ~~(summary.performance * 100);
+            const a11y = ~~(summary.accessibility * 100);
+            const best = ~~(summary['best-practices'] * 100);
+            const seo = ~~(summary.seo * 100);
+            const pwa = ~~(summary.pwa * 100);
+            const perfColor = perf >= 90 ? 'green' : perf >= 50 ? 'orange' : 'red';
+            const a11yColor = a11y >= 90 ? 'green' : a11y >= 50 ? 'orange' : 'red';
+            const bestColor = best >= 90 ? 'green' : best >= 50 ? 'orange' : 'red';
+            const seoColor = seo >= 90 ? 'green' : seo >= 50 ? 'orange' : 'red';
+            const pwaColor = pwa >= 90 ? 'green' : pwa >= 50 ? 'orange' : 'red';
             github.issues.createComment({
               issue_number,
               owner,
               repo, 
-              body: `### Links\n- [Preview Deployment](${netlifyUrl})\n- [Lighthouse Report](${lighthouseUrl})\n\n${JSON.stringify(summary)}\n![](https://img.shields.io/badge/Accessibility-${~~(summary.accessibility * 100)}-green?style=flat-square)\n\nnumber of links ${links.length}`
+              body: `### Links\n- [Preview Deployment](${netlifyUrl})\n- [Lighthouse Report](${lighthouseUrl})\n\n${JSON.stringify(summary)}\n![](https://img.shields.io/badge/Accessibility-${perf}-${perfColor}?style=flat-square)\n![](https://img.shields.io/badge/Accessibility-${a11y}-${a11yColor}?style=flat-square)`
             });
