@@ -15,15 +15,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  # If, for whatever reason, the userland netlify deploy action doesn't
-  # work anymore, this can be switched to build & deploy on netlify via
-  # netlify.toml and waiting for netlify deployment with
-  # https://github.com/marketplace/actions/wait-for-netlify-deployment
-  # Netlify will
-  #   - deploy a preview every time there is a PR to the main branch
-  #     opened, synchronized or reopened
-  #   - comment on that PR with the preview deploy URL
-  deployPreview:
+  # Netlify will deploy a preview every time there is a PR to the main branch
+  # opened, synchronized or reopened.
+  # 
+  # The audit job will wait for the netlify deployment, run a lighthouse check
+  # against the preview deployment URL and update the PR with the result.
+  audit:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main'
 
@@ -59,11 +56,10 @@ jobs:
             const { issue: { number: issue_number, owner, repo }  } = context;
             const links = Object.entries(JSON.parse('${{ steps.lighthouse.outputs.links }}'));
             const [netlifyUrl, lighthouseUrl] = links[0];
-            const [netlifyUrl2, lighthouseUrl2] = links[1];
             const summary = JSON.parse('${{ steps.lighthouse.outputs.manifest }}')[0].summary;
             github.issues.createComment({
               issue_number,
               owner,
               repo, 
-              body: `### Links\n- [Preview Deployment](${netlifyUrl})\n- [Lighthouse Report](${lighthouseUrl})\n\n${JSON.stringify(summary)}\n![](https://img.shields.io/badge/Accessibility-${~~(summary.accessibility * 100)}-green?style=flat-square)\n\n${lighthouseUrl2}`
+              body: `### Links\n- [Preview Deployment](${netlifyUrl})\n- [Lighthouse Report](${lighthouseUrl})\n\n${JSON.stringify(summary)}\n![](https://img.shields.io/badge/Accessibility-${~~(summary.accessibility * 100)}-green?style=flat-square)\n\nnumber of links ${links.length}`
             });
