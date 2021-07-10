@@ -30,10 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install lighthouse plugin
-        run: npm i -D lighthouse-plugin-field-performance
-
-      - name: Wait for Netlify Deploy
+      - name: Wait for Netlify
         uses: probablyup/wait-for-netlify-action@3.2.0
         id: netlify
         with:
@@ -49,7 +46,7 @@ jobs:
         with:
           urls: |
             ${{ steps.netlify.outputs.url }}
-          configPath: .github/workflows/.lighthouserc.js
+          runs: 3
           uploadArtifacts: true
           temporaryPublicStorage: true
 
