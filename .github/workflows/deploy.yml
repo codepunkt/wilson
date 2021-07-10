@@ -1,4 +1,4 @@
-name: Deploy
+name: Lighthouse
 
 on:
   push:
@@ -29,6 +29,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install lighthouse plugin
+        run: npm i -D lighthouse-plugin-field-performance
 
       - name: Wait for Netlify Deploy
         uses: probablyup/wait-for-netlify-action@3.2.0
