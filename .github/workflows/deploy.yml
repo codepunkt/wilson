@@ -56,4 +56,12 @@ jobs:
           github-token: ${{ secrets.RELEASE_TOKEN }}
           script: |
             const { issue: { number: issue_number, owner, repo }  } = context;
-            github.issues.createComment({ issue_number, owner, repo, body: `${2+4} Link: ${{ steps.lighthouse.outputs.links }}! 👋` });
+            github.issues.createComment({
+              issue_number,
+              owner,
+              repo, 
+              body: `
+                # Link:
+                ${JSON.parse(${{ steps.lighthouse.outputs.links }})}! 👋
+              `
+            });
