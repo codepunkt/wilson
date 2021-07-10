@@ -28,6 +28,8 @@ jobs:
     if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main'
 
     steps:
+      - uses: actions/checkout@v2
+      
       - name: Wait for Netlify Deploy
         uses: probablyup/wait-for-netlify-action@3.2.0
         id: netlify
