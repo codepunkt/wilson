@@ -71,5 +71,5 @@ jobs:
               issue_number,
               owner,
               repo, 
-              body: `### Links\n- [Preview Deployment](${netlifyUrl})\n- [Lighthouse Report](${lighthouseUrl})\n\n${JSON.stringify(summary)}\n![](https://img.shields.io/badge/Accessibility-${perf}-${perfColor}?style=flat-square)\n![](https://img.shields.io/badge/Accessibility-${a11y}-${a11yColor}?style=flat-square)`
+              body: `### Links\n- [Preview Deployment](${netlifyUrl})\n- [Lighthouse Report](${lighthouseUrl})\n\n${JSON.stringify(summary)}\n![](https://img.shields.io/badge/Performance-${perf}-${perfColor}?style=flat-square) ![](https://img.shields.io/badge/Best-Practices-${best}-${bestColor}?style=flat-square) ![](https://img.shields.io/badge/Accessibility-${a11y}-${a11yColor}?style=flat-square) ![](https://img.shields.io/badge/Best-Practices-${best}-${bestColor}?style=flat-square) ![](https://img.shields.io/badge/SEO-${seo}-${seoColor}?style=flat-square) ![](https://img.shields.io/badge/Progressive-Web-App-${pwa}-${pwaColor}?style=flat-square)`
             });
