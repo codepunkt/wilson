@@ -62,6 +62,6 @@ jobs:
               repo, 
               body: `
                 # Link:
-                ${JSON.parse(${{ steps.lighthouse.outputs.links }})}! 👋
+                ${JSON.parse('${{ steps.lighthouse.outputs.links }}')}! 👋
               `
             });
