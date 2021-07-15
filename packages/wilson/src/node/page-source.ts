@@ -75,7 +75,7 @@ export class MarkdownPageSource extends ContentPageSource {
     assetUrls.forEach((_, i) => {
       htmlCode = htmlCode.replace(
         new RegExp(`"${assetUrlPrefix}${i}"`, 'g'),
-        `{${assetUrlPrefix}${i}}`
+        `"#!@%#{${assetUrlPrefix}${i}}"`
       )
     })
 
@@ -85,13 +85,12 @@ export class MarkdownPageSource extends ContentPageSource {
 
     const preactCode = `
       import { h } from "preact";
-      ${relativeAssetImports.join('')}
+      ${relativeAssetImports.join('\n')}
 
       export const Page = () => {
-        return <div dangerouslySetInnerHTML={{ __html: \`${htmlCode.replace(
-          /([`$\\])/g,
-          '\\$1'
-        )}\` }} />
+        return <div dangerouslySetInnerHTML={{ __html: \`${htmlCode
+          .replace(/([`$\\])/g, '\\$1')
+          .replace(/#!@%#{/g, '${')}\` }} />
       };
     `
 

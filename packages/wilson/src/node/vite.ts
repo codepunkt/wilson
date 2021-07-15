@@ -45,8 +45,7 @@ export const getViteConfig = async ({
       outDir: ssr ? '.wilson/ssr' : 'dist',
       // inline async chunk css
       cssCodeSplit: true,
-      // TODO: asset inlining doesn't work? check how vite/vitepress do it for vue
-      assetsInlineLimit: 409600000,
+      assetsInlineLimit: 4096,
       rollupOptions: {
         // important so that each page chunk and the index export things for each other
         preserveEntrySignatures: 'allow-extension',

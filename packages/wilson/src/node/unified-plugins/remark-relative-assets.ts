@@ -1,4 +1,4 @@
-import { visit, EXIT } from 'unist-util-visit'
+import { visit, CONTINUE } from 'unist-util-visit'
 import { Element } from 'hast'
 import { Transformer } from 'unified'
 
@@ -41,7 +41,7 @@ const remarkRelativeAssets: (options: Options) => Transformer = ({
         }
       })
 
-      return EXIT
+      return CONTINUE
     }
   }
 }

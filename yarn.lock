@@ -894,7 +894,7 @@
   resolved "https://registry.yarnpkg.com/@prefresh/utils/-/utils-1.1.1.tgz#ffe7f2e6bd48a0633631a3d92c0ee4bdeb0ac330"
   integrity sha512-MUhT5m2XNN5NsZl4GnpuvlzLo6VSTa/+wBfBd3fiWUvHGhv0GF9hnA1pd//v0uJaKwUnVRQ1hYElxCV7DtYsCQ==
 
-"@prefresh/vite@^2.1.0", "@prefresh/vite@^2.2.3":
+"@prefresh/vite@^2.1.0":
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/@prefresh/vite/-/vite-2.2.3.tgz#a06c7d18b93893c4bc4b90cd2b215990dc4a0906"
   integrity sha512-TlAzVRKAZ3kiUryLzCd3AoqZDK6K7qZDc7C3QPI7hNwDGyZmJaHY+SXNMCCDaBW5xn9YlYqz/5bl3P4tptAcOg==
@@ -1107,6 +1107,11 @@
   version "16.0.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.0.1.tgz#70cedfda26af7a2ca073fdcc9beb2fff4aa693f8"
   integrity sha512-hBOx4SUlEPKwRi6PrXuTGw1z6lz0fjsibcWCM378YxsSu/6+C30L6CR49zIBKHiwNWCYIcOLjg4OHKZaFeLAug==
+
+"@types/node@^14.14.37":
+  version "14.17.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.5.tgz#b59daf6a7ffa461b5648456ca59050ba8e40ed54"
+  integrity sha512-bjqH2cX/O33jXT/UmReo2pM7DIJREPMnarixbQ57DOOzzFaI6D2+IcwaJQaJpv0M1E9TIhPCYVxrkcityLjlqA==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -5262,6 +5267,11 @@ postcss@^8.3.5:
     nanoid "^3.1.23"
     source-map-js "^0.6.2"
 
+preact-iso@^1.1.1:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/preact-iso/-/preact-iso-1.2.0.tgz#384e2896b500f94c53dd201adec28f15433da81b"
+  integrity sha512-0XCZ/DkmJfFEooCH6ZaqrwbAJ2IdwLmxIW+c3xna7irBt+VACkNRRh+Em23V/nkkK4jxkdJZgyECCbB5ABouJw==
+
 preact-iso@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/preact-iso/-/preact-iso-2.0.3.tgz#79343d9e539261c3369800c5623c213c528a0541"
@@ -5715,7 +5725,7 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.1, safe-buffer@~5.2.0:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sass@^1.35.2:
+sass@^1.32.8, sass@^1.35.2:
   version "1.35.2"
   resolved "https://registry.yarnpkg.com/sass/-/sass-1.35.2.tgz#b732314fcdaf7ef8d0f1698698adc378043cb821"
   integrity sha512-jhO5KAR+AMxCEwIH3v+4zbB2WB0z67V1X0jbapfVwQQdjHZUGUyukpnoM6+iCMfsIUC016w9OPKQ5jrNOS9uXw==
