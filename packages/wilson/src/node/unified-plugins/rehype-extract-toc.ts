@@ -13,7 +13,7 @@ const headingTagNames = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
 function findHeadingsRecursive(node: Node, headingNodes: Heading[]): void {
   if (node.type === 'element') {
     const { tagName, children, properties } = node as Element
-    if (headingTagNames.includes(tagName)) {
+    if (headingTagNames.includes(tagName) && children[0]) {
       headingNodes.push({
         level: parseInt(tagName[1], 10),
         text: (children[0] as Text).value,
