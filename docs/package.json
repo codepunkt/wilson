@@ -28,7 +28,6 @@
     "vscode-styled-components": "styled-components/vscode-styled-components"
   },
   "devDependencies": {
-    "@prefresh/vite": "^2.2.3",
     "@types/node": "^16.0.1",
     "sass": "^1.35.2"
   }
