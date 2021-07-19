@@ -91,6 +91,7 @@ const pagesPlugin = async (): Promise<Plugin> => {
         : ''
 
       const wrapper = `
+        import 'preact/compat';
         import { h } from 'preact';
         import { useMeta, useTitle } from 'hoofd/preact';
         import { siteData } from 'wilson/virtual';
