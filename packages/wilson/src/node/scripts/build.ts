@@ -1,5 +1,6 @@
 import { build as viteBuild } from 'vite'
 import fs from 'fs-extra'
+
 import { getViteConfig } from '../vite.js'
 import { prerenderStaticPages } from '../prerender.js'
 import { createOpengraphImages } from '../opengraph.js'

@@ -84,11 +84,11 @@ export async function prerenderStaticPages(feeds: Feed[]): Promise<void> {
 
         prerenderResult.links.forEach((link) => {
           if (!linkDependencies[link]) {
-            for (const [i, pageSource] of getPageSources().entries()) {
-              for (const [j, page] of pageSource.pages.entries()) {
+            for (const [x, pageSource] of getPageSources().entries()) {
+              for (const [y, page] of pageSource.pages.entries()) {
                 if (page.route === link) {
                   linkDependencies[link] = wrappedManifest.getPageDependencies(
-                    `@wilson/page-source/${i}/page/${j}`,
+                    `@wilson/page-source/${x}/page/${y}`,
                     { assets: false }
                   )
                 }

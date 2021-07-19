@@ -1,10 +1,11 @@
 import chalk from 'chalk'
 import boxen from 'boxen'
 import minimist from 'minimist'
+import { createRequire } from 'module'
+
 import { startDevServer } from './scripts/dev.js'
 import { build } from './scripts/build.js'
 import { serve } from './scripts/serve.js'
-import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url)
 const argv = minimist(process.argv.slice(2))

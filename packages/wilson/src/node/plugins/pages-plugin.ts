@@ -78,16 +78,25 @@ const pagesPlugin = async (): Promise<Plugin> => {
         }
       `
 
+      const autoPrefetchUse = autoPrefetch.enabled ? '<AutoPretetch />' : ''
+      const autoPrefetchDefinition = autoPrefetch.enabled
+        ? `
+            import { useAutoPrefetch } from 'wilson/dist/client/context/prefetch';
+
+            const AutoPretetch = () => {
+              useAutoPrefetch(${JSON.stringify(autoPrefetch)})
+              return null;
+            };
+          `
+        : ''
+
       const wrapper = `
         import { h } from 'preact';
         import { useMeta, useTitle } from 'hoofd/preact';
         import { siteData } from 'wilson/virtual';
-        ${
-          autoPrefetch.enabled &&
-          `import { useAutoPrefetch } from 'wilson/dist/client/context/prefetch'`
-        };
         import { Page } from '${pageSource.path}';
         ${layoutImport}
+        ${autoPrefetchDefinition}
 
         export default function PageWrapper() {
           const pageUrl = siteData.siteUrl + '${page.route}';
@@ -102,12 +111,9 @@ const pagesPlugin = async (): Promise<Plugin> => {
           }' });
           useMeta({ property: 'twitter:title', content: title });
           useTitle(title);
-          ${
-            autoPrefetch.enabled &&
-            `useAutoPrefetch(${JSON.stringify(autoPrefetch)})`
-          };
           
           return <Layout ${componentProps}>
+            ${autoPrefetchUse}
             <Page
               ${componentProps}
               ${

@@ -58,8 +58,10 @@ const getExistingAssets = (): string[] => {
  * Provides auto-prefetch related state to component subtree of choice.
  */
 export const AutoPrefetchProvider: FunctionComponent = ({ children }) => {
-  const [dependencies, setDependencies] =
-    useState<Record<string, string[]> | null>(null)
+  const [dependencies, setDependencies] = useState<Record<
+    string,
+    string[]
+  > | null>(null)
   const [assets, setAssets] = useState<string[]>([])
   const prevAssets = usePrevious<string[]>(assets)
 
@@ -187,13 +189,15 @@ const getPrefetchAssets = (
   return [
     ...new Set(
       entries
-        .map(({ isIntersecting, target }) =>
-          isIntersecting
-            ? dependencies[target.getAttribute('href') as string]
+        .map(({ isIntersecting, target }) => {
+          return isIntersecting
+            ? dependencies[target.getAttribute('href') as string] ?? []
             : []
-        )
+        })
         .flat()
-        .map((url) => `/${url}`)
+        .map((url) => {
+          return `/${url}`
+        })
         .filter((url) => !loadedAssets.includes(url))
     ),
   ]
@@ -284,7 +288,9 @@ export const useAutoPrefetch = (
         observerRef.current = new window.IntersectionObserver((entries) => {
           if (performDataSaving()) return
           const prefetchUrls = getPrefetchAssets(entries, dependencies, assets)
-          setAssets((assets) => [...assets, ...prefetchUrls])
+          if (prefetchUrls.some((url) => !assets.includes(url))) {
+            setAssets((assets) => [...new Set([...assets, ...prefetchUrls])])
+          }
         })
 
         const cb = window.requestIdleCallback || requestIdleCallbackPolyfill

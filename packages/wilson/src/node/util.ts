@@ -85,3 +85,21 @@ export const toSlug = (input: string): string => {
     lower: true,
   })
 }
+
+/**
+ * Ensures a URL has (exactly one) trailing slash.
+ */
+export const ensureTrailingSlash = (url: string): string =>
+  `${url}/`.replace(/\/+$/, '/')
+
+/**
+ * Ensures a URL has (exactly one) leading slash.
+ */
+export const ensureLeadingSlash = (url: string): string =>
+  `/${url}`.replace(/^\/+/, '/')
+
+/**
+ * Ensures a URL has (exactly one) leading slash and (exactly one) trailing slash.
+ */
+export const ensureSlashWrap = (url: string): string =>
+  ensureLeadingSlash(ensureTrailingSlash(url))

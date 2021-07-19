@@ -90,7 +90,7 @@ export class MarkdownPageSource extends ContentPageSource {
       export const Page = () => {
         return <div dangerouslySetInnerHTML={{ __html: \`${htmlCode
           .replace(/([`$\\])/g, '\\$1')
-          .replace(/#!@%#{/g, '${')}\` }} />
+          .replace(/#!@%#{/g, '${')}\` }} />;
       };
     `
 

@@ -17,12 +17,7 @@ import {
   TermsPageSource,
 } from './page-source.js'
 import { getTaxonomyTerms } from './state.js'
-import { toSlug } from './util.js'
-
-const ensureLeadingSlash = (str: string) => `/${str}`.replace(/^\/+/, '/')
-const ensureTrailingSlash = (str: string) => `${str}/`.replace(/\/+$/, '/')
-const ensureSlashWrap = (str: string) =>
-  ensureLeadingSlash(ensureTrailingSlash(str))
+import { ensureSlashWrap, toSlug } from './util.js'
 
 const getPaginationRoutes = (
   baseRoute: string,
