@@ -6,7 +6,8 @@ import { useLocation } from 'preact-iso'
 const Header: FunctionalComponent<{ withLogo?: boolean }> = ({
   withLogo = false,
 }) => {
-  const isDocumentation = useLocation().url.startsWith('/docs/')
+  const isDocumentation = useLocation()?.url?.startsWith('/docs/')
+
   return (
     <header className={classes.header}>
       <div className={classes.innerHeader}>

@@ -126,8 +126,8 @@ export const transformMarkdown = async (
 
   const result: MarkdownTransformResult = {
     html: (vfile.contents as string)
-      .replace(/^<div>/, '<Fragment>')
-      .replace(/<\/div>$/, '</Fragment>'),
+      .replace(/^<div>/, '<>')
+      .replace(/<\/div>$/, '</>'),
     assetUrls: (vfile.data as MarkdownTransformResult).assetUrls as string[],
     headings: (vfile.data as MarkdownTransformResult).headings as Heading[],
   }
