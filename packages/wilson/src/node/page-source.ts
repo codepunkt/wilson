@@ -86,12 +86,7 @@ export class MarkdownPageSource extends ContentPageSource {
     const preactCode = `
       import { h } from "preact";
       ${relativeAssetImports.join('\n')}
-
-      export const Page = () => {
-        return <div dangerouslySetInnerHTML={{ __html: \`${htmlCode
-          .replace(/([`$\\])/g, '\\$1')
-          .replace(/#!@%#{/g, '${')}\` }} />;
-      };
+      export const Page = () => ${htmlCode};
     `
 
     const jsCode = transformJsx(preactCode)
