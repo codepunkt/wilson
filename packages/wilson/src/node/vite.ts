@@ -20,6 +20,7 @@ export const getViteConfig = async ({
     optimizeDeps: {
       include: [
         'preact',
+        'preact/compat',
         'preact/hooks',
         'preact/jsx-runtime',
         'preact-iso',
