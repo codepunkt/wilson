@@ -39,6 +39,22 @@ export const getViteConfig = async ({
       preact.default({
         devtoolsInProd: true,
       }),
+      // vite preact plugin automatically imports { h, Fragment } from 'preact'
+      // when we want to use Fragment in a layout or page, we need to import it
+      // so that typescript doesn't bark at us. If we do so, the import is duplicated
+      // in the generated code. Therefore, we override the preact plugin's jsxInject
+      // via a vite config hook
+      // @see https://github.com/preactjs/preset-vite/issues/4#issuecomment-843551844
+      {
+        name: 'reset-preact-plugin-esbuild-settings',
+        config() {
+          return {
+            esbuild: {
+              jsxInject: `import { h } from 'preact'`,
+            },
+          }
+        },
+      },
     ],
     build: {
       ssr,
@@ -60,7 +76,7 @@ export const getViteConfig = async ({
       minify: ssr ? false : !process.env.DEBUG,
     },
     esbuild: {
-      jsxInject: `import { h, Fragment } from 'preact'`,
+      jsxInject: `import { h } from 'preact'`,
       jsxFactory: 'h',
       jsxFragment: 'Fragment',
     },

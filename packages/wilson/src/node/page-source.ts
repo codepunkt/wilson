@@ -84,7 +84,7 @@ export class MarkdownPageSource extends ContentPageSource {
     )
 
     const preactCode = `
-      import { h } from "preact";
+      import { h, Fragment } from "preact";
       ${relativeAssetImports.join('\n')}
 
       export const Page = () => {
