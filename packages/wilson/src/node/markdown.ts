@@ -3,7 +3,7 @@ import NodeCache from 'node-cache'
 import rehypeSlug from 'rehype-slug'
 import remarkParse from 'remark-parse'
 import remarkToRehype from 'remark-rehype'
-import rehypeStringify from 'rehype-stringify'
+import { Node } from 'unist'
 import remarkStringify from 'remark-stringify'
 import rehypeRaw from 'rehype-raw'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
@@ -11,8 +11,11 @@ import remarkRelativeAssets from './unified-plugins/remark-relative-assets.js'
 import rehypeExtractToc from './unified-plugins/rehype-extract-toc.js'
 import { assetUrlPrefix, assetUrlTagConfig } from './constants.js'
 import { Heading } from '../types'
-import unified from 'unified'
+import unified, { Processor } from 'unified'
 import { getConfig } from './config.js'
+// eslint-disable-next-line
+// @ts-ignore
+import toJsx from '@mapbox/hast-util-to-jsx'
 // eslint-disable-next-line
 // @ts-ignore
 import syntaxHighlighting from 'gatsby-remark-vscode'
@@ -114,20 +117,21 @@ export const transformMarkdown = async (
     .use(rehypeExtractToc)
     // TODO: configure autolink headings
     .use(rehypeAutolinkHeadings, {})
-    .use(rehypeStringify, {
-      allowDangerousHtml: true,
-      closeSelfClosing: true,
+    .use(function stringifyToJsx(this: Processor): void {
+      this.Compiler = (tree: Node) => toJsx(tree)
     })
 
   const { markdown: withoutFrontmatter } = parseFrontmatter(markdownCode)
   const vfile = await processor.process(withoutFrontmatter)
-  const { assetUrls, headings } = vfile.data as Omit<
-    MarkdownTransformResult,
-    'html'
-  >
-  const html = vfile.contents as string
-  const result: MarkdownTransformResult = { html, assetUrls, headings }
-  transformCache.set<MarkdownTransformResult>(markdownCode, result)
 
+  const result: MarkdownTransformResult = {
+    html: (vfile.contents as string)
+      .replace(/^<div>/, '<Fragment>')
+      .replace(/<\/div>$/, '</Fragment>'),
+    assetUrls: (vfile.data as MarkdownTransformResult).assetUrls as string[],
+    headings: (vfile.data as MarkdownTransformResult).headings as Heading[],
+  }
+
+  transformCache.set<MarkdownTransformResult>(markdownCode, result)
   return result
 }

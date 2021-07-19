@@ -52,9 +52,9 @@ const pagesPlugin = async (): Promise<Plugin> => {
       const pageLayout =
         pageSource.frontmatter.layout ?? typeof pageLayouts === 'undefined'
           ? undefined
-          : pageLayouts.find(({ pattern = '**' }) =>
-              minimatch(pageSource.relativePath, pattern)
-            )?.layout
+          : pageLayouts.find(({ pattern = '**' }) => {
+              return minimatch(pageSource.relativePath, pattern)
+            })?.layout
 
       const layoutImport = pageLayout
         ? `import Layout from '${relative(
