@@ -1,9 +1,6 @@
 name: Lighthouse
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -22,7 +19,7 @@ jobs:
   # against the preview deployment URL and update the PR with the result.
   audit:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main'
+    if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
 
     steps:
       - uses: actions/checkout@v2
