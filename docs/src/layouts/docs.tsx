@@ -47,11 +47,12 @@ const MenuItem: FunctionalComponent<{
   headings: Exclude<ContentPageProps['headings'], undefined>
   showToc?: boolean
 }> = ({ children, href, isActive = false, headings, showToc = false }) => {
-  const url = useLocation().url
+  const location = useLocation()
+
   return (
     <li data-active={isActive}>
       <Link href={href}>{children}</Link>
-      {headings.length > 0 && (showToc || url === href) && (
+      {headings.length > 0 && (showToc || location.url === href) && (
         <Toc headings={headings} />
       )}
     </li>
@@ -61,7 +62,6 @@ const MenuItem: FunctionalComponent<{
 const DocsLayout: FunctionalComponent<ContentPageProps> = ({
   children,
   title,
-  taxonomies,
   headings = [],
 }) => {
   const [activeSection, setActiveSection] = useState<string | null>(null)
