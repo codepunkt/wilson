@@ -5,6 +5,8 @@
  * folder structure gets screwed up.
  */
 
+import { Node } from 'unist'
+
 /**
  *
  */
@@ -176,26 +178,6 @@ interface SiteConfigRequired {
   siteData: SiteData
 }
 
-type SyntaxHighlightingTheme =
-  | string
-  | ThemeSettings
-  | ((data: CodeBlockData) => string | ThemeSettings)
-
-/**
- * Syntax highlighting options
- */
-interface SyntaxHighlightingOptions {
-  extensions: string[]
-  theme: SyntaxHighlightingTheme
-  inlineCode?: {
-    theme: SyntaxHighlightingTheme
-    marker: string
-    className:
-      | string
-      | ((obj: { language: string; node: RemarkASTNode }) => string)
-  }
-}
-
 /**
  * Auto-prefetch options
  */
@@ -203,6 +185,34 @@ export interface AutoPrefetchOptions {
   enabled?: boolean
   maxConcurrentFetches?: number
   timeout?: number
+}
+
+/**
+ * Syntax highlighting options, reflects options of gatsby-remark-vscode
+ */
+interface ThemeSettings {
+  default: string
+  dark?: string
+  parentSelector?: Record<string, string>
+  media?: Array<{ match: string; theme: string }>
+}
+interface CodeData {
+  language: string
+  node: Node
+}
+interface SyntaxHighlightingOptions {
+  theme?: string | ThemeSettings | ((data: CodeData) => string | ThemeSettings)
+  wrapperClassName?: string | ((data: CodeData) => string)
+  languageAliases?: Record<string, string>
+  extensions?: string[]
+  inlineCode?: {
+    marker: string
+    className: string | ((data: CodeData) => string)
+    theme: string | ThemeSettings | ((data: CodeData) => string | ThemeSettings)
+  }
+  injectStyles?: boolean
+  replaceColor?: (colorValue: string, theme: string) => string
+  logLevel?: 'trace' | 'debug' | 'info' | 'warn' | 'error'
 }
 
 /**
@@ -247,10 +257,10 @@ export type SiteConfig = SiteConfigRequired & SiteConfigOptional
 export type SiteConfigWithDefaults = SiteConfig & SiteConfigDefaults
 
 export interface Page {
-  public route: string
-  public path: string
-  public title: string
-  public date: Date
+  route: string
+  path: string
+  title: string
+  date: Date
 }
 
 interface PageProps {
