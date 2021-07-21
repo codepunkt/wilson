@@ -11,7 +11,7 @@ import remarkRelativeAssets from './unified-plugins/remark-relative-assets.js'
 import rehypeExtractToc from './unified-plugins/rehype-extract-toc.js'
 import { assetUrlPrefix, assetUrlTagConfig } from './constants.js'
 import { Heading } from '../types'
-import unified, { Processor } from 'unified'
+import { unified, Processor } from 'unified'
 import { getConfig } from './config.js'
 // eslint-disable-next-line
 // @ts-ignore
@@ -125,7 +125,7 @@ export const transformMarkdown = async (
   const vfile = await processor.process(withoutFrontmatter)
 
   const result: MarkdownTransformResult = {
-    html: (vfile.contents as string)
+    html: (vfile.value as string)
       .replace(/^<div>/, '<>')
       .replace(/<\/div>$/, '</>'),
     assetUrls: (vfile.data as MarkdownTransformResult).assetUrls as string[],

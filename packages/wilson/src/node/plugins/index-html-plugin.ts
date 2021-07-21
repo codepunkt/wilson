@@ -5,7 +5,7 @@ import { getConfig } from '../config.js'
 import { Node, Element } from 'hast'
 import parse from 'rehype-parse'
 import stringify from 'rehype-stringify'
-import unified from 'unified'
+import { unified } from 'unified'
 import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url)
@@ -70,7 +70,7 @@ const indexHtmlPlugin = async (): Promise<Plugin> => {
         .use(setLang, { lang: lang ?? 'en' })
         .use(stringify)
       const vfile = processor.processSync(html)
-      const result = vfile.contents
+      const result = vfile.value
 
       return {
         html: result as string,
