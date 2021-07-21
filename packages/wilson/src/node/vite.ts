@@ -46,7 +46,10 @@ export const getViteConfig = async ({
       outDir: ssr ? '.wilson/ssr' : 'dist',
       // inline async chunk css
       cssCodeSplit: true,
-      assetsInlineLimit: 4096,
+      // assets inline limit is not configurable and set to a very low size because
+      // inlined assets are baked into both a page's javascript and the statically
+      // generated .html files
+      assetsInlineLimit: 2048,
       rollupOptions: {
         // important so that each page chunk and the index export things for each other
         preserveEntrySignatures: 'allow-extension',
