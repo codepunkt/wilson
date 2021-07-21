@@ -113,7 +113,7 @@
     "@types/mime-types": "^2.1.0",
     "@types/minimatch": "^3.0.5",
     "@types/minimist": "^1.2.2",
-    "@types/node": "^16.3.3",
+    "@types/node": "^16.4.0",
     "@types/requestidlecallback": "^0.3.4",
     "@types/rss": "^0.0.29",
     "@types/serve-handler": "^6.1.1",
