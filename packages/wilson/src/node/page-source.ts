@@ -75,7 +75,7 @@ export class MarkdownPageSource extends ContentPageSource {
     assetUrls.forEach((_, i) => {
       htmlCode = htmlCode.replace(
         new RegExp(`"${assetUrlPrefix}${i}"`, 'g'),
-        `"#!@%#{${assetUrlPrefix}${i}}"`
+        `{${assetUrlPrefix}${i}}`
       )
     })
 
