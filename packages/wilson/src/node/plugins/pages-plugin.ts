@@ -42,7 +42,9 @@ const pagesPlugin = async (): Promise<Plugin> => {
       const pageIndex = parseInt(match[2], 10)
       const page = pageSource.pages[pageIndex]
 
-      const { autoPrefetch } = getConfig()
+      const {
+        performance: { autoPrefetch },
+      } = getConfig()
 
       if (page === undefined) {
         throw new Error('kaput!')

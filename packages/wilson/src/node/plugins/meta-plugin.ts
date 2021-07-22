@@ -22,7 +22,7 @@ const createNameMeta = createMetaFactory('name')
 const createPropertyMeta = createMetaFactory('property')
 
 /**
- * Transforms index html.
+ * Adds meta information from siteData to index.html.
  *
  * - Adds `lang` attribute from siteData, defaulting to 'en'.
  * - Adds `meta` elements that don't change between pages.
@@ -30,9 +30,9 @@ const createPropertyMeta = createMetaFactory('property')
  * Certain meta elements like title, twitter:sitle, og:image, og:url or og:type
  * are page specific and thus handled by pages plugin.
  */
-const indexHtmlPlugin = async (): Promise<Plugin> => {
+const metaPlugin = async (): Promise<Plugin> => {
   return {
-    name: 'wilson-plugin-indexhtml',
+    name: 'wilson-plugin-meta',
     enforce: 'pre',
 
     async transformIndexHtml(html: string) {
@@ -118,4 +118,4 @@ const indexHtmlPlugin = async (): Promise<Plugin> => {
   }
 }
 
-export default indexHtmlPlugin
+export default metaPlugin

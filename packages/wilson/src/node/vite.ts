@@ -6,8 +6,9 @@ import preact from '@preact/preset-vite'
 import markdownPlugin from './plugins/markdown-plugin.js'
 import virtualPlugin from './plugins/virtual-plugin.js'
 import pagesPlugin from './plugins/pages-plugin.js'
-import indexHtmlPlugin from './plugins/index-html-plugin.js'
+import metaPlugin from './plugins/meta-plugin.js'
 import svgPlugin from './plugins/svg-plugin.js'
+import injectHeadPlugin from './plugins/inject-head-plugin.js'
 
 interface ViteConfigOptions {
   ssr?: boolean
@@ -32,7 +33,8 @@ export const getViteConfig = async ({
     },
     clearScreen: false,
     plugins: [
-      await indexHtmlPlugin(),
+      await metaPlugin(),
+      await injectHeadPlugin(),
       await markdownPlugin(),
       await pagesPlugin(),
       await virtualPlugin(),

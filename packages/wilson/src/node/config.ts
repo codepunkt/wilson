@@ -10,6 +10,13 @@ import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 
 const configDefaults: SiteConfigDefaults = {
+  performance: {
+    autoPrefetch: {
+      enabled: true,
+      maxConcurrentFetches: 8,
+      timeout: 2000,
+    },
+  },
   pageLayouts: [{ pattern: '**/*.md', layout: 'markdown' }],
   pagination: {
     pageSize: 10,
@@ -25,11 +32,7 @@ const configDefaults: SiteConfigDefaults = {
     extensions: [],
     theme: 'Default Dark+',
   },
-  autoPrefetch: {
-    enabled: true,
-    maxConcurrentFetches: 8,
-    timeout: 2000,
-  },
+  injectHead: () => '',
 }
 
 /**
@@ -73,11 +76,13 @@ export function getConfig(
     ...configDefaults,
     ...config,
     pagination: { ...configDefaults.pagination, ...config.pagination },
-    autoPrefetch: {
-      ...configDefaults.autoPrefetch,
-      ...config.autoPrefetch,
-      // Disable auto-prefetch in development mode
-      ...(isDevServer ? { enabled: false } : {}),
+    performance: {
+      autoPrefetch: {
+        ...configDefaults.performance.autoPrefetch,
+        ...(config.performance?.autoPrefetch ?? {}),
+        // Disable auto-prefetch in development mode
+        ...(isDevServer ? { enabled: false } : {}),
+      },
     },
   }
 
