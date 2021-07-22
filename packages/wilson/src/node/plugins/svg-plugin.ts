@@ -14,8 +14,9 @@ const svgPlugin = async (): Promise<Plugin> => {
     enforce: 'pre',
 
     async load(id): Promise<LoadResult> {
-      if (!id.match(/\.svg$/)) return
+      if (!id.match(/\.svg\?component$/)) return
 
+      id = id.replace(/\?component$/, '')
       let result = cache.get(id)
 
       if (!result) {

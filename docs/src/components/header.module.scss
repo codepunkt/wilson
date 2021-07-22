@@ -46,19 +46,14 @@
   flex-grow: 1;
 }
 
-.logo {
+.logoLink {
   display: flex;
   align-items: center;
   margin-right: 2.5rem;
   text-decoration: none;
+}
 
-  img {
-    height: 2.6rem;
-  }
-
-  span {
-    font-size: 1.8rem;
-    font-weight: 300;
-    color: #111827;
-  }
+.logo {
+  height: 2.6rem;
+  color: #111827;
 }

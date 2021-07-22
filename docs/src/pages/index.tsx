@@ -1,7 +1,7 @@
 import { ContentPageProps, Frontmatter } from 'wilson'
 import { FunctionalComponent } from 'preact'
 import classes from './index.module.scss'
-import Logo from '../assets/wilson-wordmark.svg'
+import Logo from '../assets/wilson-wordmark.svg?component'
 import InstallButton from '../components/install-button'
 
 /**
