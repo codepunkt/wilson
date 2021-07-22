@@ -22,7 +22,7 @@ const isMarkdownPage = (filePath: string): boolean => {
  */
 const markdownPlugin = async (): Promise<Plugin> => {
   return {
-    name: 'wilson-plugin-page-markdown',
+    name: 'wilson-plugin-markdown',
     enforce: 'pre',
 
     async handleHotUpdate({

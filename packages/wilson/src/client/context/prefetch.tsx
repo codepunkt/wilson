@@ -241,7 +241,7 @@ const requestIdleCallbackPolyfill = (
  * @param options Auto-prefetch options
  */
 export const useAutoPrefetch = (
-  options: SiteConfigWithDefaults['autoPrefetch']
+  options: SiteConfigWithDefaults['performance']['autoPrefetch']
 ): void => {
   const [toAdd, isDone] = throttle(options.maxConcurrentFetches)
   const state = useContext(Context)

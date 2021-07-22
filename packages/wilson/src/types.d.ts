@@ -179,15 +179,6 @@ interface SiteConfigRequired {
 }
 
 /**
- * Auto-prefetch options
- */
-export interface AutoPrefetchOptions {
-  enabled?: boolean
-  maxConcurrentFetches?: number
-  timeout?: number
-}
-
-/**
  * Syntax highlighting options, reflects options of gatsby-remark-vscode
  */
 interface ThemeSettings {
@@ -215,18 +206,30 @@ interface SyntaxHighlightingOptions {
   logLevel?: 'trace' | 'debug' | 'info' | 'warn' | 'error'
 }
 
+export interface AutoPrefetchOptions {
+  enabled?: boolean
+  maxConcurrentFetches?: number
+  timeout?: number
+}
+export interface PerformanceOptions {
+  autoPrefetch?: AutoPrefetchOptions
+}
+
 /**
  * Optional site configuration.
  */
-interface SiteConfigOptional {
+export interface SiteConfigOptional {
   opengraphImage?: { background: string; texts: OpengraphImageText[] }
   pageLayouts?: { layout: string; pattern?: string }[]
+  // @TODO move into PerformanceOptions under `performance`
   linkPreloadTest?: (route: string) => boolean
   taxonomies?: TaxonomyDefinition
+  // @TODO combine with TaxonomyDefinition under `taxonomies`
   pagination?: PaginationOptions
   feeds?: FeedOptions[]
   syntaxHighlighting?: SyntaxHighlightingOptions
-  autoPrefetch?: AutoPrefetchOptions
+  performance?: PerformanceOptions
+  injectHead?: () => string | Promise<string>
 }
 
 /**
@@ -239,11 +242,12 @@ export type SiteConfigDefaults = Required<
     | 'taxonomies'
     | 'feeds'
     | 'syntaxHighlighting'
-    | 'autoPrefetch'
+    | 'performance'
+    | 'injectHead'
   >
 > & {
   pagination: Required<PaginationOptions>
-  autoPrefetch: Required<AutoPrefetchOptions>
+  performance: Required<PerformanceOptions>
 }
 
 /**
