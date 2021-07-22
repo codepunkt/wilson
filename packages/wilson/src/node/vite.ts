@@ -7,6 +7,7 @@ import markdownPlugin from './plugins/markdown-plugin.js'
 import virtualPlugin from './plugins/virtual-plugin.js'
 import pagesPlugin from './plugins/pages-plugin.js'
 import indexHtmlPlugin from './plugins/index-html-plugin.js'
+import svgPlugin from './plugins/svg-plugin.js'
 
 interface ViteConfigOptions {
   ssr?: boolean
@@ -40,6 +41,7 @@ export const getViteConfig = async ({
       preact.default({
         devtoolsInProd: true,
       }),
+      await svgPlugin(),
     ],
     build: {
       ssr,

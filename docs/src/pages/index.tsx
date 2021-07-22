@@ -1,7 +1,7 @@
 import { ContentPageProps, Frontmatter } from 'wilson'
 import { FunctionalComponent } from 'preact'
 import classes from './index.module.scss'
-import logoSrc from '../assets/wilson-wordmark.svg'
+import Logo from '../assets/wilson-wordmark.svg?component'
 import InstallButton from '../components/install-button'
 
 /**
@@ -12,9 +12,7 @@ export const Page: FunctionalComponent<ContentPageProps> = () => {
   return (
     <>
       <div className={classes.hero}>
-        <div className={classes.logo}>
-          <img src={logoSrc} height="80" alt="Wilsonjs Logo" />
-        </div>
+        <Logo className={classes.logo} />
         <h1 className={classes.claim}>{frontmatter.title}.</h1>
         <p className={classes.description}>
           Based on state of the art libraries and patterns, Wilson makes the

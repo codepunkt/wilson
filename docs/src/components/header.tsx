@@ -1,6 +1,6 @@
 import { FunctionalComponent } from 'preact'
 import classes from './header.module.scss'
-import logoSrc from '../assets/wilson-wordmark.svg'
+import Logo from '../assets/wilson-wordmark.svg?component'
 import { useLocation } from 'preact-iso'
 
 const Header: FunctionalComponent<{ withLogo?: boolean }> = ({
@@ -12,8 +12,8 @@ const Header: FunctionalComponent<{ withLogo?: boolean }> = ({
     <header className={classes.header}>
       <div className={classes.innerHeader}>
         {withLogo && (
-          <a href="/" className={classes.logo}>
-            <img src={logoSrc} alt="wilsonjs" />
+          <a href="/" className={classes.logoLink}>
+            <Logo className={classes.logo} />
           </a>
         )}
         <div>Search</div>

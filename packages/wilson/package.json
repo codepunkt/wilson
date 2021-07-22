@@ -18,6 +18,7 @@
   "files": [
     "bin/**",
     "dist/**",
+    "client.d.ts",
     "virtual.d.ts"
   ],
   "repository": {
@@ -59,6 +60,7 @@
     "@codepunkt/wasm-layout-text": "^3.0.0",
     "@mapbox/hast-util-to-jsx": "^1.0.0",
     "@preact/preset-vite": "^2.1.0",
+    "@svgr/core": "^5.5.0",
     "acorn": "^8.1.1",
     "astring": "^1.7.4",
     "boxen": "^5.0.0",

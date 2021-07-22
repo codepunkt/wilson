@@ -14,7 +14,7 @@
     "sourceMap": true,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "types": ["node", "../node_modules/vite/client"]
+    "types": ["node", "wilson/client", "vite/client"]
   },
   "include": ["./src"]
 }
