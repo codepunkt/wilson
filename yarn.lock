@@ -6686,10 +6686,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript-styled-plugin@0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/typescript-styled-plugin/-/typescript-styled-plugin-0.16.0.tgz#b1bde49e259c9dc312afbc3e683e9e7e413f24d0"
-  integrity sha512-I3UfkGzdy1js95EDtYMatBzDINOCWAW4E0+sE4+MG8gy3gaUyQOSi5NhvVNkF3zqWXY+z43g6MnmYy8QzqFhVQ==
+typescript-styled-plugin@^0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/typescript-styled-plugin/-/typescript-styled-plugin-0.18.0.tgz#4e20e99bd7938f693ee37ad20682cc2401d06898"
+  integrity sha512-GopdOs3twyZkuLMU2ActiZQAtCgyibmwmQczULoe47qJ2URIaHSWxtUIDwuv6QhKPLBIrV6jSo/qp+184hlwLg==
   dependencies:
     typescript-template-language-service-decorator "^2.2.0"
     vscode-css-languageservice "^5.1.1"
@@ -7001,11 +7001,12 @@ vscode-oniguruma@^1.4.0:
   integrity sha512-JrBZH8DCC262TEYcYdeyZusiETu0Vli0xFgdRwNJjDcObcRjbmJP+IFcA3ScBwIXwgFHYKbAgfxtM/Cl+3Spjw==
 
 vscode-styled-components@styled-components/vscode-styled-components:
-  version "1.6.4"
-  resolved "https://codeload.github.com/styled-components/vscode-styled-components/tar.gz/ffd92c89642dcab584866624f80345d7b6bed5df"
+  version "1.6.5"
+  uid "3e28a1c14c3b0e0b17ee278c0edd92c120c0501b"
+  resolved "https://codeload.github.com/styled-components/vscode-styled-components/tar.gz/3e28a1c14c3b0e0b17ee278c0edd92c120c0501b"
   dependencies:
     d3-color "^2.0.0"
-    typescript-styled-plugin "0.16.0"
+    typescript-styled-plugin "^0.18.0"
     vscode-css-languageservice "^5.1.1"
 
 vscode-textmate@^5.2.0:
