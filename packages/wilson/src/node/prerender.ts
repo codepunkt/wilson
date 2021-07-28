@@ -146,13 +146,14 @@ export async function prerenderStaticPages(feeds: Feed[]): Promise<void> {
         const filteredLinkDependencies: Record<string, string[]> = {}
         for (const path in linkDependencies) {
           const targetPage = getPages().find((p) => p.route === path)
-          const config = getConfig()
-          if (
-            targetPage &&
-            (typeof config.linkPreloadTest !== 'function' ||
-              config.linkPreloadTest(targetPage.route))
-          ) {
-            filteredLinkDependencies[path] = linkDependencies[path]
+          if (targetPage) {
+            const config = getConfig()
+            if (
+              typeof config.performance.autoPrefetch.routeTest !== 'function' ||
+              config.performance.autoPrefetch.routeTest(targetPage.route)
+            ) {
+              filteredLinkDependencies[path] = linkDependencies[path]
+            }
           }
         }
         const source = sources[page.path].replace(

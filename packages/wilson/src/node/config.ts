@@ -4,7 +4,7 @@ import {
   SiteConfigWithDefaults,
 } from '../types'
 import { resolve } from 'path'
-import fs from 'fs-extra'
+import fs, { truncate } from 'fs-extra'
 import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url)
@@ -14,6 +14,7 @@ const configDefaults: SiteConfigDefaults = {
     autoPrefetch: {
       enabled: true,
       maxConcurrentFetches: 8,
+      routeTest: () => true,
       timeout: 2000,
     },
   },

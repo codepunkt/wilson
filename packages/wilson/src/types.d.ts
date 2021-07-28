@@ -204,6 +204,10 @@ interface SyntaxHighlightingOptions {
 export interface AutoPrefetchOptions {
   enabled?: boolean
   maxConcurrentFetches?: number
+  /**
+   * If function returns true for a route, resources for that route will be prefetched
+   */
+  routeTest?: (route: string) => boolean
   timeout?: number
 }
 export interface PerformanceOptions {
@@ -221,10 +225,7 @@ export interface LayoutOptions {
 export interface SiteConfigOptional {
   opengraphImage?: { background: string; texts: OpengraphImageText[] }
   layouts?: LayoutOptions
-  // @TODO move into PerformanceOptions under `performance`
-  linkPreloadTest?: (route: string) => boolean
   taxonomies?: TaxonomyDefinition
-  // @TODO combine with TaxonomyDefinition under `taxonomies`
   pagination?: PaginationOptions
   feeds?: FeedOptions[]
   syntaxHighlighting?: SyntaxHighlightingOptions
