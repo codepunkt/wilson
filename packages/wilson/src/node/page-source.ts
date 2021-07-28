@@ -172,10 +172,6 @@ export class SelectPageSource extends PageSource {
       )
       // sort by page date, descending
       .sort((a, b) => +b.date - +a.date)
-    /**
-     * @todo size should have a default value prior to this
-     * code being executed
-     */
     const pageSize = config.pagination.pageSize ?? 2
     let currentPage = 1
     this.pages = []

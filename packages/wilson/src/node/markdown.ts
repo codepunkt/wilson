@@ -88,8 +88,6 @@ type MarkdownTransformResult = {
  * the `html` property and additional information that was gathered during the
  * transformation such as `headings` and `assetUrls`.
  *
- * @todo is rehype-react applicable here?
- *
  * @param markdownCode The markdown code to parse
  * @returns The MarkdownTransformResult object
  */

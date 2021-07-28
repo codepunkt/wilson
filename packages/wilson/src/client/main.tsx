@@ -3,9 +3,6 @@ import { hydrate } from 'preact-iso'
 import { options, VNode } from 'preact'
 
 const app = <App />
-// if (import.meta.hot) {
-//     app = something else
-// }
 
 // @TODO: whats SSRContextProvider in react-plugin-pages?
 const old = options.vnode
