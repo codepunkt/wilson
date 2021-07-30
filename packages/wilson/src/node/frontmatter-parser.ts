@@ -1,7 +1,10 @@
 import {
+  ContentFrontmatter,
   Frontmatter,
   FrontmatterDefaults,
   FrontmatterWithDefaults,
+  SelectFrontmatter,
+  TaxonomyFrontmatter,
 } from '../types'
 import { extname } from 'path'
 import { readFileSync } from 'fs'
@@ -16,6 +19,7 @@ import { walk } from 'estree-walker'
 import acorn, { parse } from 'acorn'
 import typescript from 'typescript'
 import { parseFrontmatter } from './markdown.js'
+import { getConfig } from './config.js'
 
 /**
  * Default values for optional properties in frontmatter.
@@ -65,20 +69,60 @@ class FrontmatterParser {
 
   /**
    * Validates frontmatter.
-   *
-   * @todo taxonomy must have permalink
-   * @todo taxonomy must have taxonomyName
-   * @todo content can only have taxonomies defined in config
-   * @todo content can have draft, but must be boolean
-   * @todo terms must have taxonomyName
-   * @todo select must have taxonomyName
-   * @todo select must have selectedTerms
    */
   private validateFrontmatter(frontmatter: FrontmatterWithDefaults): void {
+    // generic validation
     if (Object.values(frontmatter).length === 0)
-      throw new Error(`page has no or empty frontmatter: ${this.path}!`)
-    if (frontmatter.title === undefined)
-      throw new Error(`frontmatter has no title: ${this.path}!`)
+      this.throw('page has no or empty frontmatter')
+    if (frontmatter.title === undefined) this.throw('frontmatter has no title')
+
+    if (frontmatter.type === 'content') {
+      const fm = frontmatter as ContentFrontmatter
+      if (fm.draft !== undefined && typeof fm.draft !== 'boolean') {
+        this.throw('frontmatter.draft is not boolean')
+      }
+      if (typeof fm.taxonomies !== 'undefined') {
+        if (Object.getPrototypeOf(fm.taxonomies) !== Object.prototype) {
+          this.throw('frontmatter.taxonomies is not an object literal')
+        }
+        const { taxonomies } = getConfig()
+        for (const taxonomyName in fm.taxonomies) {
+          if (!taxonomies[taxonomyName]) {
+            this.throw(`taxonomy "${taxonomyName}" is not defined in config`)
+          }
+          if (!Array.isArray(fm.taxonomies[taxonomyName])) {
+            this.throw(`taxonomy "${taxonomyName}" is not an array of strings`)
+          }
+        }
+      }
+    } else {
+      // taxonomy, select and terms all need `taxonomyName`
+      const fm = frontmatter as SelectFrontmatter
+      if (fm.taxonomyName === undefined) {
+        this.throw('frontmatter.taxonomyName is not defined')
+      } else if (typeof fm.taxonomyName !== 'string') {
+        this.throw('frontmatter.taxonomyName is not a string')
+      }
+
+      if (frontmatter.type === 'select') {
+        if (fm.selectedTerms === undefined) {
+          this.throw('frontmatter.selectedTerms is not defined')
+        } else if (!Array.isArray(fm.selectedTerms)) {
+          this.throw('frontmatter.selectedTerms is not an array of strings')
+        }
+      } else if (frontmatter.type === 'taxonomy') {
+        const fm = frontmatter as TaxonomyFrontmatter
+        if (fm.permalink === undefined) {
+          this.throw('frontmatter.permalink is not defined')
+        } else if (typeof fm.permalink !== 'string') {
+          this.throw('frontmatter.permalink is not a string')
+        }
+      }
+    }
+  }
+
+  private throw(message: string): void {
+    throw new Error(`${message}: ${this.path}`)
   }
 
   /**
