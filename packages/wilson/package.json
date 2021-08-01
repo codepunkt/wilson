@@ -88,7 +88,7 @@
     "pretty-error": "^3.0.3",
     "readdirp": "^3.6.0",
     "rehype-autolink-headings": "^5.0.1",
-    "rehype-parse": "^7.0.1",
+    "rehype-parse": "^8.0.1",
     "rehype-raw": "^5.1.0",
     "rehype-slug": "^4.0.1",
     "rehype-stringify": "^8.0.0",
