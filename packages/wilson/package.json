@@ -92,7 +92,7 @@
     "rehype-raw": "^5.1.0",
     "rehype-slug": "^4.0.1",
     "rehype-stringify": "^8.0.0",
-    "remark-parse": "^9.0.0",
+    "remark-parse": "^10.0.0",
     "remark-rehype": "^8.1.0",
     "remark-stringify": "^9.0.1",
     "rss": "^1.2.2",
