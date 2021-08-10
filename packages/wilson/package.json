@@ -94,7 +94,7 @@
     "rehype-stringify": "^8.0.0",
     "remark-parse": "^10.0.0",
     "remark-rehype": "^8.1.0",
-    "remark-stringify": "^9.0.1",
+    "remark-stringify": "^10.0.0",
     "rss": "^1.2.2",
     "sass": "^1.36.0",
     "slugify": "^1.6.0",
