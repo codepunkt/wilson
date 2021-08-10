@@ -32,7 +32,7 @@
     "prepack": "yarn run build"
   },
   "dependencies": {
-    "chalk": "^4.1.1",
+    "chalk": "^4.1.2",
     "cross-spawn": "^7.0.3",
     "fs-extra": "^10.0.0",
     "minimist": "^1.2.5"
