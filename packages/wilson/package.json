@@ -98,7 +98,7 @@
     "rss": "^1.2.2",
     "sass": "^1.37.5",
     "slugify": "^1.6.0",
-    "sucrase": "^3.20.0",
+    "sucrase": "^3.20.1",
     "throttles": "^1.0.1",
     "typescript": "^4.2.4",
     "unified": "^10.0.1",
