@@ -82,7 +82,7 @@
     "module-alias": "^2.2.2",
     "node-cache": "^5.1.2",
     "ora": "^5.4.0",
-    "plist": "^3.0.3",
+    "plist": "^3.0.4",
     "preact": "^10.5.14",
     "preact-render-to-string": "^5.1.19",
     "pretty-error": "^3.0.3",
