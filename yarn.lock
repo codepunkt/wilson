@@ -3582,10 +3582,10 @@ he@^1.2.0:
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
-hoofd@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/hoofd/-/hoofd-1.3.1.tgz#32d8f8818c225a10c128d7f29b3483d9448704a2"
-  integrity sha512-NLl8iz+4G1l11togUswt8NyFCCgYRY7NtKFUTxsHqpH5jJV1QK3JEFQhJxig68WKH8A448BeEvg1VfIwVdmMUQ==
+hoofd@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/hoofd/-/hoofd-1.4.0.tgz#b2c94d55ec5fad996ac2aa0476b115d3554b7fd0"
+  integrity sha512-qsfSJKQr/mAUfSLVnjt8wmI9aeCyNUDBiEFnRqzj17G4eFlttEf460pPKSr3ZjEDANEvsvzVuGP1PAwAL5oLTw==
 
 hosted-git-info@^2.1.4:
   version "2.8.9"
