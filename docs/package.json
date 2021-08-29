@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "@types/node": "^16.4.13",
-    "sass": "^1.37.5"
+    "sass": "^1.38.2"
   }
 }
